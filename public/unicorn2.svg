@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="150px" viewBox="0 0 200 150" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>Unicorn 2</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="rainbowMane">
+            <stop stop-color="#FF0000" offset="0%"></stop>
+            <stop stop-color="#FF9900" offset="20%"></stop>
+            <stop stop-color="#FFFF00" offset="40%"></stop>
+            <stop stop-color="#00FF00" offset="60%"></stop>
+            <stop stop-color="#0099FF" offset="80%"></stop>
+            <stop stop-color="#9900FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="paleBodyGradient">
+            <stop stop-color="#FFEEFF" offset="0%"></stop>
+            <stop stop-color="#EEDDFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="starHornGradient">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#D6F4FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Body -->
+        <path d="M60,85 C60,65 80,55 110,55 C140,55 160,75 165,95 C170,115 160,130 140,135 C120,140 90,135 70,125 C50,115 60,105 60,85 Z" 
+              fill="url(#paleBodyGradient)" stroke="#CCBBEE" stroke-width="1.5"></path>
+        
+        <!-- Head -->
+        <path d="M45,75 C45,65 55,55 70,50 C85,45 100,50 105,60 C110,70 105,80 95,85 C85,90 70,90 55,80 C50,75 45,80 45,75 Z" 
+              fill="url(#paleBodyGradient)" stroke="#CCBBEE" stroke-width="1.5"></path>
+        
+        <!-- Legs -->
+        <line x1="75" y1="125" x2="70" y2="145" stroke="#CCBBEE" stroke-width="3" stroke-linecap="round"></line>
+        <line x1="95" y1="125" x2="90" y2="145" stroke="#CCBBEE" stroke-width="3" stroke-linecap="round"></line>
+        <line x1="115" y1="125" x2="110" y2="145" stroke="#CCBBEE" stroke-width="3" stroke-linecap="round"></line>
+        <line x1="135" y1="125" x2="130" y2="145" stroke="#CCBBEE" stroke-width="3" stroke-linecap="round"></line>
+        
+        <!-- Rainbow Mane -->
+        <path d="M70,50 C75,40 90,30 100,35 C110,40 110,50 105,60 C100,70 90,75 80,65 C75,60 65,60 70,50 Z" 
+              fill="url(#rainbowMane)" stroke="none"></path>
+        
+        <!-- Magical Horn -->
+        <path d="M70,50 C65,40 60,30 55,20 C50,10 65,15 70,30 C75,45 70,50 70,50 Z" 
+              fill="url(#starHornGradient)" stroke="#F0F6FF" stroke-width="1"></path>
+        
+        <!-- Eye -->
+        <circle cx="65" cy="65" r="3" fill="#6600CC"></circle>
+        
+        <!-- Sparkles -->
+        <circle cx="50" cy="20" r="2" fill="#FFFF00"></circle>
+        <circle cx="60" cy="15" r="1" fill="#FFFF00"></circle>
+        <circle cx="55" cy="25" r="1.5" fill="#FFFF00"></circle>
+        <circle cx="65" cy="17" r="1" fill="#FFFF00"></circle>
+        
+        <!-- Rainbow Tail -->
+        <path d="M140,105 C160,95 180,105 180,125 C180,135 170,140 160,135 C150,130 140,120 140,105 Z" 
+              fill="url(#rainbowMane)" stroke="none"></path>
+    </g>
+</svg> 

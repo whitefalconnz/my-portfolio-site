@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="150px" viewBox="0 0 200 150" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>Unicorn 3</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="blueMane">
+            <stop stop-color="#00CCFF" offset="0%"></stop>
+            <stop stop-color="#0066FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="goldBodyGradient">
+            <stop stop-color="#FFFACD" offset="0%"></stop>
+            <stop stop-color="#FFE46B" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="crystalHornGradient">
+            <stop stop-color="#E100FF" offset="0%"></stop>
+            <stop stop-color="#7700FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Body -->
+        <path d="M50,75 C50,55 70,45 100,45 C130,45 160,65 170,85 C180,105 170,120 150,125 C130,130 110,125 90,115 C70,105 50,95 50,75 Z" 
+              fill="url(#goldBodyGradient)" stroke="#DBBD00" stroke-width="1.5"></path>
+        
+        <!-- Head -->
+        <path d="M40,65 C40,55 50,45 65,40 C80,35 95,40 100,50 C105,60 100,70 90,75 C80,80 65,80 50,70 C45,65 40,70 40,65 Z" 
+              fill="url(#goldBodyGradient)" stroke="#DBBD00" stroke-width="1.5"></path>
+        
+        <!-- Legs -->
+        <line x1="70" y1="115" x2="65" y2="135" stroke="#DBBD00" stroke-width="3" stroke-linecap="round"></line>
+        <line x1="90" y1="115" x2="85" y2="135" stroke="#DBBD00" stroke-width="3" stroke-linecap="round"></line>
+        <line x1="110" y1="115" x2="105" y2="135" stroke="#DBBD00" stroke-width="3" stroke-linecap="round"></line>
+        <line x1="130" y1="115" x2="125" y2="135" stroke="#DBBD00" stroke-width="3" stroke-linecap="round"></line>
+        
+        <!-- Blue Mane -->
+        <path d="M65,40 C70,30 85,20 95,25 C105,30 105,40 100,50 C95,60 85,65 75,55 C70,50 60,50 65,40 Z" 
+              fill="url(#blueMane)" stroke="#0099FF" stroke-width="1"></path>
+        
+        <!-- Crystal Horn -->
+        <path d="M65,40 C60,30 55,20 50,10 C45,0 60,5 65,20 C70,35 65,40 65,40 Z" 
+              fill="url(#crystalHornGradient)" stroke="#AB00FF" stroke-width="1"></path>
+        
+        <!-- Eye -->
+        <circle cx="60" cy="55" r="3" fill="#000066"></circle>
+        
+        <!-- Sparkles around horn -->
+        <circle cx="45" cy="10" r="2" fill="#FFFFFF"></circle>
+        <circle cx="50" cy="5" r="1" fill="#FFFFFF"></circle>
+        <circle cx="55" cy="15" r="1.5" fill="#FFFFFF"></circle>
+        <circle cx="60" cy="7" r="1" fill="#FFFFFF"></circle>
+        <circle cx="47" cy="18" r="1.2" fill="#FFFFFF"></circle>
+        
+        <!-- Stars in mane -->
+        <polygon points="75,25 77,30 82,30 78,33 80,38 75,35 70,38 72,33 68,30 73,30" fill="#FFFFFF"></polygon>
+        <polygon points="85,35 87,40 92,40 88,43 90,48 85,45 80,48 82,43 78,40 83,40" fill="#FFFFFF" transform="scale(0.7)"></polygon>
+        
+        <!-- Blue Tail -->
+        <path d="M150,95 C170,85 190,95 190,115 C190,125 180,130 170,125 C160,120 150,110 150,95 Z" 
+              fill="url(#blueMane)" stroke="#0099FF" stroke-width="1"></path>
+    </g>
+</svg> 

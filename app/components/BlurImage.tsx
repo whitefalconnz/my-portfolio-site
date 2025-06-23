@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { useScrollInView } from '@/app/hooks/useScrollInView'
+import { useScrollInView } from '../hooks/useScrollInView'
 
 interface BlurImageProps {
   src: string

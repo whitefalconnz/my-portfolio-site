@@ -3,10 +3,14 @@
 import { useState, useEffect } from "react"
 import Header from "../components/layout/Header"
 import { Mail, Briefcase, Palette, RotateCcw } from 'lucide-react'
-import { Badge } from "@/app/components/ui/badge"
+import { Badge } from "../components/ui/badge"
 import SparkEffect from "../components/animations/SparkEffect"
 import { motion, useMotionValue } from "framer-motion";
 import FadeInImage from "../components/common/FadeInImage"
+import React from "react";
+import { Motion } from "framer-motion";
+import ScrollReveal from "../components/animations/ScrollReveal";
+import IntroSection from "../components/common/IntroSection";
 
 export default function AboutPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);

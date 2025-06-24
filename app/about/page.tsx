@@ -40,9 +40,10 @@ export default function AboutPage() {
       setIsDarkMode(isDark);
     };
 
-    // Check if on desktop
+    // Check if on desktop and respect reduced motion preference
     const checkIfDesktop = () => {
-      setIsDraggable(window.innerWidth >= 1024);
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setIsDraggable(window.innerWidth >= 1024 && !prefersReducedMotion);
     };
 
     // Initial checks
@@ -56,8 +57,10 @@ export default function AboutPage() {
       attributeFilter: ['class'],
     });
 
-    // Listen for window resize
+    // Listen for window resize and motion preference changes
     window.addEventListener('resize', checkIfDesktop);
+    const motionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    motionMediaQuery.addEventListener('change', checkIfDesktop);
 
     // Set loaded state after a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
@@ -67,6 +70,7 @@ export default function AboutPage() {
     return () => {
       observer.disconnect();
       window.removeEventListener('resize', checkIfDesktop);
+      motionMediaQuery.removeEventListener('change', checkIfDesktop);
       clearTimeout(timer);
     };
   }, []);
@@ -155,45 +159,105 @@ export default function AboutPage() {
           </motion.button>
         )}
         
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 pt-32">
-          <div className="lg:col-span-6 lg:col-start-2 flex justify-center">
-          <motion.div
-              variants={item}
-              className="relative z-10 cursor-move bg-transparent p-0 inline-block"
-              initial={{ 
-                opacity: 0, 
-                y: 10
-              }}
-                    animate={{ 
-                opacity: 1,
-                transition: { 
-                  duration: 0.3, 
-                  ease: [0.25, 0.1, 0.25, 1]
-                }
-              }}
-              drag={isDraggable}
-              dragMomentum={false}
-              dragElastic={0}
-              onDragStart={() => handleDragStart('image')}
-              style={{ x: imageX, y: imageY, zIndex: zIndexes.image }}
-            >
-              <div className="relative border-2" style={{ 
-                borderColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)') : 'rgba(0, 0, 0, 0)',
-              }}>
-                {isDraggable && <DragHandle />}
-                    <FadeInImage
-                      src="/Img_and_Vid/WebsitePortfolio.jpg"
-                      alt="Decorative illustration"
-                      width={800}
-                      height={600}
-                      priority={false}
-                      className="block max-w-full h-auto"
-                      style={{ pointerEvents: isDraggable ? 'none' : 'auto' }}
-                    />
-              </div>
-            </motion.div>
+        <div className="grid lg:grid-cols-12 gap-2 lg:gap-4 pt-32">
+          {/* Left side - Image and Skills */}
+          <div className="lg:col-span-6 lg:col-start-2 space-y-6">
+            {/* Image */}
+            <div className="flex justify-center">
+              <motion.div
+                variants={item}
+                className="relative z-10 cursor-move bg-transparent p-0 inline-block"
+                initial={{ 
+                  opacity: 0, 
+                  y: 10
+                }}
+                animate={{ 
+                  opacity: 1,
+                  transition: { 
+                    duration: 0.3, 
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }
+                }}
+                drag={isDraggable}
+                dragMomentum={false}
+                dragElastic={0}
+                onDragStart={() => handleDragStart('image')}
+                style={{ x: imageX, y: imageY, zIndex: zIndexes.image }}
+              >
+                <div className="relative border-2" style={{ 
+                  borderColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)') : 'rgba(0, 0, 0, 0)',
+                }}>
+                  {isDraggable && <DragHandle />}
+                  <FadeInImage
+                    src="https://res.cloudinary.com/donmpenyc/image/upload/v1750647391/WebsitePortfolio_xrmg3a.jpg"
+                    alt="Decorative illustration"
+                    width={720}
+                    height={540}
+                    priority={false}
+                    className="block max-w-full h-auto"
+                    style={{ pointerEvents: isDraggable ? 'none' : 'auto' }}
+                  />
+                </div>
+              </motion.div>
             </div>
+
+            {/* Skills section moved under the image */}
+            <div className="flex justify-center">
+              <motion.div 
+                variants={item} 
+                className="border-2 bg-white/80 dark:bg-[#2A2A2A]/80 backdrop-blur-sm p-4 relative z-10 w-full max-w-[720px]"
+                initial={{ borderColor: 'rgba(0, 0, 0, 0)' }}
+                animate={{ 
+                  borderColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)') : 'rgba(0, 0, 0, 0)',
+                  transition: { delay: 0.5, duration: 0.5 }
+                }}
+                drag={isDraggable}
+                dragMomentum={false}
+                dragElastic={0.1}
+                onDragStart={() => handleDragStart('skills')}
+                style={{ x: skillsX, y: skillsY, zIndex: zIndexes.skills }}
+              >
+                {isDraggable && <DragHandle />}
+                <motion.div 
+                  className="flex items-center gap-2 mb-3 border-b pb-2"
+                  initial={{ borderBottomColor: 'rgba(0, 0, 0, 0)' }}
+                  style={{ borderBottomColor: 'rgba(0, 0, 0, 0)' }}
+                  animate={{ 
+                    borderBottomColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') : 'rgba(0, 0, 0, 0)',
+                    transition: { delay: 0.6, duration: 0.5 }
+                  }}
+                >
+                  <Palette className="h-4 w-4 text-primary/70 dark:text-primary-light/70" />
+                  <h2 className="font-mono text-lg text-dark/70 dark:text-light/70">Core Skills</h2>
+                </motion.div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    "Digital Illustration",
+                    "Storyboarding",
+                    "UI Design",
+                    "After Effects vector animation or ToonBoom frame by frame animation"
+                  ].map((skill, index) => (
+                    <motion.div 
+                      key={skill} 
+                      className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-2"
+                      initial={{ borderColor: 'rgba(0, 0, 0, 0)' }}
+                      style={{ borderColor: 'rgba(0, 0, 0, 0)' }}
+                      animate={{ 
+                        borderColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)') : 'rgba(0, 0, 0, 0)',
+                        transition: { delay: 0.7 + (index * 0.1), duration: 0.5 }
+                      }}
+                    >
+                      <span className="font-mono text-xs text-dark dark:text-light block text-center">
+                        {skill}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
           
+          {/* Right side - Bio and Experience */}
           <motion.div
             variants={container}
             initial="hidden"
@@ -316,58 +380,6 @@ export default function AboutPage() {
                     <span className="text-secondary dark:text-secondary-light">MySafetyTV/Sharpdrive</span>
                   </div>
                 </motion.div>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              variants={item} 
-              className="border-2 bg-white/80 dark:bg-[#2A2A2A]/80 backdrop-blur-sm p-4 relative z-10"
-              initial={{ borderColor: 'rgba(0, 0, 0, 0)' }}
-              animate={{ 
-                borderColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)') : 'rgba(0, 0, 0, 0)',
-                transition: { delay: 0.5, duration: 0.5 }
-              }}
-              drag={isDraggable}
-              dragMomentum={false}
-              dragElastic={0.1}
-              onDragStart={() => handleDragStart('skills')}
-              style={{ x: skillsX, y: skillsY, zIndex: zIndexes.skills }}
-            >
-              {isDraggable && <DragHandle />}
-              <motion.div 
-                className="flex items-center gap-2 mb-3 border-b pb-2"
-                initial={{ borderBottomColor: 'rgba(0, 0, 0, 0)' }}
-                style={{ borderBottomColor: 'rgba(0, 0, 0, 0)' }}
-                animate={{ 
-                  borderBottomColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') : 'rgba(0, 0, 0, 0)',
-                  transition: { delay: 0.6, duration: 0.5 }
-                }}
-              >
-                <Palette className="h-4 w-4 text-primary/70 dark:text-primary-light/70" />
-                <h2 className="font-mono text-lg text-dark/70 dark:text-light/70">Core Skills</h2>
-              </motion.div>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  "Digital Illustration",
-                  "Storyboarding",
-                  "UI Design",
-                  "After Effects vector animation or ToonBoom frame by frame animation"
-                ].map((skill, index) => (
-                  <motion.div 
-                    key={skill} 
-                    className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-2"
-                    initial={{ borderColor: 'rgba(0, 0, 0, 0)' }}
-                    style={{ borderColor: 'rgba(0, 0, 0, 0)' }}
-                    animate={{ 
-                      borderColor: isLoaded ? (isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)') : 'rgba(0, 0, 0, 0)',
-                      transition: { delay: 0.7 + (index * 0.1), duration: 0.5 }
-                    }}
-                  >
-                    <span className="font-mono text-xs text-dark dark:text-light block text-center">
-                      {skill}
-                    </span>
-                  </motion.div>
-                ))}
               </div>
             </motion.div>
           </motion.div>

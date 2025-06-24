@@ -81,12 +81,6 @@ const AnimatedImage = ({ item, onImageClick }: { item: ContentItem; onImageClick
           />
         </div>
       </div>
-      
-      {/* Mobile caption - only visible on small screens */}
-      <div className="md:hidden w-full px-2 pt-3">
-        {item.title && <h4 className="text-base font-medium text-white/90 mb-1">{item.title}</h4>}
-        {item.description && <p className="text-sm text-white/70">{item.description}</p>}
-      </div>
     </div>
   );
 };
@@ -750,7 +744,6 @@ export default function ProjectModal({
       // Render as normal content sections
       return (
         <div className="space-y-0">
-          <h3 className="text-xl md:text-2xl font-semibold text-white/90 px-4 md:px-0 pt-4 md:hidden">{section.title}</h3>
           {section.content.map((item, i) => (
             <div 
               key={i} 
@@ -805,11 +798,6 @@ export default function ProjectModal({
                   )}
                 </div>
                 
-                {/* Mobile caption - only visible on small screens */}
-                <div className="md:hidden w-full px-4 pt-2">
-                  {item.title && <h4 className="text-lg font-medium text-white/90 mb-1">{item.title}</h4>}
-                  {item.description && <p className="text-sm text-white/70">{item.description}</p>}
-                </div>
               </div>
             </div>
           ))}
@@ -826,7 +814,6 @@ export default function ProjectModal({
       data-parent-title={parentTitle || title}
       style={{ height: '92vh' }}
     >
-      <h3 className="text-xl font-semibold text-white/90 mb-2 px-4 md:px-0 md:hidden">{title}</h3>
       <div className="w-full flex-1 h-full md:w-[95%] md:mx-auto">
         <AnimatedPDF pdfUrl={pdfUrl} title={title} />
       </div>
@@ -954,7 +941,6 @@ export default function ProjectModal({
           <div key={idx}>
             {'content' in section ? (
               <div className="space-y-0">
-                <h3 className="text-xl md:text-2xl font-semibold text-white/90 px-4 md:px-0 pt-4 md:hidden">{section.title}</h3>
                 {section.content.map((item, i) => (
                   <div 
                     key={i} 
@@ -976,12 +962,7 @@ export default function ProjectModal({
                           onClick={() => handleImageClick(item.image)}
                         />
                       </div>
-                      
-                      {/* Mobile caption - only visible on small screens */}
-                      <div className="md:hidden w-full px-4 pt-2">
-                        {item.title && <h4 className="text-lg font-medium text-white/90 mb-1">{item.title}</h4>}
-                        {item.description && <p className="text-sm text-white/70">{item.description}</p>}
-                      </div>
+
                     </div>
                   </div>
                 ))}
@@ -1070,7 +1051,6 @@ export default function ProjectModal({
 
   const renderImageGrid = (images: string[], title: string) => (
     <div className="w-full snap-start py-10 md:py-16 px-4 md:px-14 flex flex-col">
-      <h3 className="text-xl font-semibold text-white/90 mb-4 px-4 md:px-0 md:hidden">{title}</h3>
       <div className="w-full flex items-center justify-center">
         <div className="w-full md:w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {images.map((img, idx) => (
@@ -1267,20 +1247,72 @@ export default function ProjectModal({
     };
   }, [isOpen, isPDFVisible, hasScrolled]);
 
-  // Add touch event handlers for mobile
+  // Add touch event handlers for mobile with snap-to-image behavior
   useEffect(() => {
     if (!isOpen || !contentRef.current) return;
 
     let startY = 0;
     let startX = 0;
     let startTime = 0;
-    const touchThreshold = 5; // Reduced threshold for more responsive touch
+    let isSwipeHandled = false;
+    const swipeThreshold = 50; // Minimum distance for a swipe
+    const timeThreshold = 300; // Maximum time for a swipe (ms)
+    
+    // Helper function to find all image elements and their positions
+    const getImageElements = () => {
+      if (!contentRef.current) return [];
+      const elements = Array.from(contentRef.current.querySelectorAll('[data-image-info]')) as HTMLElement[];
+      return elements.map(el => ({
+        element: el,
+        offsetTop: el.offsetTop,
+        height: el.offsetHeight,
+        centerY: el.offsetTop + (el.offsetHeight / 2)
+      })).sort((a, b) => a.offsetTop - b.offsetTop);
+    };
+    
+    // Helper function to find the next/previous image based on current scroll position
+    const findTargetImage = (direction: 'up' | 'down') => {
+      const images = getImageElements();
+      if (images.length === 0) return null;
+      
+      const currentScrollTop = contentRef.current!.scrollTop;
+      const containerHeight = contentRef.current!.clientHeight;
+      const currentCenter = currentScrollTop + (containerHeight / 2);
+      
+      if (direction === 'down') {
+        // Find the next image below the current center
+        return images.find(img => img.centerY > currentCenter + 100) || images[images.length - 1];
+      } else {
+        // Find the previous image above the current center
+        const reversedImages = [...images].reverse();
+        return reversedImages.find(img => img.centerY < currentCenter - 100) || images[0];
+      }
+    };
+    
+    // Smooth scroll to target image
+    const scrollToImage = (targetImage: any) => {
+      if (!contentRef.current || !targetImage) return;
+      
+      const containerHeight = contentRef.current.clientHeight;
+      const targetScrollTop = Math.max(0, targetImage.offsetTop - (containerHeight / 2) + (targetImage.height / 2));
+      
+      contentRef.current.scrollTo({
+        top: targetScrollTop,
+        behavior: 'smooth'
+      });
+      
+      // Set flag that user has scrolled for activeItem detection
+      if (!hasScrolled) {
+        setHasScrolled(true);
+      }
+    };
     
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
       startY = touch.clientY;
       startX = touch.clientX;
       startTime = Date.now();
+      isSwipeHandled = false;
       
       // If we're touching a PDF iframe, don't interfere
       if ((e.target as Element).closest('iframe')) {
@@ -1294,30 +1326,61 @@ export default function ProjectModal({
         return;
       }
       
-      if (!contentRef.current) return;
+      if (!contentRef.current || isSwipeHandled) return;
       
       const touch = e.touches[0];
       const deltaY = startY - touch.clientY;
       const deltaX = startX - touch.clientX;
+      const absDeltaY = Math.abs(deltaY);
+      const absDeltaX = Math.abs(deltaX);
       
-      // If horizontal swipe is greater than vertical, it might be a navigation gesture
-      if (Math.abs(deltaX) > Math.abs(deltaY) + touchThreshold) {
-        if (Math.abs(deltaX) > 50) {
+      // If horizontal swipe is greater than vertical, handle project navigation
+      if (absDeltaX > absDeltaY + 20 && absDeltaX > 50) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Check for vertical swipe gesture
+      if (absDeltaY > swipeThreshold && absDeltaY > absDeltaX) {
+        const currentTime = Date.now();
+        const swipeTime = currentTime - startTime;
+        
+        // If it's a quick swipe, handle snap-to-image behavior
+        if (swipeTime < timeThreshold) {
           e.preventDefault();
+          isSwipeHandled = true;
+          
+          const direction = deltaY > 0 ? 'down' : 'up';
+          const targetImage = findTargetImage(direction);
+          
+          if (targetImage) {
+            // Add a subtle haptic feedback feel with a slight delay
+            setTimeout(() => {
+              scrollToImage(targetImage);
+            }, 50);
+          }
+          
           return;
         }
       }
       
-      // Vertical scrolling - more responsive
-      if (Math.abs(deltaY) > touchThreshold) {
+      // For slower movements, allow normal scrolling but make it more responsive
+      if (absDeltaY > 10) {
         e.preventDefault();
-        contentRef.current.scrollBy({
-          top: deltaY * 1.5, // Increased multiplier for faster response
-          behavior: 'auto' // Always use auto for immediate response
-        });
-        
-        // Update start position for continuous movement
-        startY = touch.clientY;
+        if (contentRef.current) {
+          contentRef.current.scrollBy({
+            top: deltaY * 1.2,
+            behavior: 'auto'
+          });
+          
+          // Update start position for continuous movement
+          startY = touch.clientY;
+          
+          // Set flag that user has scrolled
+          if (!hasScrolled) {
+            setHasScrolled(true);
+          }
+        }
       }
     };
     
@@ -1327,22 +1390,24 @@ export default function ProjectModal({
         return;
       }
       
+      if (isSwipeHandled) return;
+      
       const endTime = Date.now();
       const timeElapsed = endTime - startTime;
       
-      // Handle swipe navigation (left/right)
+      // Handle horizontal swipe navigation (left/right for project navigation)
       if (e.changedTouches.length) {
         const touch = e.changedTouches[0];
         const deltaX = startX - touch.clientX;
         const deltaY = startY - touch.clientY;
         
         // Only consider horizontal swipes if they're more pronounced than vertical ones
-        if (Math.abs(deltaX) > Math.abs(deltaY) + 20 && Math.abs(deltaX) > 80 && timeElapsed < 300) {
+        if (Math.abs(deltaX) > Math.abs(deltaY) + 20 && Math.abs(deltaX) > 80 && timeElapsed < timeThreshold) {
           if (deltaX > 0 && hasNext && !isTransitioning) {
-            // Swipe left, go to next
+            // Swipe left, go to next project
             handleNext();
           } else if (deltaX < 0 && hasPrevious && !isTransitioning) {
-            // Swipe right, go to previous
+            // Swipe right, go to previous project
             handlePrevious();
           }
         }
@@ -1358,7 +1423,7 @@ export default function ProjectModal({
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isOpen, isPDFVisible, hasScrolled]);
+  }, [isOpen, isPDFVisible, hasScrolled, hasNext, hasPrevious, isTransitioning, handleNext, handlePrevious]);
 
   // Helper function to update active PDF - MOVED UP BEFORE BEING USED
   const updateActivePDF = useCallback((pdfTitle: string, mainTitle: string) => {
@@ -1583,8 +1648,51 @@ export default function ProjectModal({
         </button>
       </div>
 
+      {/* Mobile bottom caption - fixed at bottom of screen */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-black/90 via-black/80 to-transparent backdrop-blur-sm">
+        <div className="px-4 pb-4 pt-8">
+          {/* Project Title */}
+          <h2 className="text-lg font-bold text-white mb-1">{title}</h2>
+          
+          {/* Current Image Information */}
+          <div className="min-h-[40px]">
+            {/* Show PDF information when PDF is visible */}
+            {isPDFVisible && activePDF && (
+              <div className="transition-all duration-200 ease-out">
+                <h3 className="text-sm font-medium text-white/90 mb-1 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <line x1="10" y1="9" x2="8" y2="9"></line>
+                  </svg>
+                  {activePDF.title}
+                </h3>
+                <p className="text-xs text-white/70">{activePDF.description}</p>
+              </div>
+            )}
+            
+            {/* Show current image information */}
+            {activeItem && activeItem.title && activeItem.title !== projectId && !isPDFVisible && (
+              <div className="transition-all duration-200 ease-out">
+                <h3 className="text-sm font-medium text-white/90 mb-1">{activeItem.title}</h3>
+                {activeItem.description && (
+                  <p className="text-xs text-white/70">{activeItem.description}</p>
+                )}
+              </div>
+            )}
+            
+            {/* Fallback to project description if no specific item */}
+            {!activeItem?.title && !isPDFVisible && (
+              <p className="text-xs text-white/70">{description}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Modal content with loading state - Responsive layout */}
-      <div className="flex flex-col md:flex-row w-full h-[92vh] max-w-[95vw] mx-auto px-3">
+      <div className="flex flex-col md:flex-row w-full h-[92vh] max-w-[95vw] mx-auto px-3 pb-20 md:pb-0">
         {/* Title and description for mobile - only visible on small screens */}
         <div className="md:hidden w-full py-4">
           <div className="text-left transform transition-all duration-300

@@ -22,9 +22,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Space Grotesk', 'sans-serif'],
+        satoshi: ['var(--font-satoshi)', 'sans-serif'],
+        recoleta: ['var(--font-recoleta)', 'serif'],
         mono: ['Space Mono', 'monospace'],
-        mplus: ['"M PLUS 1p"', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'sans-serif'],
       },
     },
   },

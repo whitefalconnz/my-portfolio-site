@@ -19,6 +19,30 @@ const geistSans = localFont({
   weight: "100 900",
 });
 
+const satoshi = localFont({
+  src: [
+    {
+      path: "./fonts/Satoshi_Complete/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Satoshi_Complete/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.woff2", 
+      weight: "300 900",
+      style: "italic",
+    }
+  ],
+  variable: "--font-satoshi",
+  display: "swap",
+});
+
+const recoleta = localFont({
+  src: "./fonts/recoleta/Recoleta-RegularDEMO.otf",
+  variable: "--font-recoleta",
+  weight: "400",
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,7 +53,7 @@ export default function RootLayout({
       <head>
         <script src="https://player.vimeo.com/api/player.js" async></script>
       </head>
-      <body className={`${geistSans.variable} antialiased bg-white text-black dark:bg-[#1A1818] dark:text-white`}>
+      <body className={`${geistSans.variable} ${satoshi.variable} ${recoleta.variable} antialiased bg-white text-black dark:bg-[#1A1818] dark:text-white`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

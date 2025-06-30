@@ -13,10 +13,13 @@ import './styles/grid.css';
 import { getImageDimensions } from "./utils/imageUtils";
 import SparkEffect from "./components/animations/SparkEffect"
 import ScrollReveal from "./components/animations/ScrollReveal"
+import BackgroundSprites from "./components/animations/BackgroundSprites"
 import AnimatedText from './utils/AnimatedText'
 import Masonry from 'react-masonry-css'
 import { motion, useMotionValue } from "framer-motion"
 import { getCDNUrl, getOptimizedImageUrl } from './utils/cdn'
+import { useHero } from './contexts/HeroContext'
+import FadeInImage from './components/common/FadeInImage'
 
 export default function Home() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
@@ -42,6 +45,13 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [isPostDrag, setIsPostDrag] = useState(false);
   const postDragTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Hero context
+  const { showHero, heroHeight } = useHero()
+
+  // Tooltip state for illustration
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
 
   // Motion values for smoother drag without React re-renders
   const introX = useMotionValue(0);
@@ -264,6 +274,15 @@ export default function Home() {
     },
     // Animation Projects
     {
+      id: "Tag",
+      title: "Tag",
+      image: "https://res.cloudinary.com/donmpenyc/video/upload/v1750915229/TagFullInitial_nyxuqe.webm",
+      aspectRatio: AspectRatio.PORTRAIT,
+      bgColor: "bg-[#5C3E3C]",
+      description: "An animated short film exploring character development and storytelling through visual narrative.",
+      categories: ["Animation", "Projects"],
+    },
+    {
       id: "SmokeAnimation",
       title: "Smoke Animation",
       image: getCDNUrl("/Img_and_Vid/SmokePreview.webm"),
@@ -355,7 +374,7 @@ export default function Home() {
           }
           
           // Set initial dimensions based on type
-          dimensions[project.id] = project.image.endsWith('.webm') 
+          dimensions[project.id] = (project.image.endsWith('.webm') || project.image.endsWith('.mp4'))
             ? { width: 1920, height: 1080 }  // Default video dimensions
             : { width: 400, height: 300 };    // Default image dimensions
           
@@ -475,20 +494,20 @@ export default function Home() {
     <>
       <style dangerouslySetInnerHTML={{
         __html: `
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        ::-webkit-scrollbar {
-          width: 0;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        html {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
+        /* Prevent hyphenation and mid-word breaks globally */
+        * {
+          -webkit-hyphens: none;
+          -moz-hyphens: none;
+          -ms-hyphens: none;
+          hyphens: none;
+          word-break: normal;
+          overflow-wrap: normal;
         }
         `
       }} />
       
       <div 
-        className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern overflow-x-hidden" 
+        className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern overflow-x-hidden relative" 
         suppressHydrationWarning
         style={{ 
           visibility: 'visible',
@@ -497,9 +516,8 @@ export default function Home() {
           pointerEvents: 'auto'
         }}
       >
-      <SparkEffect />
-      <Header />
-      
+        {/* Background Sprites */}
+        <BackgroundSprites />
       <main 
         className="pt-32 md:pt-40 transition-all duration-500 ease-in-out"
         style={{ 
@@ -534,9 +552,9 @@ export default function Home() {
                   <div className="max-w-3xl mx-auto lg:max-w-none">
                     <div style={{padding:'56.25% 0 0 0', position:'relative'}}>
                       <motion.iframe 
-                        src="https://player.vimeo.com/video/955743492?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;dnt=1" 
+                        src="https://player.vimeo.com/video/1096106663?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
                         frameBorder="0" 
-                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" 
+                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
                         style={{
                           position:'absolute',
                           top:0,
@@ -546,8 +564,8 @@ export default function Home() {
                           cursor: 'default',
                           pointerEvents: 'auto'
                         }}
-                        title="Showreel"
-                        className={`border-2 border-black dark:border-white ${isDraggable ? 'showreel-draggable' : ''}`}
+                        title="ShowReel25.06.2025"
+                        className={`border-2 border-black dark:border-white hover:border-orange-500 transition-all duration-300 ${isDraggable ? 'showreel-draggable' : ''}`}
                         loading="lazy"
                         onLoad={() => { showreelLoaded.current = true }}
                       />
@@ -576,195 +594,119 @@ export default function Home() {
               }}
             >
               <ScrollReveal direction="up" duration={800}>
-                <motion.div 
-                  className="max-w-2xl mx-auto lg:max-w-none text-center lg:text-left border-[1px] p-6 md:p-8 bg-[#F3F1E9] dark:bg-[#1A1818] relative"
+                <Link 
+                  href="/about"
+                  className="block cursor-pointer group"
+                  onMouseEnter={(e) => {
+                    setShowTooltip(true)
+                    setTooltipPosition({ x: e.clientX, y: e.clientY })
+                  }}
+                  onMouseLeave={() => setShowTooltip(false)}
+                  onMouseMove={(e) => {
+                    if (showTooltip) {
+                      setTooltipPosition({ x: e.clientX, y: e.clientY })
+                    }
+                  }}
                 >
-                  {isDraggable && <div className="absolute top-2 right-2"><DragHandle /></div>}
-                  <h1 className="text-3xl md:text-4xl font-bold mb-4 font-mplus">
-                    <AnimatedText 
-                      text="Hi, I'm Jakob Backhouse"
-                      delay={50}
-                      variant={contentLoaded ? "title" : "instant"}
-                      disablePixels={!contentLoaded}
-                    />
-                  </h1>
-                  <div className="w-80 h-[1px] bg-black/50 dark:bg-white/50 mx-auto lg:mx-0 mb-6"></div>
-                  <p className="text-base md:text-lg text-black dark:text-white mb-6 whitespace-normal break-words">
-                    A
-                    {" "}
-                    <span className="font-bold text-black dark:text-white">
-                      designer
-                    </span>
-                    {" "}
-                    and
-                    {" "}
-                    <span className="font-bold text-black dark:text-white">
-                      animator
-                    </span>
-                    {" "}
-                    who thrives on uncovering
-                    {" "}
-                    <span className="font-bold text-black dark:text-white">
-                      compelling ideas
-                    </span>
-                    {" "}
-                    and bringing them to life through
-                    {" "}
-                    <span className="font-bold text-black dark:text-white">
-                      great design.
-                    </span>
-                  </p>
-                  <div className="flex justify-center lg:justify-start space-x-4">
-                    <Link href="https://www.instagram.com/jakob_backhouse/" target="_blank" rel="noopener noreferrer" className="text-black dark:text-white hover:text-orange-500 transition-colors">
-                      <Instagram size={24} />
+                  <motion.div 
+                    className="max-w-2xl mx-auto lg:max-w-none text-center lg:text-left border-2 border-black dark:border-white p-6 md:p-8 bg-[#F3F1E9] dark:bg-[#1A1818] relative group-hover:border-orange-500 transition-all duration-300"
+                  >
+                    {isDraggable && <div className="absolute top-2 right-2"><DragHandle /></div>}
+                    <h1 className="text-3xl md:text-4xl font-bold mb-4 font-mplus">
+                      <AnimatedText 
+                        text="Hi, I'm Jakob Backhouse"
+                        delay={50}
+                        variant={contentLoaded ? "title" : "instant"}
+                        disablePixels={!contentLoaded}
+                      />
+                    </h1>
+                    <div className="w-80 h-[1px] bg-black/50 dark:bg-white/50 mx-auto lg:mx-0 mb-6"></div>
+                    <p className="text-base md:text-lg text-black dark:text-white mb-6 whitespace-normal break-normal hyphens-none">
+                      A
+                      {" "}
+                      <span className="font-bold text-black dark:text-white">
+                        designer
+                      </span>
+                      {" "}
+                      and
+                      {" "}
+                      <span className="font-bold text-black dark:text-white">
+                        animator
+                      </span>
+                      {" "}
+                      who thrives on uncovering
+                      {" "}
+                      <span className="font-bold text-black dark:text-white">
+                        compelling ideas
+                      </span>
+                      {" "}
+                      and bringing them to life through
+                      {" "}
+                      <span className="font-bold text-black dark:text-white">
+                        great design.
+                      </span>
+                    </p>
+                    <div className="flex justify-center lg:justify-start space-x-4">
+                      <Link href="https://www.instagram.com/jakob_backhouse/" target="_blank" rel="noopener noreferrer" className="text-black dark:text-white hover:text-orange-500 transition-colors">
+                        <Instagram size={24} />
+                      </Link>
+                      <Link href="https://www.linkedin.com/in/jakob-backhouse-is-cool/" className="text-black dark:text-white hover:text-primary dark:hover:text-primary transition-colors">
+                        <Linkedin size={24} />
+                      </Link>
+                      <Link href="#" className="text-black dark:text-white hover:text-primary dark:hover:text-primary transition-colors">
+                        <Twitter size={24} />
+                      </Link>
+                    </div>
+                  </motion.div>
+                </Link>
+                
+                {/* Illustration - Desktop only */}
+                <div className="hidden lg:block mt-8">
+                  <ScrollReveal direction="up" duration={800} delay={200}>
+                    <Link 
+                      href="/about"
+                      className="block border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300 cursor-pointer group"
+                      onMouseEnter={(e) => {
+                        setShowTooltip(true)
+                        setTooltipPosition({ x: e.clientX, y: e.clientY })
+                      }}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      onMouseMove={(e) => {
+                        if (showTooltip) {
+                          setTooltipPosition({ x: e.clientX, y: e.clientY })
+                        }
+                      }}
+                    >
+                      <FadeInImage
+                        src="https://res.cloudinary.com/donmpenyc/image/upload/v1750647391/WebsitePortfolio_xrmg3a.jpg"
+                        alt="Decorative illustration - Click to visit about page"
+                        width={720}
+                        height={540}
+                        priority={false}
+                        className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                      />
                     </Link>
-                    <Link href="https://www.linkedin.com/in/jakob-backhouse-is-cool/" className="text-black dark:text-white hover:text-primary dark:hover:text-primary transition-colors">
-                      <Linkedin size={24} />
-                    </Link>
-                    <Link href="#" className="text-black dark:text-white hover:text-primary dark:hover:text-primary transition-colors">
-                      <Twitter size={24} />
-                    </Link>
-                  </div>
-                </motion.div>
+                  </ScrollReveal>
+                </div>
               </ScrollReveal>
             </motion.div>
           </div>
 
-          {/* Featured Work Section - Styled like showreel */}
-          <div className="mb-40">
-            <ScrollReveal direction="up" delay={100} duration={800}>
-              <div className="text-center mb-8">
-                <p className="text-sm text-gray-500 dark:text-gray-400 font-mono tracking-wider">
-                  FEATURED WORK
-                </p>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={150} duration={800}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                {/* Primary Project - Takes full width on mobile, left side on desktop */}
-                <motion.div
-                  className="group cursor-pointer"
-                  onClick={() => handleProjectClick("MySafetyTV")}
-                >
-                  <div className="relative">
-                    <div className="relative border-2 border-black dark:border-white overflow-hidden">
-                      <div className="aspect-[4/3] relative">
-                        <Image
-                          src={getCDNUrl("/Img_and_Vid/MySafetyTV.png")}
-                          alt="MySafetyTV"
-                          fill
-                          className="object-cover transition-all duration-500 group-hover:scale-105"
-                          priority
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                            <h3 className="text-2xl font-bold mb-2">MySafetyTV</h3>
-                            <p className="text-sm opacity-90 line-clamp-3 mb-3">Animated safety awareness campaign combining education and entertainment through engaging character-driven storytelling.</p>
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {["Animation", "Creative Advertising", "Projects"].map((category) => (
-                                <span key={category} className="text-xs px-2 py-1 bg-white/20 backdrop-blur-sm">
-                                  {category}
-                                </span>
-                              ))}
-                            </div>
-                            <p className="text-xs opacity-75">Click to view full project details</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <h3 className="text-lg font-bold mb-1 text-black dark:text-white">MySafetyTV</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 font-mono tracking-wide">ANIMATION • ADVERTISING</p>
-                  </div>
-                </motion.div>
 
-                {/* Second Project */}
-                <motion.div
-                  className="group cursor-pointer"
-                  onClick={() => handleProjectClick("SmokeAnimation")}
-                >
-                  <div className="relative">
-                    <div className="relative border-2 border-black dark:border-white overflow-hidden">
-                      <div className="aspect-[4/3] relative">
-                        <video
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-                          preload="metadata"
-                        >
-                          <source src={getCDNUrl("/Img_and_Vid/SmokePreview.webm")} type="video/webm" />
-                        </video>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                            <h3 className="text-2xl font-bold mb-2">Smoke Animation</h3>
-                            <p className="text-sm opacity-90 line-clamp-3 mb-3">Experimental animation exploring particle dynamics and fluid motion using advanced simulation techniques.</p>
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {["Animation", "Projects"].map((category) => (
-                                <span key={category} className="text-xs px-2 py-1 bg-white/20 backdrop-blur-sm">
-                                  {category}
-                                </span>
-                              ))}
-                            </div>
-                            <p className="text-xs opacity-75">Click to view full project details</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <h3 className="text-lg font-bold mb-1 text-black dark:text-white">Smoke Animation</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 font-mono tracking-wide">EXPERIMENTAL • ANIMATION</p>
-                  </div>
-                </motion.div>
-              </div>
-            </ScrollReveal>
-          </div>
 
-          {/* Projects Section with Filter Button */}
+          {/* Projects Section */}
           <div className="relative">
-            {/* Filter Toggle Button - Only shows when scrolled past categories */}
-            <motion.button
-              onClick={() => setShowFilters(!showFilters)}
-              className="fixed left-4 top-1/2 -translate-y-1/2 z-30 bg-white dark:bg-[#2A2A2A] p-3 border-2 border-black dark:border-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              title={showFilters ? "Hide Filters" : "Show Filters"}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ 
-                opacity: showFilterButton ? 1 : 0,
-                x: showFilterButton ? 0 : -20,
-                pointerEvents: showFilterButton ? 'auto' : 'none'
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              <svg 
-                width="16" 
-                height="16" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                className={`transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}
-              >
-                <path 
-                  d="M3 4a1 1 0 011-1h16a1 1 0 110 2H4a1 1 0 01-1-1zM6 8a1 1 0 011-1h10a1 1 0 110 2H7a1 1 0 01-1-1zM9 12a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1z" 
-                  fill="currentColor"
-                />
-              </svg>
-            </motion.button>
 
             {/* Explore All Projects Heading */}
             <ScrollReveal direction="up" delay={100} duration={800}>
               <div className="text-center mb-8">
-                <p className="text-sm text-gray-500 dark:text-gray-400 font-mono tracking-wider">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
                   EXPLORE ALL PROJECTS
                 </p>
               </div>
             </ScrollReveal>
 
-            {/* Collapsible Categories Section - Now underneath the heading */}
+            {/* Categories Section - Always visible */}
             <motion.div
               ref={categoriesRef}
               className="relative z-10 mb-8"
@@ -781,39 +723,31 @@ export default function Home() {
                 x: categoriesX,
                 y: categoriesY
               }}
-              initial={false}
-              animate={{ 
-                height: showFilters ? 'auto' : 0,
-                opacity: showFilters ? 1 : 0,
-                marginBottom: showFilters ? 32 : 8
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
             >
               {isDraggable && <DragHandle />}
-              <div className="overflow-hidden">
-                <ScrollReveal direction="up" delay={150} duration={800}>
-                  <div className="text-center py-4">
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      {categories.map((category) => (
-                        <motion.button
-                          key={category}
-                          onClick={() => toggleCategory(category)}
-                          className={`
-                           px-4 py-2 font-mono text-sm transition-all duration-300
-                           border-2 border-black dark:border-white
-                           ${selectedCategories.includes(category)
-                             ? 'bg-black dark:bg-white text-white dark:text-black scale-105'
-                             : 'bg-transparent hover:bg-black/10 dark:hover:bg-white/10 hover:scale-102'}
-                         `}
-                          aria-pressed={selectedCategories.includes(category)}
-                        >
-                          {category}
-                        </motion.button>
-                      ))}
-                    </div>
+              <ScrollReveal direction="up" delay={150} duration={800}>
+                <div className="text-center py-4">
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {categories.map((category) => (
+                      <motion.button
+                        key={category}
+                        onClick={() => toggleCategory(category)}
+                        className={`
+                         px-4 py-2 font-satoshi text-sm transition-all duration-300
+                         border-2 border-black dark:border-white
+                         bg-[#F3F1E9] dark:bg-[#1A1818]
+                         ${selectedCategories.includes(category)
+                           ? 'text-white dark:text-black bg-black dark:bg-white scale-105'
+                           : 'text-black dark:text-white hover:border-orange-500 hover:scale-102'}
+                       `}
+                        aria-pressed={selectedCategories.includes(category)}
+                      >
+                        {category}
+                      </motion.button>
+                    ))}
                   </div>
-                </ScrollReveal>
-              </div>
+                </div>
+              </ScrollReveal>
             </motion.div>
           </div>
         </div>
@@ -877,21 +811,32 @@ export default function Home() {
                       <motion.div
                         className="group relative cursor-pointer"
                         onClick={() => handleProjectClick(project.id)}
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
                       >
-                        <div className="relative border-2 border-black dark:border-white overflow-hidden">
+                        <div className="relative border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300">
                           <div className="project-item-inner" style={{ paddingBottom: `${(1 / aspectRatio) * 100}%` }}>
-                            {project.image.endsWith('.webm') ? (
+                            {(project.image.endsWith('.webm') || project.image.endsWith('.mp4')) ? (
                               <video
                                 autoPlay
                                 loop
                                 muted
                                 playsInline
+                                controls={false}
+                                disablePictureInPicture
                                 className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-                                preload="metadata"
+                                preload="auto"
+                                onLoadedData={(e) => {
+                                  const video = e.target as HTMLVideoElement;
+                                  video.play().catch(() => {
+                                    // Fallback: try playing on user interaction
+                                    console.log('Autoplay prevented, will play on hover');
+                                  });
+                                }}
+                                onMouseEnter={(e) => {
+                                  const video = e.target as HTMLVideoElement;
+                                  video.play().catch(() => {});
+                                }}
                               >
-                                <source src={project.image} type="video/webm" />
+                                <source src={project.image} type={project.image.endsWith('.mp4') ? 'video/mp4' : 'video/webm'} />
                               </video>
                             ) : (
                               <Image
@@ -919,17 +864,18 @@ export default function Home() {
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                               <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                <h3 className="text-lg font-bold mb-2">{project.title}</h3>
-                                <p className="text-sm opacity-90 line-clamp-3 mb-3">{project.description}</p>
+                                <h3 className="text-lg font-recoleta font-medium mb-2">{project.title}</h3>
+                                <p className="text-sm opacity-90 line-clamp-3 mb-3 hyphens-none break-normal">{project.description}</p>
                                 <div className="flex flex-wrap gap-2">
                                   {project.categories?.map((category, catIndex) => (
                                     <span 
                                       key={catIndex} 
                                       className={`
-                                        text-xs px-2 py-1 backdrop-blur-sm transition-all duration-300
+                                        text-xs px-2 py-1 transition-all duration-300
+                                        border-2 border-white/50 bg-[#F3F1E9]/90 dark:bg-[#1A1818]/90
                                         ${selectedCategories.includes(category) 
-                                          ? 'bg-white/30 text-white font-medium border border-white/50' 
-                                          : 'bg-white/20 text-white/90'}
+                                          ? 'text-black dark:text-white bg-white dark:bg-black border-white dark:border-black' 
+                                          : 'text-black dark:text-white hover:border-orange-500'}
                                       `}
                                     >
                                       {category}
@@ -969,25 +915,25 @@ export default function Home() {
           <ScrollReveal direction="up" delay={400} duration={800}>
             <div className="flex justify-center space-x-6">
               <motion.div
-                className="border p-1"
+                className="border-2 border-black dark:border-white p-3 md:p-4 bg-[#F3F1E9] dark:bg-[#1A1818] hover:border-orange-500 transition-all duration-300"
               >
-                <Link href="https://www.instagram.com/jakobbackhouse_/" className="text-dark/60 dark:text-light/60 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link href="https://www.instagram.com/jakobbackhouse_/" className="text-black dark:text-white hover:text-orange-500 transition-colors">
                   <Instagram className="w-6 h-6" />
                   <span className="sr-only">Instagram</span>
                 </Link>
               </motion.div>
               <motion.div
-                className="border p-1"
+                className="border-2 border-black dark:border-white p-3 md:p-4 bg-[#F3F1E9] dark:bg-[#1A1818] hover:border-orange-500 transition-all duration-300"
               >
-                <Link href="https://www.linkedin.com/in/jakob-backhouse-is-cool/" className="text-dark/60 dark:text-light/60 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link href="https://www.linkedin.com/in/jakob-backhouse-is-cool/" className="text-black dark:text-white hover:text-orange-500 transition-colors">
                   <Linkedin className="w-6 h-6" />
                   <span className="sr-only">LinkedIn</span>
                 </Link>
               </motion.div>
               <motion.div
-                className="border p-1"
+                className="border-2 border-black dark:border-white p-3 md:p-4 bg-[#F3F1E9] dark:bg-[#1A1818] hover:border-orange-500 transition-all duration-300"
               >
-                <Link href="#" className="text-dark/60 dark:text-light/60 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link href="#" className="text-black dark:text-white hover:text-orange-500 transition-colors">
                   <Twitter className="w-6 h-6" />
                   <span className="sr-only">Twitter</span>
                 </Link>
@@ -1009,6 +955,20 @@ export default function Home() {
             hasPrevious={currentProjectIndex > 0}
             projectId={selectedProject}
           />
+        )}
+
+        {/* Custom tooltip for illustration */}
+        {showTooltip && (
+          <div 
+            className="fixed z-50 pointer-events-none bg-black dark:bg-white text-white dark:text-black px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-white dark:border-black"
+            style={{
+              left: tooltipPosition.x + 10,
+              top: tooltipPosition.y - 40,
+              transform: 'translate(0, 0)'
+            }}
+          >
+            Go to about page
+          </div>
         )}
       </main>
     </div>

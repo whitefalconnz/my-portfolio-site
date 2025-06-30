@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCDNUrl } from '../../utils/cdn';
 
 interface LoadingScreenProps {
@@ -8,6 +8,27 @@ interface LoadingScreenProps {
 }
 
 export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (transitionState === 'visible') {
+      // Simulate loading progress
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          // More realistic loading progression
+          const increment = Math.random() * 15 + 5;
+          return Math.min(prev + increment, 100);
+        });
+      }, 150);
+
+      return () => clearInterval(interval);
+    }
+  }, [transitionState]);
+
   return (
     <div className={`loading-screen ${transitionState} bg-white dark:bg-[#1A1818] text-black dark:text-white`}>
       <div className="scanlines" />
@@ -24,6 +45,18 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
             <source src={getCDNUrl("/Img_and_Vid/RunCycleLoadingScreen.webm")} type="video/webm" />
           </video>
         </div>
+
+        <div className="progress-container">
+          <div className="progress-wrapper">
+            <div className="progress-bar-background">
+              <div 
+                className="progress-bar-fill"
+                style={{ width: `${progress}%` }}
+              />
+              <div className="progress-bar-glow" style={{ left: `${progress}%` }} />
+            </div>
+          </div>
+        </div>
         
         <div className="loading-text text-black dark:text-white">
           Now Loading
@@ -32,10 +65,6 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
             <span>.</span>
             <span>.</span>
           </span>
-        </div>
-
-        <div className="progress-container">
-          <div className="progress-bar" />
         </div>
       </div>
     </div>

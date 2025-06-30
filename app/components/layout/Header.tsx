@@ -7,6 +7,8 @@ import { Moon, Sun, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from 'framer-motion'
 import { getCDNUrl } from '../../utils/cdn'
+import { useHero } from '../../contexts/HeroContext'
+import { useLoading } from '../../contexts/LoadingContext'
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -14,6 +16,8 @@ export default function Header() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { showHero, heroHeight } = useHero()
+  const { isLoading } = useLoading()
 
   useEffect(() => {
     setMounted(true)
@@ -61,8 +65,25 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Function to scroll to main content when on home page with hero visible
+  const scrollToContent = (e: React.MouseEvent) => {
+    // Only scroll if we're already on home page and hero is visible
+    if (window.location.pathname === '/' && showHero && heroHeight > 0) {
+      e.preventDefault()
+      window.scrollTo({
+        top: heroHeight,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  // Don't render header during loading
+  if (isLoading) {
+    return null
+  }
+
   const headerClasses = `
-    fixed top-0 left-0 right-0 
+    sticky top-0 left-0 right-0 
     backdrop-blur z-50 
     border-b-2 border-black dark:border-white
     transition-colors duration-300
@@ -71,20 +92,21 @@ export default function Header() {
 
   return (
     <header className={headerClasses} style={bounceStyle}>
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-6 relative">
         {/* Desktop Layout */}
         <div className="hidden lg:flex items-center justify-between">
           {/* Main Navigation */}
           <nav className="flex items-center space-x-8 w-1/3">
             <Link 
               href="/" 
-              className="retro-box px-4 py-2 font-mono text-dark dark:text-light hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-300"
+              className="retro-box px-5 py-3 font-satoshi text-lg text-dark dark:text-light hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-300"
+              onClick={scrollToContent}
             >
               WORK
             </Link>
             <Link 
               href="/about" 
-              className="font-mono text-dark dark:text-light hover:text-primary dark:hover:text-primary-light transition-all duration-300 text-sm relative group"
+              className="font-satoshi text-dark dark:text-light hover:text-primary dark:hover:text-primary-light transition-all duration-300 text-base relative group"
             >
               <span className="relative">
                 ABOUT
@@ -93,7 +115,7 @@ export default function Header() {
             </Link>
             <Link 
               href="/contact" 
-              className="font-mono text-dark dark:text-light hover:text-primary dark:hover:text-primary-light transition-all duration-300 text-sm relative group"
+              className="font-satoshi text-dark dark:text-light hover:text-primary dark:hover:text-primary-light transition-all duration-300 text-base relative group"
             >
               <span className="relative">
                 CONTACT
@@ -106,30 +128,30 @@ export default function Header() {
           <div className="flex items-center gap-4 justify-center w-1/3">
             <Link 
               href="/" 
-              className="font-mono text-2xl font-bold text-primary dark:text-primary-light whitespace-nowrap"
+              className="font-recoleta text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap"
             >
               Jakob's Portfolio
             </Link>
-            <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
-              <Image
-                src={getCDNUrl("/Img_and_Vid/WebsitePortfolio.jpg")}
-                alt="Profile"
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-              />
-            </div>
+                      <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+            <Image
+              src="https://res.cloudinary.com/donmpenyc/image/upload/w_400,h_400,c_fill,q_auto,f_auto/v1750931877/ProfilePicturewebsite_z9zdyo.jpg"
+              alt="Profile"
+              width={400}
+              height={400}
+              className="w-full h-full object-cover"
+            />
+          </div>
           </div>
 
           {/* Social Icons + Theme Toggle */}
-          <div className="flex items-center space-x-4 justify-end w-1/3">
+          <div className="flex items-center space-x-5 justify-end w-1/3">
             <a 
               href="https://instagram.com" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform hover:scale-110"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
             </a>
@@ -139,7 +161,7 @@ export default function Header() {
               rel="noopener noreferrer" 
               className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform hover:scale-110"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
               </svg>
             </a>
@@ -148,13 +170,13 @@ export default function Header() {
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                className="p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? (
-                  <Sun className="w-5 h-5 text-[#F5F5F5] hover:text-[#FF6B61]" />
+                  <Sun className="w-6 h-6 text-[#F5F5F5] hover:text-[#FF6B61]" />
                 ) : (
-                  <Moon className="w-5 h-5 text-[#332A2A] hover:text-[#B14038]" />
+                  <Moon className="w-6 h-6 text-[#332A2A] hover:text-[#B14038]" />
                 )}
               </button>
             )}
@@ -166,30 +188,30 @@ export default function Header() {
           {/* Hamburger Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-[#332A2A] dark:text-[#F5F5F5]"
+            className="text-[#332A2A] dark:text-[#F5F5F5] p-2"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-8 h-8" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-8 h-8" />
             )}
           </button>
 
           {/* Center Logo/Name */}
-          <div className="flex items-center gap-2 justify-center">
+          <div className="flex items-center gap-4 justify-center">
             <Link 
               href="/" 
-              className="font-mono text-lg md:text-xl text-primary dark:text-primary-light hover:text-primary-hover dark:hover:text-primary-light/80 transition-colors"
+              className="font-recoleta text-3xl md:text-4xl text-primary dark:text-primary-light hover:text-primary-hover dark:hover:text-primary-light/80 transition-colors"
             >
-              <span className="font-bold tracking-tight">Jakob Backhouse</span>
+              <span className="font-medium tracking-tight">Jakob's Portfolio</span>
             </Link>
-            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
               <Image
-                src="/placeholder.svg"
+                src="https://res.cloudinary.com/donmpenyc/image/upload/w_400,h_400,c_fill,q_auto,f_auto/v1750931877/ProfilePicturewebsite_z9zdyo.jpg"
                 alt="Profile"
-                width={32}
-                height={32}
+                width={400}
+                height={400}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -199,13 +221,13 @@ export default function Header() {
           {mounted && (
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2"
+              className="p-3"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-[#F5F5F5] hover:text-[#FF6B61]" />
+                <Sun className="w-6 h-6 text-[#F5F5F5] hover:text-[#FF6B61]" />
               ) : (
-                <Moon className="w-5 h-5 text-[#332A2A] hover:text-[#B14038]" />
+                <Moon className="w-6 h-6 text-[#332A2A] hover:text-[#B14038]" />
               )}
             </button>
           )}
@@ -213,14 +235,17 @@ export default function Header() {
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-x-0 top-[73px] bottom-0 bg-primary dark:bg-primary z-[999] min-h-[calc(100vh-73px)]">
+          <div className="lg:hidden absolute inset-x-0 top-full bg-primary dark:bg-primary z-[999] min-h-[calc(100vh-100px)] border-t-2 border-black dark:border-white">
             <div className="flex flex-col items-center pt-8 space-y-6">
               {/* Navigation Links */}
-              <nav className="flex flex-col items-center space-y-6 text-lg">
+              <nav className="flex flex-col items-center space-y-8 text-xl font-satoshi">
                 <Link 
                   href="/" 
                   className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setIsMobileMenuOpen(false)
+                    scrollToContent(e)
+                  }}
                 >
                   WORK
                 </Link>
@@ -241,14 +266,14 @@ export default function Header() {
               </nav>
 
               {/* Social Icons */}
-              <div className="flex space-x-6 pt-6">
+              <div className="flex space-x-8 pt-8">
                 <a 
                   href="https://instagram.com" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                   </svg>
                 </a>
@@ -258,7 +283,7 @@ export default function Header() {
                   rel="noopener noreferrer" 
                   className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                   </svg>
                 </a>

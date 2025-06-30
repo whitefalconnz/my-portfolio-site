@@ -22,8 +22,16 @@ const cloudinaryUrlMap: Record<string, string> = {
   '/Img_and_Vid/output_1.png': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647355/output_1_dkokjs.png',
   '/Img_and_Vid/output_2.png': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647357/output_2_wxs8ra.png',
   
-  // Loading screen video (temporary fallback)
-  '/Img_and_Vid/RunCycleLoadingScreen.webm': '/Img_and_Vid/RunCycleLoadingScreen.webm', // Keep local for now
+  // Loading screen video
+  '/Img_and_Vid/RunCycleLoadingScreen.webm': 'https://res.cloudinary.com/donmpenyc/video/upload/v1750647451/RunCycleLoadingScreen_ufonva.webm',
+  
+  // Personal Paintings
+  '/Img_and_Vid/PersonalPaintings/BrightLights.webp': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647460/BrightLights_asa8fi.webp',
+  '/Img_and_Vid/PersonalPaintings/photobash.webp': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647456/photobash_cgychg.webp',
+  '/Img_and_Vid/PersonalPaintings/Run(compressed).webp': 'https://res.cloudinary.com/donmpenyc/video/upload/v1750647453/RunCycleLoadingScreen_e3f8qs.mp4',
+  '/Img_and_Vid/PersonalPaintings/SaddleRoadQuickSketch.webp': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647453/SaddleRoadQuickSketch_r40dz2.webp',
+  '/Img_and_Vid/PersonalPaintings/New_Series.webp': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647456/New_Series_yufvbp.jpg',
+  '/Img_and_Vid/PersonalPaintings/11.png': 'https://res.cloudinary.com/donmpenyc/image/upload/v1750647363/11_fngoxg.webp',
   
   // Add more mappings as needed - we'll update this as we find more files
 };

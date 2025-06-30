@@ -48,6 +48,57 @@ interface ProjectModalProps {
   projectId: string
 }
 
+// Enhanced BlurImage with progressive loading
+const ProgressiveBlurImage = ({ 
+  src, 
+  alt, 
+  className, 
+  onClick, 
+  onVisible, 
+  isPriority = false,
+  isPreloaded = false,
+  ...props 
+}: {
+  src: string
+  alt: string
+  className?: string
+  onClick?: () => void
+  onVisible?: (src: string) => void
+  isPriority?: boolean
+  isPreloaded?: boolean
+  [key: string]: any
+}) => {
+  const { ref, isInView } = useScrollInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  // Trigger progressive loading when image becomes visible
+  useEffect(() => {
+    if (isInView && onVisible) {
+      onVisible(src)
+    }
+  }, [isInView, src, onVisible])
+
+  return (
+    <div ref={ref} className="w-full h-full flex items-center justify-center">
+      <BlurImage
+        src={src}
+        alt={alt}
+        width={2560}
+        height={1440}
+        quality={100}
+        priority={isPriority || isPreloaded}
+        className={className}
+        sizes="(max-width: 640px) 90vw, (max-width: 1024px) 85vw, 80vw"
+        unoptimized={true}
+        onClick={onClick}
+        {...props}
+      />
+    </div>
+  )
+}
+
 // Extract AnimatedImage into a separate component
 const AnimatedImage = ({ item, onImageClick }: { item: ContentItem; onImageClick: (src: string) => void }) => {
   const { ref, isInView } = useScrollInView({
@@ -277,8 +328,11 @@ export default function ProjectModal({
   const [isPDFTransitioning, setIsPDFTransitioning] = useState(false)
   // Flag to prevent showing any image info when first loading
   const [hasScrolled, setHasScrolled] = useState(false)
-  // Track scroll speed for dynamic scrolling adjustments
-  const scrollSpeedTracker = useRef({ lastEvent: 0, speed: 0 })
+  
+  // Progressive loading state
+  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set())
+  const [imageLoadQueue, setImageLoadQueue] = useState<string[]>([])
+  const imageIndexMap = useRef<Map<string, number>>(new Map())
 
   const overlayRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -325,6 +379,195 @@ export default function ProjectModal({
       handleClose()
     }
   }
+
+  // Handle click on blank areas within content
+  const handleContentClick = (e: React.MouseEvent) => {
+    const target = e.target as Element
+    
+    // Don't close if clicking on interactive elements
+    if (
+      target.tagName === 'IMG' ||
+      target.tagName === 'VIDEO' ||
+      target.tagName === 'IFRAME' ||
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'A' ||
+      target.tagName === 'SVG' ||
+      target.tagName === 'PATH' ||
+      target.closest('button') ||
+      target.closest('a') ||
+      target.closest('video') ||
+      target.closest('iframe') ||
+      target.closest('img') ||
+      target.closest('[role="button"]') ||
+      target.closest('.cursor-zoom-in') ||
+      target.closest('.cursor-move') ||
+      target.hasAttribute('data-image-info')
+    ) {
+      return
+    }
+
+    // Check if clicked on text content
+    const hasTextContent = target.textContent && target.textContent.trim().length > 0
+    if (hasTextContent && target.tagName !== 'DIV') {
+      return
+    }
+
+    // If we reach here, it's likely a blank area - close the modal
+    handleClose()
+  }
+
+  // Extract all image URLs from current project data
+  const getAllProjectImages = useCallback(() => {
+    const images: string[] = []
+    
+    // Add main project image
+    if (image) images.push(image)
+    
+    // Extract images based on project type
+    if (projectId === 'Creative Advertising') {
+      talesFromTheSunCampaign.sections.forEach(section => {
+        if ('content' in section) {
+          section.content.forEach(item => {
+            if (item.image && !item.image.endsWith('.pdf')) {
+              images.push(item.image)
+            }
+          })
+        }
+      })
+    } else if (projectId === 'BumbleGanttWithTheWind') {
+      bumbleGanttCampaign.sections.forEach(section => {
+        if ('content' in section) {
+          section.content.forEach(item => {
+            if (item.image && !item.image.endsWith('.pdf')) {
+              images.push(item.image)
+            }
+          })
+        }
+      })
+    } else if (projectId === 'CreativeCoding') {
+      creativeCodingCampaign.sections.forEach(section => {
+        if ('content' in section) {
+          section.content.forEach(item => {
+            if (item.image && !item.image.endsWith('.pdf')) {
+              images.push(item.image)
+            }
+          })
+        }
+      })
+    } else if (projectId === 'SmokeAnimation') {
+      smokeAnimationCampaign.sections.forEach(section => {
+        if ('content' in section) {
+          section.content.forEach(item => {
+            if (item.image && !item.image.endsWith('.pdf') && !item.image.endsWith('.mp4') && !item.image.endsWith('.webm')) {
+              images.push(item.image)
+            }
+          })
+        }
+      })
+    } else if (projectId === 'Illustrations') {
+      illustrationCampaign.sections.forEach(section => {
+        if ('content' in section) {
+          section.content.forEach(item => {
+            if (item.image && !item.image.endsWith('.pdf')) {
+              images.push(item.image)
+            }
+          })
+        }
+      })
+    } else if (projectId === 'Tag') {
+      tagCampaign.sections.forEach(section => {
+        if ('content' in section) {
+          section.content.forEach(item => {
+            if (item.image && !item.image.endsWith('.pdf') && !item.image.includes('player.vimeo.com')) {
+              images.push(item.image)
+            }
+          })
+        }
+      })
+    } else if (projectId === 'dreaming') {
+      // Add dreaming project images
+      images.push("/images/projects/dreaming/frame1.jpg")
+      images.push("/images/projects/dreaming/frame2.jpg")
+      images.push("/images/projects/dreaming/frame3.jpg")
+      images.push("/images/projects/dreaming/frame4.jpg")
+      images.push("/images/projects/dreaming/frame5.jpg")
+      images.push("/images/projects/dreaming/frame6.jpg")
+    }
+    
+    return images.filter(Boolean) // Remove any undefined/null values
+  }, [projectId, image])
+
+  // Non-blocking preload function
+  const preloadImage = useCallback((imageSrc: string) => {
+    if (preloadedImages.has(imageSrc)) return
+    
+    // Use requestIdleCallback for non-blocking preloading, fallback to setTimeout
+    const loadImage = () => {
+      const img = document.createElement('img')
+      img.onload = () => {
+        setPreloadedImages(prev => new Set([...prev, imageSrc]))
+      }
+      img.onerror = () => {
+        console.warn(`Failed to preload image: ${imageSrc}`)
+      }
+      img.src = imageSrc
+    }
+    
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadImage)
+    } else {
+      setTimeout(loadImage, 100)
+    }
+  }, [preloadedImages])
+
+  // Non-blocking progressive preloading function
+  const preloadUpcomingImages = useCallback((currentImageSrc: string, preloadCount: number = 2) => {
+    // Use requestIdleCallback to avoid blocking scroll performance
+    const preloadTask = () => {
+      const allImages = getAllProjectImages()
+      const currentIndex = imageIndexMap.current.get(currentImageSrc) ?? -1
+      
+      if (currentIndex === -1) return
+      
+      // Preload next images
+      for (let i = 1; i <= preloadCount; i++) {
+        const nextIndex = currentIndex + i
+        if (nextIndex < allImages.length) {
+          const nextImage = allImages[nextIndex]
+          if (!preloadedImages.has(nextImage)) {
+            preloadImage(nextImage)
+          }
+        }
+      }
+    }
+    
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(preloadTask)
+    } else {
+      setTimeout(preloadTask, 50)
+    }
+  }, [getAllProjectImages, preloadImage, preloadedImages])
+
+  // Initialize image index mapping when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const allImages = getAllProjectImages()
+      const indexMap = new Map<string, number>()
+      
+      allImages.forEach((img, index) => {
+        indexMap.set(img, index)
+      })
+      
+      imageIndexMap.current = indexMap
+      setImageLoadQueue(allImages)
+      
+      // Preload the first few images immediately
+      const initialPreloadCount = 3
+      allImages.slice(0, initialPreloadCount).forEach(img => {
+        preloadImage(img)
+      })
+    }
+  }, [isOpen, getAllProjectImages, preloadImage])
 
   if (!isOpen) return null;
 
@@ -733,6 +976,108 @@ export default function ProjectModal({
     ]
   };
 
+  const tagCampaign: Campaign = {
+    id: "Tag",
+    title: "Tag",
+    sections: [
+      {
+        title: "Main Trailer",
+        content: [
+          {
+            image: "https://player.vimeo.com/video/1093033927",
+            title: "Tag Trailer",
+            description: "Official trailer showcasing the animated short film's key moments and visual style."
+          }
+        ]
+      },
+      {
+        title: "Character Development",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730592/Character_Model_Sheet_Sketches_q8gmcr.webp",
+            title: "Character Model Sheet Sketches",
+            description: "Initial character design explorations and construction sketches."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730593/CharacterColourPicking_swb8uu.webp",
+            title: "Character Color Picking",
+            description: "Color palette exploration and selection process for main characters."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730591/Character_Model_Sheet_Colour_jefo2v.webp",
+            title: "Character Model Sheet - Color",
+            description: "Final colored character model sheets with turnarounds and expressions."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730593/CharacterStyle_jis3mj.webp",
+            title: "Character Style Exploration",
+            description: "Visual style development and character design refinement."
+          }
+        ]
+      },
+      {
+        title: "Monster Development",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730644/MonstersOG_bcokm8.webp",
+            title: "Monster Original Designs",
+            description: "Initial concept art and design exploration for creature characters."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730640/MonsterDev_upxsh5.webp",
+            title: "Monster Development",
+            description: "Refined monster designs and character development process."
+          }
+        ]
+      },
+      {
+        title: "Color Script & Storyboard",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730903/ColourScriptDraft1_lbjd9b.webp",
+            title: "Color Script Draft",
+            description: "Color timing and mood exploration for the animated sequence."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730899/0ab54785-7747-4db1-82b1-f1c4fe1ced7d-0002_t1tdma.webp",
+            title: "Storyboard Frame 1",
+            description: "Key story moments and shot composition planning."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730899/0ab54785-7747-4db1-82b1-f1c4fe1ced7d-0003_h3n7mc.webp",
+            title: "Storyboard Frame 2",
+            description: "Sequence development and visual storytelling progression."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730899/0ab54785-7747-4db1-82b1-f1c4fe1ced7d-0004_iejn19.webp",
+            title: "Storyboard Frame 3",
+            description: "Action sequences and character interaction moments."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730900/0ab54785-7747-4db1-82b1-f1c4fe1ced7d-0005_yjy4d2.webp",
+            title: "Storyboard Frame 4",
+            description: "Climactic moments and visual narrative conclusion."
+          }
+        ]
+      },
+      {
+        title: "Poster Designs",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730338/TagPoster1_syu1ko.jpg",
+            title: "Tag Poster Design",
+            description: "Main promotional poster design featuring key characters and visual branding."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730337/TagPoster_Cinema_hpt8tv.jpg",
+            title: "Cinema Poster",
+            description: "Cinema-formatted poster design optimized for theatrical display."
+          }
+        ]
+      }
+    ]
+  };
+
   const renderContentSection = (section: ContentSection) => {
     if (hasGridLayout(section)) {
       // Render as a grid
@@ -784,16 +1129,13 @@ export default function ProjectModal({
                       </div>
                     </div>
                   ) : (
-                    <BlurImage
+                    <ProgressiveBlurImage
                       src={item.image}
                       alt={item.title}
-                      width={2560}
-                      height={1440}
-                      quality={100}
                       className="w-auto max-w-full max-h-[75vh] object-contain cursor-zoom-in"
-                      sizes="(max-width: 640px) 90vw, (max-width: 1024px) 85vw, 80vw"
-                      unoptimized={true}
                       onClick={() => handleImageClick(item.image)}
+                      onVisible={preloadUpcomingImages}
+                      isPreloaded={preloadedImages.has(item.image)}
                     />
                   )}
                 </div>
@@ -950,16 +1292,13 @@ export default function ProjectModal({
                     <div className="w-full h-full flex flex-col items-center justify-center">
                       {/* Image */}
                       <div className="w-full md:w-[90%] mx-auto flex items-center justify-center h-full">
-                        <BlurImage
+                        <ProgressiveBlurImage
                           src={item.image}
                           alt={item.title}
-                          width={2560}
-                          height={1440}
-                          quality={100}
                           className="w-auto max-w-full max-h-[75vh] object-contain cursor-zoom-in"
-                          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 85vw, 80vw"
-                          unoptimized={true}
                           onClick={() => handleImageClick(item.image)}
+                          onVisible={preloadUpcomingImages}
+                          isPreloaded={preloadedImages.has(item.image)}
                         />
                       </div>
 
@@ -970,6 +1309,60 @@ export default function ProjectModal({
             ) : (
               // PDF section with proper margins
               renderPDFSection(section.pdfUrl, section.title, illustrationCampaign.title)
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderTagContent = () => {
+    return (
+      <div className="space-y-0">
+        {tagCampaign.sections.map((section, idx) => (
+          <div key={idx}>
+            {'content' in section ? (
+              <div className="space-y-0">
+                {section.content.map((item, i) => (
+                  <div 
+                    key={i} 
+                    className="w-full h-[92vh] snap-start snap-always flex flex-col md:flex-row items-center justify-center py-4 md:py-4 px-4 md:px-14"
+                    data-image-info={JSON.stringify(item)}
+                  >
+                    <div className="w-full h-full flex flex-col items-center justify-center">
+                      {/* Check if it's the Vimeo video */}
+                      {item.image.includes('player.vimeo.com') ? (
+                        <div className="w-full md:w-[90%] mx-auto flex items-center justify-center h-full">
+                          <div className="w-full max-w-4xl mx-auto relative" style={{paddingTop: '56.25%'}}>
+                            <iframe
+                              src={`${item.image}?badge=0&autopause=0&player_id=0&app_id=58479`}
+                              className="absolute top-0 left-0 w-full h-full rounded-sm border border-white/10"
+                              frameBorder="0"
+                              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                              title={item.title}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        /* Regular image */
+                        <div className="w-full md:w-[90%] mx-auto flex items-center justify-center h-full">
+                          <ProgressiveBlurImage
+                            src={item.image}
+                            alt={item.title}
+                            className="w-auto max-w-full max-h-[75vh] object-contain cursor-zoom-in"
+                            onClick={() => handleImageClick(item.image)}
+                            onVisible={preloadUpcomingImages}
+                            isPreloaded={preloadedImages.has(item.image)}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // PDF section with proper margins
+              renderPDFSection(section.pdfUrl, section.title, tagCampaign.title)
             )}
           </div>
         ))}
@@ -1017,16 +1410,14 @@ export default function ProjectModal({
       })}
     >
       <div className="w-full md:w-[90%] mx-auto flex items-center justify-center">
-        <BlurImage
+        <ProgressiveBlurImage
           src={image}
           alt={title}
-          width={3840}
-          height={2160}
-          quality={100}
           className="w-auto max-w-full max-h-[70vh] md:max-h-[75vh] object-contain cursor-zoom-in"
-          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 85vw, 80vw"
-          unoptimized={true}
           onClick={() => handleImageClick(image)}
+          onVisible={preloadUpcomingImages}
+          isPriority={true}
+          isPreloaded={preloadedImages.has(image)}
         />
       </div>
     </div>
@@ -1035,15 +1426,13 @@ export default function ProjectModal({
   const renderImageGridItem = (imageSrc: string, alt: string, onClick: () => void) => (
     <div className="p-3 md:p-5 flex items-center justify-center h-full w-full">
       <div className="overflow-hidden rounded border border-black/10 dark:border-white/10 h-full w-full">
-        <BlurImage
+        <ProgressiveBlurImage
           src={imageSrc}
           alt={alt}
-          width={1200}
-          height={800}
-          quality={90}
           className="w-full h-full object-contain cursor-zoom-in hover:scale-105 transition-transform duration-300"
-          unoptimized={true}
           onClick={onClick}
+          onVisible={preloadUpcomingImages}
+          isPreloaded={preloadedImages.has(imageSrc)}
         />
       </div>
     </div>
@@ -1084,22 +1473,28 @@ export default function ProjectModal({
       return renderSmokeAnimationContent();
     } else if (projectId === 'Illustrations') {
       return renderIllustrationsContent();
+    } else if (projectId === 'Tag') {
+      return renderTagContent();
     } else {
       // For projects with just a single image
       return renderSingleImage();
     }
   };
 
-  // Track scroll position and set hasScrolled flag
+  // Optimized scroll handler with throttling
   const handleScroll = useCallback((e: any) => {
     const target = e.target
-    const scrollPercent = (target.scrollTop / (target.scrollHeight - target.clientHeight)) * 100
-    setScrollProgress(Math.min(scrollPercent, 100))
     
-    // Set hasScrolled to true after first scroll
+    // Set hasScrolled to true after first scroll (most important for mobile)
     if (!hasScrolled && target.scrollTop > 0) {
       setHasScrolled(true)
     }
+    
+    // Throttle progress updates to improve performance
+    requestAnimationFrame(() => {
+      const scrollPercent = (target.scrollTop / (target.scrollHeight - target.clientHeight)) * 100
+      setScrollProgress(Math.min(scrollPercent, 100))
+    })
   }, [hasScrolled])
 
   // Enhanced keyboard navigation
@@ -1192,19 +1587,13 @@ export default function ProjectModal({
     }
   }, [isOpen])
 
-  // Add wheel event handler
+  // Optimized wheel event handler - desktop only
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (!isOpen || !contentRef.current) return;
       
-      // Prevent default scrolling behavior
-      e.preventDefault();
-      const content = contentRef.current;
-      
-      // Track scrolling speed for more responsive scrolling
-      const now = Date.now();
-      const timeDelta = now - scrollSpeedTracker.current.lastEvent;
-      scrollSpeedTracker.current.lastEvent = now;
+      // Only handle wheel events on desktop to avoid mobile conflicts
+      if ('ontouchstart' in window) return;
       
       // Check if cursor is directly over a PDF element
       const target = e.target as Element;
@@ -1212,22 +1601,24 @@ export default function ProjectModal({
       
       // If we're over a PDF iframe directly, let the PDF handle it
       if (isOverPDF) {
-        // Don't do any special handling, let the default PDF behavior work
         return;
       }
+      
+      // Prevent default scrolling behavior only on desktop
+      e.preventDefault();
+      const content = contentRef.current;
       
       // Get the scroll delta and direction
       const scrollingDown = e.deltaY > 0;
       const scrollDelta = Math.abs(e.deltaY);
       
-      // Always use high speed factor for immediate response
+      // Desktop-optimized scroll speed
       const speedFactor = 3.0;
-      const scrollBehavior: ScrollBehavior = 'auto';
       
-      // Apply immediate scrolling regardless of image loading state
+      // Apply immediate scrolling for desktop
       content.scrollBy({
         top: (scrollingDown ? scrollDelta : -scrollDelta) * speedFactor,
-        behavior: scrollBehavior
+        behavior: 'auto'
       });
       
       // Set flag that user has scrolled for activeItem detection
@@ -1238,149 +1629,37 @@ export default function ProjectModal({
 
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      window.addEventListener('wheel', handleWheel, { passive: false });
+      // Only add wheel listener on desktop
+      if (!('ontouchstart' in window)) {
+        window.addEventListener('wheel', handleWheel, { passive: false });
+      }
     }
 
     return () => {
       document.body.style.overflow = 'unset';
-      window.removeEventListener('wheel', handleWheel);
+      if (!('ontouchstart' in window)) {
+        window.removeEventListener('wheel', handleWheel);
+      }
     };
-  }, [isOpen, isPDFVisible, hasScrolled]);
+  }, [isOpen, hasScrolled]);
 
-  // Add touch event handlers for mobile with snap-to-image behavior
+  // Simplified touch event handlers for mobile - focused on smooth scrolling
   useEffect(() => {
     if (!isOpen || !contentRef.current) return;
 
-    let startY = 0;
     let startX = 0;
     let startTime = 0;
-    let isSwipeHandled = false;
-    const swipeThreshold = 50; // Minimum distance for a swipe
+    const swipeThreshold = 80; // Minimum distance for a horizontal swipe
     const timeThreshold = 300; // Maximum time for a swipe (ms)
     
-    // Helper function to find all image elements and their positions
-    const getImageElements = () => {
-      if (!contentRef.current) return [];
-      const elements = Array.from(contentRef.current.querySelectorAll('[data-image-info]')) as HTMLElement[];
-      return elements.map(el => ({
-        element: el,
-        offsetTop: el.offsetTop,
-        height: el.offsetHeight,
-        centerY: el.offsetTop + (el.offsetHeight / 2)
-      })).sort((a, b) => a.offsetTop - b.offsetTop);
-    };
-    
-    // Helper function to find the next/previous image based on current scroll position
-    const findTargetImage = (direction: 'up' | 'down') => {
-      const images = getImageElements();
-      if (images.length === 0) return null;
-      
-      const currentScrollTop = contentRef.current!.scrollTop;
-      const containerHeight = contentRef.current!.clientHeight;
-      const currentCenter = currentScrollTop + (containerHeight / 2);
-      
-      if (direction === 'down') {
-        // Find the next image below the current center
-        return images.find(img => img.centerY > currentCenter + 100) || images[images.length - 1];
-      } else {
-        // Find the previous image above the current center
-        const reversedImages = [...images].reverse();
-        return reversedImages.find(img => img.centerY < currentCenter - 100) || images[0];
-      }
-    };
-    
-    // Smooth scroll to target image
-    const scrollToImage = (targetImage: any) => {
-      if (!contentRef.current || !targetImage) return;
-      
-      const containerHeight = contentRef.current.clientHeight;
-      const targetScrollTop = Math.max(0, targetImage.offsetTop - (containerHeight / 2) + (targetImage.height / 2));
-      
-      contentRef.current.scrollTo({
-        top: targetScrollTop,
-        behavior: 'smooth'
-      });
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startTime = Date.now();
       
       // Set flag that user has scrolled for activeItem detection
       if (!hasScrolled) {
         setHasScrolled(true);
-      }
-    };
-    
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      startY = touch.clientY;
-      startX = touch.clientX;
-      startTime = Date.now();
-      isSwipeHandled = false;
-      
-      // If we're touching a PDF iframe, don't interfere
-      if ((e.target as Element).closest('iframe')) {
-        return;
-      }
-    };
-    
-    const handleTouchMove = (e: TouchEvent) => {
-      // If we're touching a PDF iframe, don't interfere
-      if ((e.target as Element).closest('iframe')) {
-        return;
-      }
-      
-      if (!contentRef.current || isSwipeHandled) return;
-      
-      const touch = e.touches[0];
-      const deltaY = startY - touch.clientY;
-      const deltaX = startX - touch.clientX;
-      const absDeltaY = Math.abs(deltaY);
-      const absDeltaX = Math.abs(deltaX);
-      
-      // If horizontal swipe is greater than vertical, handle project navigation
-      if (absDeltaX > absDeltaY + 20 && absDeltaX > 50) {
-        e.preventDefault();
-        return;
-      }
-      
-      // Check for vertical swipe gesture
-      if (absDeltaY > swipeThreshold && absDeltaY > absDeltaX) {
-        const currentTime = Date.now();
-        const swipeTime = currentTime - startTime;
-        
-        // If it's a quick swipe, handle snap-to-image behavior
-        if (swipeTime < timeThreshold) {
-          e.preventDefault();
-          isSwipeHandled = true;
-          
-          const direction = deltaY > 0 ? 'down' : 'up';
-          const targetImage = findTargetImage(direction);
-          
-          if (targetImage) {
-            // Add a subtle haptic feedback feel with a slight delay
-            setTimeout(() => {
-              scrollToImage(targetImage);
-            }, 50);
-          }
-          
-          return;
-        }
-      }
-      
-      // For slower movements, allow normal scrolling but make it more responsive
-      if (absDeltaY > 10) {
-        e.preventDefault();
-        if (contentRef.current) {
-          contentRef.current.scrollBy({
-            top: deltaY * 1.2,
-            behavior: 'auto'
-          });
-          
-          // Update start position for continuous movement
-          startY = touch.clientY;
-          
-          // Set flag that user has scrolled
-          if (!hasScrolled) {
-            setHasScrolled(true);
-          }
-        }
       }
     };
     
@@ -1390,19 +1669,16 @@ export default function ProjectModal({
         return;
       }
       
-      if (isSwipeHandled) return;
-      
       const endTime = Date.now();
       const timeElapsed = endTime - startTime;
       
       // Handle horizontal swipe navigation (left/right for project navigation)
-      if (e.changedTouches.length) {
+      if (e.changedTouches.length && timeElapsed < timeThreshold) {
         const touch = e.changedTouches[0];
         const deltaX = startX - touch.clientX;
-        const deltaY = startY - touch.clientY;
         
-        // Only consider horizontal swipes if they're more pronounced than vertical ones
-        if (Math.abs(deltaX) > Math.abs(deltaY) + 20 && Math.abs(deltaX) > 80 && timeElapsed < timeThreshold) {
+        // Only consider clear horizontal swipes
+        if (Math.abs(deltaX) > swipeThreshold) {
           if (deltaX > 0 && hasNext && !isTransitioning) {
             // Swipe left, go to next project
             handleNext();
@@ -1414,16 +1690,15 @@ export default function ProjectModal({
       }
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd, { passive: false });
+    // Use passive listeners for better performance - let native scrolling handle vertical movement
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
     
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isOpen, isPDFVisible, hasScrolled, hasNext, hasPrevious, isTransitioning, handleNext, handlePrevious]);
+  }, [isOpen, hasScrolled, hasNext, hasPrevious, isTransitioning, handleNext, handlePrevious]);
 
   // Helper function to update active PDF - MOVED UP BEFORE BEING USED
   const updateActivePDF = useCallback((pdfTitle: string, mainTitle: string) => {
@@ -1532,7 +1807,7 @@ export default function ProjectModal({
     };
   }, [isPDFVisible, contentRef, updateActivePDF]);
 
-  // Modify the intersection observer effect for better stability
+  // Optimized intersection observer for better mobile performance
   useEffect(() => {
     if (!contentRef.current) return;
     
@@ -1540,9 +1815,12 @@ export default function ProjectModal({
     let bestItem: ContentItem | null = null;
     let highestRatio = 0;
     
-    // Create observer with root as the content container
+    // Create observer with root as the content container - less aggressive thresholds
     const observer = new IntersectionObserver(
       (entries) => {
+        // Only process if user has scrolled to avoid initial state conflicts
+        if (!hasScrolled) return;
+        
         // Find the entry with the highest intersection ratio
         entries.forEach(entry => {
           if (entry.isIntersecting && entry.intersectionRatio > highestRatio) {
@@ -1564,20 +1842,20 @@ export default function ProjectModal({
         // Clear any existing debounce timer
         clearTimeout(debounceTimer);
         
-        // Set a new debounce timer to prevent rapid updates during scrolling
+        // Longer debounce for mobile to prevent interference with scrolling
         debounceTimer = setTimeout(() => {
-          if (bestItem && bestItem.title && bestItem.image && highestRatio > 0.5) {
+          if (bestItem && bestItem.title && bestItem.image && highestRatio > 0.6) {
             updateActiveItem(bestItem);
           }
           // Reset for next observation cycle
           bestItem = null;
           highestRatio = 0;
-        }, 100); // 100ms debounce
+        }, 200); // Increased to 200ms for better mobile performance
       },
       {
         root: contentRef.current,
         rootMargin: '0px',
-        threshold: [0.25, 0.5, 0.75, 0.9]
+        threshold: [0.6, 0.8] // Simplified thresholds for better performance
       }
     );
     
@@ -1705,18 +1983,22 @@ export default function ProjectModal({
         <div 
           ref={contentRef}
           onScroll={handleScroll}
-          className={`w-full md:w-[75%] max-h-[92vh] overflow-y-auto relative md:pr-4 snap-y snap-mandatory
+          onClick={handleContentClick}
+          className={`w-full md:w-[75%] max-h-[92vh] overflow-y-auto relative md:pr-4
             ${showModal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
             transition-all duration-300 overscroll-contain
-            scroll-smooth scroll-pt-0
+            md:snap-y md:snap-mandatory
             [-ms-overflow-style:none] [scrollbar-width:none]
             [&::-webkit-scrollbar]:hidden
             [will-change:scroll-position] [backface-visibility:hidden]
             [perspective:1000px] [transform:translate3d(0,0,0)]
-            [scroll-snap-type:y_mandatory]`}
+            [scroll-behavior:auto] md:[scroll-behavior:smooth]
+            [-webkit-overflow-scrolling:touch]
+            [overscroll-behavior:contain]
+            md:[scroll-snap-type:y_mandatory]`}
         >
           {isLoading ? (
-            <div className="flex flex-col items-center mt-16">
+            <div className="flex flex-col items-center justify-center h-full min-h-[60vh]">
               <OrangeLoadingCube transitionState={isLoading ? 'visible' : 'exiting'} />
             </div>
           ) : (

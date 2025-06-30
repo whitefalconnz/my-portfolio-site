@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
-import Header from '../components/layout/Header'
-import SparkEffect from "../components/animations/SparkEffect"
+
 import { sendEmail } from './actions'
+import BackgroundSprites from '../components/animations/BackgroundSprites'
 import { RotateCcw } from 'lucide-react'
 
 export default function ContactPage() {
@@ -179,9 +179,10 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern">
-      <SparkEffect />
-      <Header />
+    <div className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern relative">
+      {/* Background Sprites */}
+      <BackgroundSprites />
+      
       <main className="pt-32 md:pt-40 pb-20 max-w-6xl mx-auto px-6 md:flex md:gap-8 relative">
         {/* Reset button (appears after dragging) */}
         {hasBeenDragged && isDraggable && (
@@ -205,14 +206,18 @@ export default function ContactPage() {
             transition: { delay: 0.2, duration: 0.5 }
           }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="p-8 mb-12 md:mb-0 md:w-[400px] md:flex-shrink-0 border-2 relative z-10 cursor-move"
+          className="p-8 mb-12 md:mb-0 md:w-[400px] md:flex-shrink-0 border-2 relative z-10 cursor-move transition-all duration-300"
           style={{ 
-            backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
+            backgroundColor: isDarkMode ? '#1A1818' : '#F3F1E9',
             borderColor: 'rgba(0, 0, 0, 0)',
             zIndex: zIndexes.infoBox,
             pointerEvents: isDragging && activeDragKey !== 'infoBox' ? 'none' : 'auto',
             x: infoBoxX,
             y: infoBoxY
+          }}
+          whileHover={{ 
+            borderColor: '#f97316',
+            transition: { duration: 0.3 }
           }}
           drag={isElementDraggable('infoBox')}
           dragMomentum={false}
@@ -224,37 +229,40 @@ export default function ContactPage() {
         >
           {isDraggable && <DragHandle />}
           
-          <motion.div 
-            className="border-b-2 mb-8 pb-4"
-            style={{ borderBottomColor: 'rgba(0, 0, 0, 0)' }}
-            animate={{ 
-              borderBottomColor: isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
-              transition: { delay: 0.3, duration: 0.5 }
-            }}
-          >
-            <h1 className="font-mono text-4xl md:text-5xl text-primary dark:text-primary-light">
-              Get in Touch
-            </h1>
-          </motion.div>
-          
-          <div className="space-y-6 font-mono">
-            <p className="text-lg text-dark dark:text-light">
-              Please don't hesitate to reach out with any thoughts or inquiries.{' '}
-              <motion.a 
-                href="mailto:jakobbackhouse@gmail.com" 
-                className="inline-block bg-[#FFFFFF] text-black px-3 py-1 
-                  hover:translate-x-[2px] hover:translate-y-[2px]
-                  transition-all ml-2 border-2"
-                style={{ borderColor: 'rgba(0, 0, 0, 0)' }}
-                animate={{ 
-                  borderColor: isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
-                  transition: { delay: 0.4, duration: 0.5 }
-                }}
-              >
-                Jakobbackhouse@gmail.com
-              </motion.a>
-            </p>
-             </div>
+          <div className="flex flex-col h-full">
+            <motion.div 
+              className="border-b-2 mb-8 pb-4"
+              style={{ borderBottomColor: 'rgba(0, 0, 0, 0)' }}
+              animate={{ 
+                borderBottomColor: isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
+                transition: { delay: 0.3, duration: 0.5 }
+              }}
+            >
+              <h1 className="font-mplus text-4xl md:text-5xl text-primary dark:text-primary-light">
+                Get in Touch
+              </h1>
+            </motion.div>
+            
+            <div className="flex-grow font-satoshi mb-8">
+              <p className="text-lg text-dark dark:text-light">
+                Please don't hesitate to reach out with any thoughts or inquiries.
+              </p>
+            </div>
+            
+            <motion.a 
+              href="mailto:jakobbackhouse@gmail.com" 
+              className="block w-full px-6 py-3 bg-[#FFFFFF] text-black font-medium text-center
+                hover:border-orange-500
+                transition-all border-2 font-satoshi"
+              style={{ borderColor: 'rgba(0, 0, 0, 0)' }}
+              animate={{ 
+                borderColor: isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
+                transition: { delay: 0.4, duration: 0.5 }
+              }}
+            >
+              jakobbackhouse@gmail.com
+            </motion.a>
+          </div>
         </motion.div>
 
         <motion.div
@@ -280,9 +288,9 @@ export default function ContactPage() {
         >
           {!formSubmitted ? (
             <motion.div 
-              className="p-8 border-2 relative z-10 cursor-move"
+              className="p-8 border-2 relative z-10 cursor-move hover:border-orange-500 transition-all duration-300"
               style={{ 
-                backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
+                backgroundColor: isDarkMode ? '#1A1818' : '#F3F1E9',
                 borderColor: 'rgba(0, 0, 0, 0)'
               }}
               animate={{ 
@@ -291,7 +299,7 @@ export default function ContactPage() {
               }}
             >
               {isDraggable && <DragHandle />}
-              <form onSubmit={handleSubmit} className="space-y-6 font-mono">
+              <form onSubmit={handleSubmit} className="space-y-6 font-satoshi">
                 <div className="space-y-2">
                   <label htmlFor="name" className="block text-sm font-medium text-dark dark:text-light">
                     Name *
@@ -302,7 +310,7 @@ export default function ContactPage() {
                     required
                     className="w-full px-4 py-2 bg-[#F3F1E9] dark:bg-[#1A1818] 
                       text-dark dark:text-light focus:outline-none focus:ring-0
-                      focus:translate-x-[2px] focus:translate-y-[2px]
+                      hover:border-orange-500
                       transition-all border-2"
                     placeholder="Your Name..."
                     value={formData.name}
@@ -325,7 +333,7 @@ export default function ContactPage() {
                     required
                     className="w-full px-4 py-2 bg-[#F3F1E9] dark:bg-[#1A1818] 
                       text-dark dark:text-light focus:outline-none focus:ring-0
-                      focus:translate-x-[2px] focus:translate-y-[2px]
+                      hover:border-orange-500
                       transition-all border-2"
                     placeholder="Your Email Address..."
                     value={formData.email}
@@ -348,7 +356,7 @@ export default function ContactPage() {
                     rows={6}
                     className="w-full px-4 py-2 bg-[#F3F1E9] dark:bg-[#1A1818] 
                       text-dark dark:text-light focus:outline-none focus:ring-0
-                      focus:translate-x-[2px] focus:translate-y-[2px]
+                      hover:border-orange-500
                       transition-all border-2"
                     placeholder="Your Message..."
                     value={formData.message}
@@ -371,7 +379,7 @@ export default function ContactPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full px-6 py-3 bg-[#FFFFFF] text-black font-medium 
-                    hover:translate-x-[2px] hover:translate-y-[2px]
+                    hover:border-orange-500
                     transition-all border-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   style={{ borderColor: 'rgba(0, 0, 0, 0)' }}
                   animate={{ 
@@ -385,9 +393,9 @@ export default function ContactPage() {
             </motion.div>
           ) : (
             <motion.div 
-              className="p-8 border-2 relative z-10 cursor-move"
+              className="p-8 border-2 relative z-10 cursor-move hover:border-orange-500 transition-all duration-300"
               style={{ 
-                backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF',
+                backgroundColor: isDarkMode ? '#1A1818' : '#F3F1E9',
                 borderColor: 'rgba(0, 0, 0, 0)'
               }}
               animate={{ 
@@ -409,10 +417,10 @@ export default function ContactPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </motion.div>
-                <h3 className="font-mono text-2xl text-dark dark:text-light">
+                <h3 className="font-mplus text-2xl text-dark dark:text-light">
                   Message Sent Successfully!
                 </h3>
-                <p className="font-mono text-secondary dark:text-secondary-light">
+                <p className="font-satoshi text-secondary dark:text-secondary-light">
                   Thanks for reaching out. I'll get back to you as soon as possible.
                 </p>
               </div>

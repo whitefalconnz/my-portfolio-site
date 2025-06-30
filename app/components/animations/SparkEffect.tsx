@@ -1,9 +1,14 @@
 "use client"
 
 import { useEffect } from 'react'
+import { useLoading } from '../../contexts/LoadingContext'
 
 export default function SparkEffect() {
+  const { isLoading } = useLoading()
+
   useEffect(() => {
+    // Don't add event listeners during loading
+    if (isLoading) return
     const createSpark = (e: MouseEvent) => {
       const numParticles = Math.floor(Math.random() * 6) + 8;
       
@@ -39,7 +44,12 @@ export default function SparkEffect() {
       document.addEventListener('click', createSpark)
       return () => document.removeEventListener('click', createSpark)
     }
-  }, [])
+  }, [isLoading])
+
+  // Don't render during loading
+  if (isLoading) {
+    return null
+  }
 
   return (
     <div id="spark-effect-container" style={{ 

@@ -119,7 +119,7 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
 
   return (
     <div 
-      className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-lg" // Increased z-index
+      className="fixed inset-0 z-[999] bg-black" // Opaque background for better performance
       onClick={onClose}
     >
       <button

@@ -173,7 +173,7 @@ interface Campaign {
         title: "Storyboards",
         content: [
           {
-            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751412357/Storyboard_BumbleICK_wndnzk.webp",
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751495046/Storyboard_BumbleICK_2_ixhgy6.webp",
             title: "BumbleICK Storyboard",
             description: "Creative storyboard exploring project management workflow concepts"
           },
@@ -393,6 +393,61 @@ const creativeCodingCampaign: Campaign = {
             image: "https://player.vimeo.com/video/1093033927?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1",
             title: "Tag Trailer",
             description: "Official trailer showcasing the animated short film's key moments and visual style."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/video/upload/v1751503774/TagFullAnimatic_1_sbyfhg.webm",
+            title: "Tag Full Animatic",
+            description: "Complete animatic showing the full story sequence and timing for the Tag animated short film."
+          }
+        ]
+      },
+      {
+        title: "Backgrounds",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502491/Background1_bqz4j7.webp",
+            title: "Background 1",
+            description: "Environmental background design for the animated sequence."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502499/Background2_pcd0wt.webp",
+            title: "Background 2",
+            description: "Secondary background environment showcasing different locations."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502495/Background3_pzeikf.webp",
+            title: "Background 3",
+            description: "Third background design exploring varied environmental settings."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502498/Background4_lyal5h.webp",
+            title: "Background 4",
+            description: "Fourth background environment design for story progression."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502482/Background5.75_xsoji5.webp",
+            title: "Background 5.75",
+            description: "Intermediate background design variation for smooth transitions."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502481/Background5_ndu6r3.webp",
+            title: "Background 5",
+            description: "Fifth background environment showcasing key story moments."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502494/Background5.5_wvra0h.webp",
+            title: "Background 5.5",
+            description: "Mid-sequence background variation for narrative continuity."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502483/Background6_sp0rfn.webp",
+            title: "Background 6",
+            description: "Sixth background design featuring climactic scene environments."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502492/Background7_s1wbzr.webp",
+            title: "Background 7",
+            description: "Final background design concluding the environmental sequence."
           }
         ]
       },
@@ -525,6 +580,48 @@ const creativeCodingCampaign: Campaign = {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751419299/Jakob_Backhouse_BMDR16_Promo-Poster2-02_zm4inm.jpg",
             title: "Promotional Poster",
             description: "Marketing poster design promoting the Truckmate platform and services."
+          }
+        ]
+      }
+    ]
+  };
+
+  const mysafetyTVCampaign: Campaign = {
+    id: "MySafetyTV",
+    title: "MySafetyTV",
+    sections: [
+      {
+        title: "Main Training Video",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/video/upload/v1751424294/restraining_loads_pt1_1080p_vfoste.webm",
+            title: "Restraining Loads - Part 1",
+            description: "Safety training video focusing on proper load restraining techniques and best practices."
+          }
+        ]
+      },
+      {
+        title: "Storyboard Development",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751498588/Storyboard_MySafetyTV_xkokxt.webp",
+            title: "MySafetyTV Storyboard",
+            description: "Comprehensive storyboard outlining the visual narrative and educational sequence for the safety training content."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751498588/Storyboard_MySafetyTV_1_gerzlh.webp",
+            title: "MySafetyTV Storyboard Panel 2",
+            description: "Continuation of the storyboard showcasing the next sequence in the safety training content."
+          }
+        ]
+      },
+      {
+        title: "Safety Education Content",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751498588/HVO_Distractions_bblswu.webp",
+            title: "HVO Distractions",
+            description: "Educational material focusing on distraction awareness and prevention strategies for heavy vehicle operators."
           }
         ]
       }
@@ -742,21 +839,56 @@ export default function ProjectModal({
   // Enhanced scroll prevention that keeps background visible
   useEffect(() => {
     if (isOpen) {
-      // Store original overflow values
+      // Store original values
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyPosition = document.body.style.position;
+      const originalBodyTop = document.body.style.top;
+      const originalBodyWidth = document.body.style.width;
+      const scrollY = window.scrollY;
 
-      // Simply hide overflow to prevent scrolling while keeping background visible
+      // Prevent scrolling while keeping background visible
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      
+      // For mobile devices, also fix the body position to prevent scroll
+      if (isTouchDevice) {
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+      }
+
+      // Prevent touch scrolling on the modal overlay
+      const preventTouchScroll = (e: TouchEvent) => {
+        // Allow scrolling within the modal content, but prevent on the overlay
+        if (e.target === overlayRef.current) {
+          e.preventDefault();
+        }
+      };
+
+      // Add touch event listeners with passive: false to ensure preventDefault works
+      document.addEventListener('touchstart', preventTouchScroll, { passive: false });
+      document.addEventListener('touchmove', preventTouchScroll, { passive: false });
 
       return () => {
         // Restore original overflow
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalHtmlOverflow;
+        
+        // Restore original body styles and scroll position
+        if (isTouchDevice) {
+          document.body.style.position = originalBodyPosition;
+          document.body.style.top = originalBodyTop;
+          document.body.style.width = originalBodyWidth;
+          window.scrollTo(0, scrollY);
+        }
+
+        // Remove touch event listeners
+        document.removeEventListener('touchstart', preventTouchScroll);
+        document.removeEventListener('touchmove', preventTouchScroll);
       };
     }
-  }, [isOpen]);
+  }, [isOpen, isTouchDevice]);
 
   // Device detection
   useEffect(() => {
@@ -813,6 +945,21 @@ export default function ProjectModal({
       (e.target as HTMLElement)?.closest('[data-clickable-area="close"]')
     ) {
       handleClose()
+    }
+  }
+
+  // Prevent touch scrolling on overlay
+  const handleTouchMove = (e: React.TouchEvent) => {
+    // Only prevent if touching the overlay itself, not content within
+    if (e.target === overlayRef.current) {
+      e.preventDefault()
+    }
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Only prevent if touching the overlay itself, not content within
+    if (e.target === overlayRef.current) {
+      e.preventDefault()
     }
   }
 
@@ -1049,6 +1196,20 @@ export default function ProjectModal({
         ))}
       </div>
     );
+    } else if (projectId === 'MySafetyTV') {
+    return (
+      <div className="space-y-0">
+        {mysafetyTVCampaign.sections.map((section, idx) => (
+          <div key={idx}>
+            {'content' in section ? (
+              renderContentSection(section)
+            ) : (
+              renderPDFSection(section.pdfUrl, section.title, mysafetyTVCampaign.title)
+            )}
+          </div>
+        ))}
+      </div>
+    );
     } else {
       // For projects with just a single image
       return (
@@ -1077,11 +1238,18 @@ export default function ProjectModal({
   const modal = (
     <div 
       ref={overlayRef}
-      className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-md overflow-hidden"
+      className={`fixed inset-0 z-[9999] overflow-hidden ${
+        isTouchDevice 
+          ? 'bg-black' // Opaque background for mobile/touch devices
+          : 'bg-black/50 backdrop-blur-md' // Semi-transparent with blur for desktop
+      }`}
       onClick={handleOverlayClick}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       style={{
-        backdropFilter: 'blur(8px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+        // Only apply backdrop filters on non-touch devices for performance
+        backdropFilter: isTouchDevice ? 'none' : 'blur(8px) saturate(180%)',
+        WebkitBackdropFilter: isTouchDevice ? 'none' : 'blur(8px) saturate(180%)',
         width: '100vw',
         height: '100vh',
         maxWidth: '100vw',
@@ -1092,7 +1260,8 @@ export default function ProjectModal({
         bottom: 0,
         margin: 0,
         padding: 0,
-        transform: 'none'
+        transform: 'none',
+        touchAction: 'none' // Additional touch prevention
       }}
     >
       {/* Progress bar */}
@@ -1103,14 +1272,16 @@ export default function ProjectModal({
         />
       </div>
 
-      {/* Close button */}
-      <button 
-        onClick={handleClose}
-        className="absolute top-4 right-4 z-[10000] p-3 rounded-full bg-black/50 hover:bg-black/70 transition-all duration-200 hover:scale-110 active:scale-95"
-        aria-label="Close modal"
-      >
-        <X className="h-6 w-6 text-white" />
-      </button>
+      {/* Close button - hidden when image viewer is open */}
+      {!enlargedImage && (
+        <button 
+          onClick={handleClose}
+          className="absolute top-4 right-4 z-[10000] p-3 rounded-full bg-black/50 hover:bg-black/70 transition-all duration-200 hover:scale-110 active:scale-95"
+          aria-label="Close modal"
+        >
+          <X className="h-6 w-6 text-white" />
+        </button>
+      )}
 
       {/* Navigation buttons */}
       <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
@@ -1133,28 +1304,10 @@ export default function ProjectModal({
         </button>
       </div>
 
-      {/* Mobile bottom caption (condensed) */}
-      <div className="md:hidden absolute bottom-0 left-0 right-0 z-[9990] bg-gradient-to-t from-black/90 via-black/80 to-transparent backdrop-blur-sm">
-        <div className="px-4 pb-2 pt-6">
-          <h2 className="text-base font-bold text-white mb-1 leading-tight">{title}</h2>
-          <div className="min-h-[32px]">
-            {activeItem && activeItem.title && activeItem.title !== projectId && (
-              <div className="transition-all duration-200 ease-out">
-                <h3 className="text-xs font-medium text-white/90 mb-1 leading-tight">{activeItem.title}</h3>
-                {activeItem.description && (
-                  <p className="text-[10px] text-white/70 leading-tight">{activeItem.description}</p>
-                )}
-              </div>
-            )}
-            {!activeItem?.title && (
-              <p className="text-[10px] text-white/70 leading-tight">{description}</p>
-            )}
-          </div>
-        </div>
-      </div>
+
 
       {/* Modal content - constrained to viewport */}
-      <div className="flex flex-col md:flex-row w-full h-full px-3 pt-8 md:pt-0 pb-20 md:pb-8 md:gap-2 lg:gap-3 justify-start max-w-full max-h-full overflow-hidden">
+      <div className="flex flex-col md:flex-row w-full h-full px-3 pt-8 md:pt-0 pb-8 md:gap-2 lg:gap-3 justify-start max-w-full max-h-full overflow-hidden">
         {/* Title and description for mobile */}
         <div className="md:hidden w-full py-4">
           <div className="text-left">

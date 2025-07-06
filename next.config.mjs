@@ -13,7 +13,8 @@ const nextConfig = {
   compress: true,
   // Enable experimental features for better performance
   experimental: {
-    optimizeCss: true,
+    // Temporarily disabled optimizeCss to fix deployment issues
+    // optimizeCss: true,
     optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
   // Webpack optimizations

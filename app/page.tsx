@@ -1041,16 +1041,6 @@ export default function Home() {
                           e.stopPropagation();
                           handleProjectClick(project.id);
                         }}
-                        onTouchEnd={(e) => {
-                          // Ensure touch events work on mobile
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('📱 Touch end event on project:', project.id);
-                          handleProjectClick(project.id);
-                        }}
-                        onTouchStart={(e) => {
-                          console.log('📱 Touch start event on project:', project.id);
-                        }}
                         drag={false}
                         dragConstraints={false}
                         style={{

@@ -161,13 +161,33 @@ interface Campaign {
             description: "Complete storyboard for the Tales from the Sun project"
           }
         ]
+      },
+      {
+        title: "Campaign Strategy",
+        content: [
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751786770/TheIssueTalesFromTheSun_mw3w92.webp",
+            title: "The Issue",
+            description: "Problem statement and market context for the campaign"
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751786770/InsightTalesFromTheSun_ewdmrr.webp",
+            title: "Campaign Insight",
+            description: "Core insight driving the Tales from the Sun campaign strategy"
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751786770/SingleMindedMessageTalesFromTheSun_xdw2ad.webp",
+            title: "Single Minded Message",
+            description: "The focused message that drives all campaign communications"
+          }
+        ]
       }
     ]
   };
 
   const bumbleGanttCampaign: Campaign = {
     id: "bumble-gantt",
-    title: "BumbleGantt With The Wind",
+    title: "Bumble ICK Campaign",
     sections: [
       {
         title: "Storyboards",
@@ -175,13 +195,23 @@ interface Campaign {
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751495046/Storyboard_BumbleICK_2_ixhgy6.webp",
             title: "BumbleICK Storyboard",
-            description: "Creative storyboard exploring project management workflow concepts"
+            description: "This campaign was a mock collaboration with Bumble to promote their app. The insight that the campaign was based on was that Gen Z develop ICKS as an excuse for human imperfections. So we wanted to promote Bumble as an open and safe platform to talk about vulnerability. We created this Australian 'health and safety' tradie character that compassionately and humorously diagnoses ICKS and then explains how Bumble can help."
           },
           {
-            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751412360/StoryboardIck_udjdfx.webp",
-            title: "ICK Storyboard",
-            description: "Additional storyboard development for the BumbleGantt campaign"
-          }
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751763379/GenZDevelopsICKSSlide_khrq8c.webp",
+            title: "Insight",
+            description: "This campaign was a mock collaboration with Bumble to promote their app. The insight that the campaign was based on was that Gen Z develop ICKS as an excuse for human imperfections. So we wanted to promote Bumble as an open and safe platform to talk about vulnerability. We created this Australian 'health and safety' tradie character that compassionately and humorously diagnoses ICKS and then explains how Bumble can help."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751761838/KickTheIckSlide_kizwle.webp",
+            title: "ICK Billboard",
+            description: "Campaign billboard design for the BumbleGantt campaign. We wanted to create a billboard that would be funny and engaging for the target audience. Something that felt almost inappropriate so that it would stand out and get people talking."
+          },
+          {
+            image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751763379/CatchingIcksIsBadForYou_nvfjdh.webp",
+            title: "Campaign Concept",
+            description: "This campaign was a mock collaboration with Bumble to promote their app. The insight that the campaign was based on was that Gen Z develop ICKS as an excuse for human imperfections. So we wanted to promote Bumble as an open and safe platform to talk about vulnerability. We created this Australian 'health and safety' tradie character that compassionately and humorously diagnoses ICKS and then explains how Bumble can help."
+          },
         ]
       }
     ]
@@ -777,6 +807,7 @@ export default function ProjectModal({
   const overlayRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const imageRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const overlayClickable = useRef(false);
 
   // Set up intersection observer to track which image is in view
   useEffect(() => {
@@ -938,13 +969,28 @@ export default function ProjectModal({
     onClose()
   }
 
+  useEffect(() => {
+    if (isOpen) {
+      overlayClickable.current = false;
+      const timer = setTimeout(() => {
+        overlayClickable.current = true;
+      }, 250); // 250ms delay before allowing overlay to close
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   const handleOverlayClick = (e: React.MouseEvent) => {
+    // Prevent immediate close right after opening (especially on mobile)
+    if (!overlayClickable.current) {
+      return;
+    }
+
     // Close if clicking on overlay, content area when not on image/controls, or any blank space
     if (
       e.target === overlayRef.current || 
       (e.target as HTMLElement)?.closest('[data-clickable-area="close"]')
     ) {
-      handleClose()
+      handleClose();
     }
   }
 
@@ -1141,40 +1187,7 @@ export default function ProjectModal({
         {tagCampaign.sections.map((section, idx) => (
           <div key={idx}>
             {'content' in section ? (
-              <div className="space-y-0">
-                {section.content.map((item, i) => (
-                  <div 
-                    key={i} 
-                      className={`w-full ${isTouchDevice ? 'min-h-[70vh]' : 'h-[80vh] snap-start snap-always'} flex flex-col md:flex-row items-center justify-center ${isTouchDevice ? 'py-2 md:py-4' : 'py-4 md:py-4'} ${isTouchDevice ? 'px-2 md:px-14' : 'px-4 md:px-14'}`}
-                    data-image-info={JSON.stringify(item)}
-                  >
-                    <div className="w-full h-full flex flex-col items-center justify-center">
-                      {item.image.includes('player.vimeo.com') ? (
-                        <div className="w-full md:w-[90%] mx-auto flex items-center justify-center h-full">
-                          <div className="w-full max-w-4xl mx-auto relative" style={{paddingTop: '56.25%'}}>
-                            <iframe
-                              src={`${item.image}&loop=1`}
-                              className="absolute top-0 left-0 w-full h-full rounded-sm border border-white/10"
-                              frameBorder="0"
-                              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                              title={item.title}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="w-full md:w-[90%] mx-auto flex items-center justify-center h-full">
-                          <ProgressiveBlurImage
-                            src={item.image}
-                            alt={item.title}
-                              className="w-auto max-w-full max-h-[65vh] object-contain cursor-zoom-in"
-                            onClick={() => handleImageClick(item.image)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              renderContentSection(section)
             ) : (
               renderPDFSection(section.pdfUrl, section.title, tagCampaign.title)
             )}

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useMemo, useRef } from "react"
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import Script from "next/script"
@@ -39,6 +39,13 @@ export default function Home() {
   const [randomizedProjects, setRandomizedProjects] = useState<Project[]>([]);
   const [loadingItems, setLoadingItems] = useState<Record<string, boolean>>({});
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [visibleProjects, setVisibleProjects] = useState<Project[]>([]);
+  const [hasMoreProjects, setHasMoreProjects] = useState(true);
+  
+  // Debug hasMoreProjects state changes
+  useEffect(() => {
+    console.log('🔄 hasMoreProjects changed:', hasMoreProjects);
+  }, [hasMoreProjects]);
   const gridRef = useRef<HTMLDivElement>(null);
   const showreelLoaded = useRef(false);
   
@@ -88,6 +95,132 @@ export default function Home() {
   const [baseZIndex, setBaseZIndex] = useState(10);
   type DragKey = 'intro' | 'showreel' | 'categories' | 'projectsGrid' | 'footer'
   const [activeDragKey, setActiveDragKey] = useState<DragKey | null>(null);
+
+  // Performance optimization: Load projects in chunks
+  const PROJECTS_PER_CHUNK = 12;
+  const [currentChunk, setCurrentChunk] = useState(1);
+
+  // Define filtered projects first
+  const filteredProjects = randomizedProjects.filter((project: Project) => {
+    if (selectedCategories.length === 0) return true;
+    return project.categories.some((category: string) => selectedCategories.includes(category));
+  });
+  
+  // Debug sentinel element rendering
+  useEffect(() => {
+    const sentinel = document.getElementById('load-more-sentinel');
+    console.log('🎯 Sentinel element:', {
+      exists: !!sentinel,
+      hasMoreProjects,
+      visibleProjectsLength: visibleProjects.length,
+      filteredProjectsLength: filteredProjects.length
+    });
+  }, [hasMoreProjects, visibleProjects.length, filteredProjects.length]);
+
+  // Load more projects when needed
+  const loadMoreProjects = useCallback(() => {
+    const startIndex = (currentChunk - 1) * PROJECTS_PER_CHUNK;
+    const endIndex = startIndex + PROJECTS_PER_CHUNK;
+    const newProjects = filteredProjects.slice(startIndex, endIndex);
+    
+    console.log('🔄 loadMoreProjects called:', {
+      startIndex,
+      endIndex,
+      newProjectsLength: newProjects.length,
+      totalFilteredProjects: filteredProjects.length,
+      currentChunk,
+      hasMoreProjects,
+      visibleProjectsLength: visibleProjects.length
+    });
+    
+    if (newProjects.length > 0) {
+      setVisibleProjects(prev => [...prev, ...newProjects]);
+      setCurrentChunk(prev => prev + 1);
+      
+      // Check if we've reached the end
+      if (endIndex >= filteredProjects.length) {
+        console.log('✅ No more projects to load, setting hasMoreProjects to false');
+        setHasMoreProjects(false);
+      } else {
+        console.log('📦 Loaded chunk, more projects available');
+      }
+    } else {
+      // No more projects to load
+      console.log('❌ No new projects found, setting hasMoreProjects to false');
+      setHasMoreProjects(false);
+    }
+  }, [filteredProjects, currentChunk, visibleProjects.length]);
+
+  // Initialize visible projects
+  useEffect(() => {
+    console.log('🔄 Initializing visible projects:', {
+      filteredProjectsLength: filteredProjects.length,
+      selectedCategories
+    });
+    
+    if (filteredProjects.length > 0) {
+      const initialProjects = filteredProjects.slice(0, PROJECTS_PER_CHUNK);
+      setVisibleProjects(initialProjects);
+      const hasMore = filteredProjects.length > PROJECTS_PER_CHUNK;
+      setHasMoreProjects(hasMore);
+      setCurrentChunk(1);
+      console.log('✅ Initialized with projects:', {
+        initialProjectsLength: initialProjects.length,
+        hasMore,
+        totalProjects: filteredProjects.length
+      });
+    } else {
+      // No projects match the filter
+      setVisibleProjects([]);
+      setHasMoreProjects(false);
+      setCurrentChunk(1);
+      console.log('❌ No projects match filter');
+    }
+  }, [filteredProjects]);
+
+  // Intersection Observer for infinite loading
+  useEffect(() => {
+    // Use a timeout to ensure the sentinel element is rendered
+    const timeoutId = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            console.log('👁️ Intersection observer triggered:', {
+              isIntersecting: entry.isIntersecting,
+              hasMoreProjects,
+              visibleProjectsLength: visibleProjects.length,
+              totalFilteredProjects: filteredProjects.length
+            });
+            
+            if (entry.isIntersecting && hasMoreProjects) {
+              console.log('🚀 Loading more projects...');
+              loadMoreProjects();
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      const sentinel = document.getElementById('load-more-sentinel');
+      console.log('🔍 Setting up intersection observer:', {
+        sentinelExists: !!sentinel,
+        hasMoreProjects,
+        visibleProjectsLength: visibleProjects.length
+      });
+      
+      if (sentinel && hasMoreProjects) {
+        observer.observe(sentinel);
+      }
+
+      return () => {
+        if (sentinel) {
+          observer.unobserve(sentinel);
+        }
+      };
+    }, 100); // Small delay to ensure DOM is ready
+
+    return () => clearTimeout(timeoutId);
+  }, [loadMoreProjects, hasMoreProjects, visibleProjects.length, filteredProjects.length]);
 
   useEffect(() => {
     // Check if dark mode is active
@@ -188,10 +321,12 @@ export default function Home() {
         isDragging,
         isPostDrag,
         selectedProject,
+        isDraggable,
         currentTime: new Date().toISOString()
       });
       
-      if (isDragging || isPostDrag) {
+      // Only prevent clicks if dragging is actually enabled and we're in a drag state
+      if (isDraggable && (isDragging || isPostDrag)) {
         console.log('🚫 Click prevented due to drag state');
         return; // Prevent clicks if dragging or just finished dragging
       }
@@ -279,6 +414,16 @@ export default function Home() {
   const toggleCategory = handleToggleCategory;
 
   const projects: Project[] = [
+    // Animation Projects - Featured First
+    {
+      id: "Tag",
+      title: "Tag",
+      image: "https://res.cloudinary.com/donmpenyc/video/upload/v1750915229/TagFullInitial_nyxuqe.webm",
+      aspectRatio: AspectRatio.PORTRAIT,
+      bgColor: "bg-[#5C3E3C]",
+      description: "An animated short film exploring character development and storytelling through visual narrative.",
+      categories: ["Animation", "Projects"],
+    },
     // Paintings and Illustrations
     {
       id: "Illustrations",
@@ -301,22 +446,12 @@ export default function Home() {
     },
     {
       id: "BumbleGanttWithTheWind",
-      title: "BumbleGantt With The Wind",
+      title: "Bumble ICK Campaign",
       image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751495046/Storyboard_BumbleICK_2_ixhgy6.webp",
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
-      description: "Project management tool redesign focusing on user experience and workflow optimization.",
+      description: "Mock collaboration with Bumble addressing how Gen Z develop 'ICKs' as an excuse for human imperfections, promoting the app as a safe platform for vulnerability.",
       categories: ["Creative Advertising", "Graphic Design", "Projects"],
-    },
-    // Animation Projects
-    {
-      id: "Tag",
-      title: "Tag",
-      image: "https://res.cloudinary.com/donmpenyc/video/upload/v1750915229/TagFullInitial_nyxuqe.webm",
-      aspectRatio: AspectRatio.PORTRAIT,
-      bgColor: "bg-[#5C3E3C]",
-      description: "An animated short film exploring character development and storytelling through visual narrative.",
-      categories: ["Animation", "Projects"],
     },
     {
       id: "SmokeAnimation",
@@ -378,7 +513,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
     
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.0"; // Increment this when making changes to project data
+    const dataVersion = "1.3"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem('projectDataVersion');
     
     if (storedProjects.length === projects.length && storedVersion === dataVersion) {
@@ -489,11 +624,6 @@ export default function Home() {
       setSelectedProject(projects[currentProjectIndex - 1].id);
     }
   };
-
-  const filteredProjects = randomizedProjects.filter((project: Project) => {
-    if (selectedCategories.length === 0) return true;
-    return project.categories.some((category: string) => selectedCategories.includes(category));
-  });
 
   // Add skeleton array for the loading state
   const skeletonProjects = useMemo(() => Array(9).fill(0).map((_, i) => i), []);
@@ -713,28 +843,34 @@ export default function Home() {
                     </h1>
                     <div className="w-80 h-[1px] bg-black/50 dark:bg-white/50 mx-auto lg:mx-0 mb-6"></div>
                     <p className="text-base md:text-lg text-black dark:text-white mb-6 whitespace-normal break-normal hyphens-none">
-                      A
+                      I am a
                       {" "}
                       <span className="font-bold text-black dark:text-white">
-                        designer
+                        Motion designer and 2D animator
                       </span>
                       {" "}
-                      and
+                      with
                       {" "}
                       <span className="font-bold text-black dark:text-white">
-                        animator
+                        3+ years of professional experience
                       </span>
                       {" "}
-                      who thrives on uncovering
+                      creating
                       {" "}
                       <span className="font-bold text-black dark:text-white">
-                        compelling ideas
+                        explainer videos, promotional content, and visual narratives
                       </span>
                       {" "}
-                      and bringing them to life through
+                      that drive results. Skilled in the
                       {" "}
                       <span className="font-bold text-black dark:text-white">
-                        great design.
+                        complete animation pipeline
+                      </span>
+                      {" "}
+                      from concept to delivery, with expertise in
+                      {" "}
+                      <span className="font-bold text-black dark:text-white">
+                        After Effects, Toon Boom Harmony, and Illustrator.
                       </span>
                     </p>
                     <div className="flex justify-center lg:justify-start space-x-4">
@@ -877,7 +1013,7 @@ export default function Home() {
                 className="project-masonry" 
                 columnClassName="project-masonry-column"
               >
-                {filteredProjects.map((project, index) => {
+                {visibleProjects.map((project, index) => {
                   const spans = getGridSpan(project);
                   const aspectRatio = imageDimensions[project.id] 
                     ? imageDimensions[project.id].width / imageDimensions[project.id]?.height 
@@ -901,7 +1037,29 @@ export default function Home() {
                     >
                       <motion.div
                         className="group relative cursor-pointer"
-                        onClick={() => handleProjectClick(project.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleProjectClick(project.id);
+                        }}
+                        onTouchEnd={(e) => {
+                          // Ensure touch events work on mobile
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('📱 Touch end event on project:', project.id);
+                          handleProjectClick(project.id);
+                        }}
+                        onTouchStart={(e) => {
+                          console.log('📱 Touch start event on project:', project.id);
+                        }}
+                        drag={false}
+                        dragConstraints={false}
+                        style={{
+                          // Ensure proper touch handling on mobile
+                          touchAction: 'manipulation',
+                          WebkitTouchCallout: 'none',
+                          WebkitUserSelect: 'none',
+                          userSelect: 'none'
+                        }}
                       >
                         <div className="relative border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300">
                           <div className="project-item-inner" style={{ paddingBottom: `${(1 / aspectRatio) * 100}%` }}>
@@ -1008,6 +1166,31 @@ export default function Home() {
                   );
                 })}
               </Masonry>
+              
+              {/* Load more sentinel for infinite scrolling */}
+              {hasMoreProjects && (
+                <div 
+                  id="load-more-sentinel" 
+                  className="h-10 w-full flex items-center justify-center"
+                  onMouseEnter={() => {
+                    console.log('🖱️ Mouse entered sentinel, triggering load');
+                    if (hasMoreProjects) {
+                      loadMoreProjects();
+                    }
+                  }}
+                >
+                  <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+              {!hasMoreProjects && visibleProjects.length > 0 && (
+                <div className="h-10 w-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
+                  All projects loaded
+                </div>
+              )}
+              {/* Debug info */}
+              <div className="text-xs text-gray-400 p-2 text-center">
+                Debug: {visibleProjects.length}/{filteredProjects.length} projects, hasMore: {hasMoreProjects.toString()}
+              </div>
             </div>
           )}
         </motion.main>

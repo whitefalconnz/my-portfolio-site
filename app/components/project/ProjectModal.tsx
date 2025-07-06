@@ -985,7 +985,15 @@ export default function ProjectModal({
       return;
     }
 
-    // Close if clicking on overlay, content area when not on image/controls, or any blank space
+    // On touch devices, only close if clicking directly on the overlay background
+    if (isTouchDevice) {
+      if (e.target === overlayRef.current) {
+        handleClose();
+      }
+      return;
+    }
+
+    // On desktop, close if clicking on overlay or content area marked as closeable
     if (
       e.target === overlayRef.current || 
       (e.target as HTMLElement)?.closest('[data-clickable-area="close"]')
@@ -1332,10 +1340,15 @@ export default function ProjectModal({
                 {/* Content area */}
         <div 
           ref={contentRef}
-          data-clickable-area="close"
+          data-clickable-area={isTouchDevice ? "" : "close"}
           onScroll={handleScroll}
           className="w-full md:w-[60%] lg:w-[62%] flex-1 overflow-y-auto relative md:pr-4 lg:pr-6 max-w-full max-h-full"
           onClick={(e) => {
+            // Don't close on touch devices to prevent accidental closes
+            if (isTouchDevice) {
+              return;
+            }
+            
             // Don't close if clicking on images, videos, or interactive elements
             const target = e.target as HTMLElement;
             if (

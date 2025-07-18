@@ -205,7 +205,7 @@ interface Campaign {
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751761838/KickTheIckSlide_kizwle.webp",
             title: "ICK Billboard",
-            description: "Campaign billboard design for the BumbleGantt campaign. We wanted to create a billboard that would be funny and engaging for the target audience. Something that felt almost inappropriate so that it would stand out and get people talking."
+            description: "Campaign billboard design for the BumbleGantt campaign. We created a billboard that would be funny and engaging for the target audience. Something that felt almost inappropriate so that it would stand out and get people talking."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751763379/CatchingIcksIsBadForYou_nvfjdh.webp",
@@ -422,12 +422,12 @@ const creativeCodingCampaign: Campaign = {
           {
             image: "https://player.vimeo.com/video/1093033927?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1",
             title: "Tag Trailer",
-            description: "Official trailer showcasing the animated short film's key moments and visual style."
+            description: "Born from a personal moment of fever-induced terror, the narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle “rubber hose” aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/video/upload/v1751503774/TagFullAnimatic_1_sbyfhg.webm",
-            title: "Tag Full Animatic",
-            description: "Complete animatic showing the full story sequence and timing for the Tag animated short film."
+            title: "Tag Full Short Film Animatic",
+            description: "I began storyboarding this concept years ago in collaboration with Michelle Pretorious, we each developed storyboards intending to animate whichever we preferred together. Though our collaboration ended due to time constraints, I chose to develop my early storyboard individually. What started as personally interesting animation revealed deeper meaning through reflective practices of documenting my thoughts through writing, getting feedback from peers, friends and lecturers through the animatic, character development and a poem. "
           }
         ]
       },
@@ -437,47 +437,47 @@ const creativeCodingCampaign: Campaign = {
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502491/Background1_bqz4j7.webp",
             title: "Background 1",
-            description: "Environmental background design for the animated sequence."
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502499/Background2_pcd0wt.webp",
             title: "Background 2",
-            description: "Secondary background environment showcasing different locations."
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502495/Background3_pzeikf.webp",
             title: "Background 3",
-            description: "Third background design exploring varied environmental settings."
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502498/Background4_lyal5h.webp",
             title: "Background 4",
-            description: "Fourth background environment design for story progression."
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort . Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502482/Background5.75_xsoji5.webp",
-            title: "Background 5.75",
-            description: "Intermediate background design variation for smooth transitions."
+            title: "Background 5",
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502481/Background5_ndu6r3.webp",
-            title: "Background 5",
-            description: "Fifth background environment showcasing key story moments."
+            title: "Background 6",
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502494/Background5.5_wvra0h.webp",
-            title: "Background 5.5",
-            description: "Mid-sequence background variation for narrative continuity."
+            title: "Background 7",
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502483/Background6_sp0rfn.webp",
-            title: "Background 6",
-            description: "Sixth background design featuring climactic scene environments."
+            title: "Background 8",
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1751502492/Background7_s1wbzr.webp",
-            title: "Background 7",
-            description: "Final background design concluding the environmental sequence."
+            title: "Background 9",
+            description: "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful."
           }
         ]
       },
@@ -486,13 +486,13 @@ const creativeCodingCampaign: Campaign = {
         content: [
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730592/Character_Model_Sheet_Sketches_q8gmcr.webp",
-            title: "Character Model Sheet Sketches",
-            description: "Initial character design explorations and construction sketches."
+            title: "Initial Character Model Sheet Sketches",
+            description: "Initially when developing my character I was thinking about creating them out of simple shapes so that they could be easily maniputed in 3D. I also knew that since the shortfilm revolved around the characters expressions that the face would have to be able to show this"
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730593/CharacterColourPicking_swb8uu.webp",
             title: "Character Color Picking",
-            description: "Color palette exploration and selection process for main characters."
+            description: "While figuring out what colour I wanted my character to be I wanted them to feel relatable so the audience could see themselvse in them."
           },
           {
             image: "https://res.cloudinary.com/donmpenyc/image/upload/v1750730591/Character_Model_Sheet_Colour_jefo2v.webp",
@@ -1369,7 +1369,7 @@ export default function ProjectModal({
         </div>
 
         {/* Title and description sidebar - desktop only (enhanced) */}
-        <div className="hidden md:block md:w-[35%] lg:w-[32%] xl:w-[30%] md:pl-6 lg:pl-8 xl:pl-10 md:pr-14 lg:pr-20 xl:pr-24 flex-none flex flex-col overflow-y-auto mt-14 lg:mt-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-4 max-w-full max-h-full">
+        <div className="md:block md:w-[35%] lg:w-[32%] xl:w-[30%] md:pl-6 lg:pl-8 xl:pl-10 md:pr-14 lg:pr-20 xl:pr-24 flex-none flex flex-col overflow-y-auto mt-14 lg:mt-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-4 max-w-full max-h-full">
           <div className="text-left">
             <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 leading-tight">{title}</h2>
             <p className="text-base text-white/90 mb-6 leading-relaxed">{description}</p>

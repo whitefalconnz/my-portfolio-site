@@ -41,7 +41,22 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [visibleProjects, setVisibleProjects] = useState<Project[]>([]);
   const [hasMoreProjects, setHasMoreProjects] = useState(true);
-  
+  const VimeoPlayer = ({ vimeoId, aspectRatio }) => {
+    const src = `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&controls=0&autoplay=1&loop=1&muted=1`;
+    
+    return (
+      <iframe
+        src={src}
+        width="100%"
+        height="100%"
+        frameBorder="0"
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        title={`Video player`}
+        style={{ aspectRatio: aspectRatio === AspectRatio.PORTRAIT ? '9/16' : '16/9' }}
+      />
+    );
+  };
   // Debug hasMoreProjects state changes
   useEffect(() => {
     console.log('🔄 hasMoreProjects changed:', hasMoreProjects);
@@ -418,12 +433,12 @@ export default function Home() {
     {
       id: "Tag",
       title: "Tag",
-      image: "https://res.cloudinary.com/donmpenyc/video/upload/v1750915229/TagFullInitial_nyxuqe.webm",
+      vimeoId: "1093033927",
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description: "This project is an animated trailer for a 2D short film that visualizes the visceral, reality-warping experience of a panic attack.", // <-- Modified description
       categories: ["Animation", "Projects"],
-    },
+    }
     // Paintings and Illustrations
     {
       id: "Illustrations",

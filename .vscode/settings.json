@@ -1,3 +1,17 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "javascript.preferGoToSourceDefinition": true,
+    "editor.formatOnSave": true,
+    "css.validate": false,
+    "scss.validate": false,
+    "less.validate": false,
+    "css.lint.unknownAtRules": "ignore",
+    "scss.lint.unknownAtRules": "ignore",
+    "less.lint.unknownAtRules": "ignore",
+    "css.lint.propertyIgnoredDueToDisplay": "ignore",
+    "scss.lint.propertyIgnoredDueToDisplay": "ignore",
+    "less.lint.propertyIgnoredDueToDisplay": "ignore",
+    "css.lint.vendorPrefix": "ignore",
+    "scss.lint.vendorPrefix": "ignore",
+    "less.lint.vendorPrefix": "ignore"
 }

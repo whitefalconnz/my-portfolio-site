@@ -41,4 +41,13 @@ const nextConfig = {
   },
 };
 
-export default nextConfig; 
+export default {
+  images: {
+    domains: [
+      'media.jakobbackhouse.com',
+      'res.cloudinary.com',
+      // ...any other domains you use
+    ],
+  },
+  // ...other config
+}

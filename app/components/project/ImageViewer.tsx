@@ -1,73 +1,79 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { X, ZoomIn, ZoomOut, Move } from 'lucide-react'
-import Image from 'next/image'
+import { useState, useEffect, useRef } from "react";
+import { X, ZoomIn, ZoomOut, Move } from "lucide-react";
+import Image from "next/image";
 
 interface ImageViewerProps {
-  src: string
-  alt: string
-  onClose: () => void
+  src: string;
+  alt: string;
+  onClose: () => void;
 }
 
 export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
-  const [scale, setScale] = useState(1)
-  const [isZoomed, setIsZoomed] = useState(false)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const dragRef = useRef<{ 
+  const [isLoading, setIsLoading] = useState(true);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [scale, setScale] = useState(1);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<{
     startX: number;
     startY: number;
     lastX: number;
     lastY: number;
     optimalZoomLevel?: number;
-  }>({ startX: 0, startY: 0, lastX: 0, lastY: 0 })
+  }>({ startX: 0, startY: 0, lastX: 0, lastY: 0 });
 
   useEffect(() => {
-    const img = new window.Image()
-    img.src = src
+    const img = new window.Image();
+    img.src = src;
     img.onload = () => {
-      const aspectRatio = img.width / img.height
-      const maxWidth = window.innerWidth * 0.95
-      const maxHeight = window.innerHeight * 0.95
-      
-      let width = img.width
-      let height = img.height
+      const aspectRatio = img.width / img.height;
+      const maxWidth = window.innerWidth * 0.95;
+      const maxHeight = window.innerHeight * 0.95;
+
+      let width = img.width;
+      let height = img.height;
 
       // Store original dimensions for potential use in zooming
-      const originalWidth = width
-      const originalHeight = height
+      const originalWidth = width;
+      const originalHeight = height;
 
       // Scale down large images to fit viewport
       if (width > maxWidth) {
-        width = maxWidth
-        height = width / aspectRatio
+        width = maxWidth;
+        height = width / aspectRatio;
       }
-      
+
       if (height > maxHeight) {
-        height = maxHeight
-        width = height * aspectRatio
+        height = maxHeight;
+        width = height * aspectRatio;
       }
 
       // Calculate optimal zoom level based on original image size
-      const optimalZoomLevel = Math.min(3, Math.max(2, Math.min(
-        originalWidth / width,
-        originalHeight / height,
-        4 // Cap maximum zoom at 4x
-      )))
+      const optimalZoomLevel = Math.min(
+        3,
+        Math.max(
+          2,
+          Math.min(
+            originalWidth / width,
+            originalHeight / height,
+            4 // Cap maximum zoom at 4x
+          )
+        )
+      );
 
-      setDimensions({ width, height })
+      setDimensions({ width, height });
       // Store optimal zoom level for later use
-      setScale(1)
+      setScale(1);
       // We'll use optimalZoomLevel when zooming in
       dragRef.current = {
         ...dragRef.current,
-        optimalZoomLevel
-      }
-    }
-  }, [src])
+        optimalZoomLevel,
+      };
+    };
+  }, [src]);
 
   const handleDragStart = (e: React.MouseEvent) => {
     if (!isZoomed) return;
@@ -77,7 +83,7 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
       startX: e.pageX - position.x,
       startY: e.pageY - position.y,
       lastX: position.x,
-      lastY: position.y
+      lastY: position.y,
     };
   };
 
@@ -94,11 +100,11 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
 
   useEffect(() => {
     if (isDragging) {
-      window.addEventListener('mousemove', handleDragMove);
-      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener("mousemove", handleDragMove);
+      window.addEventListener("mouseup", handleDragEnd);
       return () => {
-        window.removeEventListener('mousemove', handleDragMove);
-        window.removeEventListener('mouseup', handleDragEnd);
+        window.removeEventListener("mousemove", handleDragMove);
+        window.removeEventListener("mouseup", handleDragEnd);
       };
     }
   }, [isDragging]);
@@ -118,7 +124,7 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-[999] bg-black" // Opaque background for better performance
       onClick={onClose}
     >
@@ -148,13 +154,13 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
       )}
 
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div 
+        <div
           className={`
             relative transition-all duration-300 origin-center
-            ${isDragging ? 'cursor-grabbing' : isZoomed ? 'cursor-grab' : 'cursor-zoom-in'}
+            ${isDragging ? "cursor-grabbing" : isZoomed ? "cursor-grab" : "cursor-zoom-in"}
           `}
-          style={{ 
-            width: dimensions.width, 
+          style={{
+            width: dimensions.width,
             height: dimensions.height,
             transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
           }}
@@ -173,7 +179,7 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
               startY: touch.pageY - position.y,
               lastX: position.x,
               lastY: position.y,
-              optimalZoomLevel: dragRef.current.optimalZoomLevel
+              optimalZoomLevel: dragRef.current.optimalZoomLevel,
             };
           }}
           onTouchMove={(e) => {
@@ -200,15 +206,14 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
             priority
             className={`
               object-contain transition-all duration-500
-              ${isLoading ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}
+              ${isLoading ? "scale-95 opacity-0" : "scale-100 opacity-100"}
             `}
             onLoadingComplete={() => setIsLoading(false)}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 80vw"
-            unoptimized={true}
           />
         </div>
       </div>
-      
+
       {/* Image information at bottom */}
       <div className="absolute bottom-4 left-0 right-0 flex justify-center">
         <div className="bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full text-white/80 text-sm max-w-[90%] truncate">
@@ -216,5 +221,5 @@ export default function ImageViewer({ src, alt, onClose }: ImageViewerProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

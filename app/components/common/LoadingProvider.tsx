@@ -1,23 +1,21 @@
-"use client"
+"use client";
 
-import { useEffect } from 'react'
-import LoadingScreen from './LoadingCube'
-import ContentWrapper from './ContentWrapper'
-import { useLoading } from '../../contexts/LoadingContext'
+import { useEffect } from "react";
+import LoadingScreen from "./LoadingCube";
+import ContentWrapper from "./ContentWrapper";
+import { useLoading } from "../../contexts/LoadingContext";
 
 export default function LoadingProvider({
-  children
+  children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   const { isLoading, transitionState } = useLoading();
 
   return (
     <>
       {isLoading && <LoadingScreen transitionState={transitionState} />}
-      <ContentWrapper isLoading={isLoading}>
-        {children}
-      </ContentWrapper>
+      <ContentWrapper isLoading={isLoading}>{children}</ContentWrapper>
     </>
   );
 }

@@ -17,5 +17,6 @@ export interface Project {
   aspectRatio: AspectRatio;
   bgColor: string;
   description: string;
-  categories: string[];  // Added categories property
+  categories: string[];
+  vimeoId?: string;  // Added optional vimeoId property
 }

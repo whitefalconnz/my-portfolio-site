@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { useScrollInView } from '../hooks/useScrollInView'
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useScrollInView } from "../hooks/useScrollInView";
 
 interface BlurImageProps {
-  src: string
-  alt: string
-  width: number
-  height: number
-  quality?: number
-  priority?: boolean
-  className?: string
-  sizes?: string
-  unoptimized?: boolean
-  onClick?: () => void
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  quality?: number;
+  priority?: boolean;
+  className?: string;
+  sizes?: string;
+  onClick?: () => void;
+  fill?: boolean;
 }
 
 export default function BlurImage({
@@ -22,91 +22,73 @@ export default function BlurImage({
   alt,
   width,
   height,
-  quality = 100,
+  quality = 75,
   priority = false,
   className = "",
-  sizes = "(max-width: 1280px) 100vw, 70vw",
-  unoptimized = true,
-  onClick
+  sizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw",
+  onClick,
+  fill = false,
 }: BlurImageProps) {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [loadingProgress, setLoadingProgress] = useState(0)
-  const [isMobile, setIsMobile] = useState(false)
-  
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const { ref, isInView } = useScrollInView({
     threshold: 0.1,
-    triggerOnce: true
-  })
+    triggerOnce: true,
+    rootMargin: "50px",
+  });
 
-  // Detect mobile device
+  // Reset loading state when src changes
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    setIsLoaded(false);
+    setIsLoading(true);
+  }, [src]);
 
-  // Simulate loading progress
-  useEffect(() => {
-    if (!isInView && !priority) return
-    
-    let interval: NodeJS.Timeout
-    if (!isLoaded) {
-      // Start at initial blur level
-      setLoadingProgress(10)
-      
-      // Simulate progressive loading by gradually reducing blur
-      interval = setInterval(() => {
-        setLoadingProgress(prev => {
-          const newProgress = prev + Math.random() * 10
-          return newProgress < 70 ? newProgress : 70  // Cap at 70% until actual load completes
-        })
-      }, 200)
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isInView, isLoaded, priority])
+  // Generate transparent blur data URL for placeholder
+  const blurDataURL = `data:image/svg+xml;base64,${Buffer.from(
+    `<svg width="${width}" height="${height}" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="transparent"/>
+    </svg>`
+  ).toString("base64")}`;
 
-  // Create a simple blurred placeholder using base64 directly
-  const blurDataURL = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTAxMDEwIi8+PC9zdmc+'
-
-  // Calculate blur amount based on loading progress
-  const blurAmount = isLoaded ? 0 : Math.max(20 - (loadingProgress / 5), 0)
+  const handleLoad = () => {
+    setIsLoaded(true);
+    setIsLoading(false);
+  };
 
   return (
     <div ref={ref} className="relative w-auto h-auto max-w-full max-h-full">
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-900 animate-pulse opacity-30"></div>
-      )}
       {(isInView || priority) && (
-        <Image
-          src={src}
-          alt={alt}
-          width={isMobile ? Math.min(width, 1280) : width}
-          height={isMobile ? Math.min(height, 720) : height}
-          quality={isMobile ? Math.min(quality, 75) : quality}
-          priority={priority}
-          loading={priority ? 'eager' : 'lazy'}
-          className={`${className} transition-all duration-300 ease-in-out`}
-          style={{
-            opacity: isLoaded ? 1 : (0.4 + loadingProgress / 100 * 0.6),
-            filter: `blur(${blurAmount}px)`
-          }}
-          sizes={sizes}
-          unoptimized={unoptimized}
-          onClick={onClick}
-          onLoadingComplete={() => {
-            setIsLoaded(true)
-            setLoadingProgress(100)
-          }}
-          placeholder="blur"
-          blurDataURL={blurDataURL}
-        />
+        <div className="relative">
+          <Image
+            src={src}
+            alt={alt}
+            width={fill ? undefined : width}
+            height={fill ? undefined : height}
+            fill={fill}
+            quality={quality}
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
+            className={`${className} transition-all duration-700 ease-out ${
+              isLoaded
+                ? "opacity-100 blur-0 scale-100"
+                : "opacity-60 blur-sm scale-95"
+            }`}
+            sizes={sizes}
+            onClick={onClick}
+            onLoad={handleLoad}
+            placeholder="blur"
+            blurDataURL={blurDataURL}
+          />
+
+          {/* Simple loading indicator overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-500">
+              <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin opacity-50"></div>
+            </div>
+          )}
+        </div>
       )}
     </div>
-  )
-} 
+  );
+}

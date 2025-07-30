@@ -115,6 +115,8 @@ export default function Home() {
   // Add state for filter button visibility based on scroll
   const [showFilterButton, setShowFilterButton] = useState(false);
   const categoriesRef = useRef<HTMLDivElement>(null);
+
+  // Hero context
   const { showHero, heroHeight } = useHero();
 
   // Tooltip state for illustration
@@ -183,8 +185,13 @@ export default function Home() {
   // Add scroll listener to show filter button when past featured section
   useEffect(() => {
     const handleScroll = () => {
+      // Show filter button when user scrolls past the featured section
+      // We'll use a scroll position threshold instead of element detection for better performance
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
+
+      // Show button when scrolled past approximately where featured section ends
+      // This is roughly after hero section + featured section (estimated ~1200px)
       setShowFilterButton(scrollY > viewportHeight * 1.2);
     };
 
@@ -196,35 +203,106 @@ export default function Home() {
     };
   }, []);
 
+  // Reset positions function
   const resetPositions = () => {
-    // This function is empty as the drag functionality was removed
+    // Function kept for compatibility but emptied since drag functionality was removed
   };
 
+  // Track when any element is dragged
   const onDragEnd = () => {
-    // This function is empty as the drag functionality was removed
+    // Function kept for compatibility but emptied since drag functionality was removed
   };
 
-  // *** MODIFIED FUNCTION ***
-  // Safe click handler that prevents clicks during/after drag
-  const handleProjectClick = (projectId: string) => {
-    console.log("🔥 handleProjectClick called for project:", projectId);
+  // Enhanced mobile-friendly click handler
+  const handleProjectClick = (
+    projectId: string,
+    event?: React.MouseEvent | React.TouchEvent
+  ) => {
+    console.log("🔥 handleProjectClick called:", {
+      projectId,
+      selectedProject,
+      currentTime: new Date().toISOString(),
+      eventType: event?.type,
+    });
 
-    // First, set the project state to trigger the modal opening.
-    // This is the most important step and should happen immediately.
-    setSelectedProject(projectId);
-    console.log("✅ setSelectedProject called. Modal should now open.");
+    // Prevent event bubbling and default behavior
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-    // Now, run the memory cleanup optimizations.
-    // This can happen after the state update has been dispatched.
-    logMemoryUsage("Before modal open");
-    clearHomePageMedia();
-    setTimeout(() => logMemoryUsage("After media cleared"), 100);
+    console.log("✅ About to call setSelectedProject with:", projectId);
+
+    // Add a small delay to ensure state updates properly on mobile
+    requestAnimationFrame(() => {
+      // Log memory usage before clearing
+      logMemoryUsage("Before modal open");
+
+      // Clear home page media to reduce memory usage
+      clearHomePageMedia();
+
+      // Log memory usage after clearing
+      setTimeout(() => logMemoryUsage("After media cleared"), 100);
+
+      setSelectedProject(projectId);
+      console.log("✅ setSelectedProject called successfully");
+    });
+  };
+
+  // Mobile-optimized touch handlers
+  const handleTouchStart = (projectId: string) => (event: React.TouchEvent) => {
+    console.log("📱 Touch start on project:", projectId);
+    // Store the initial touch to compare with touchend
+    const touch = event.touches[0];
+    (event.currentTarget as any).initialTouch = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+    };
+  };
+
+  const handleTouchEnd = (projectId: string) => (event: React.TouchEvent) => {
+    console.log("📱 Touch end on project:", projectId);
+    const element = event.currentTarget as any;
+    const initialTouch = element.initialTouch;
+
+    if (!initialTouch) {
+      console.log("📱 No initial touch found, treating as click");
+      handleProjectClick(projectId, event);
+      return;
+    }
+
+    const changedTouch = event.changedTouches[0];
+    const deltaX = Math.abs(changedTouch.clientX - initialTouch.x);
+    const deltaY = Math.abs(changedTouch.clientY - initialTouch.y);
+    const deltaTime = Date.now() - initialTouch.time;
+
+    // Consider it a tap if movement is minimal and duration is short
+    const isTap = deltaX < 10 && deltaY < 10 && deltaTime < 500;
+
+    console.log("📱 Touch analysis:", {
+      deltaX,
+      deltaY,
+      deltaTime,
+      isTap,
+    });
+
+    if (isTap) {
+      handleProjectClick(projectId, event);
+    }
+
+    // Clean up
+    delete element.initialTouch;
   };
 
   const categories = ["Animation", "Creative Advertising", "Illustration"];
 
+  // Safe toggle category handler that prevents clicks during/after drag
   const handleToggleCategory = (category: string) => {
+    // Save current window scroll position
     const scrollPosition = window.scrollY;
+
+    // Add filtering class for smooth transition
     const masonryElement = document.querySelector(".project-masonry");
     if (masonryElement) {
       masonryElement.classList.add("filtering");
@@ -236,10 +314,12 @@ export default function Home() {
         : [...prev, category]
     );
 
+    // Reset loading states for newly visible projects
     setTimeout(() => {
       setLoadingItems((prev) => {
         const newLoadingStates = { ...prev };
         filteredProjects.forEach((project) => {
+          // Only reset if the project wasn't already visible
           if (!prev.hasOwnProperty(project.id)) {
             newLoadingStates[project.id] = true;
           }
@@ -248,22 +328,23 @@ export default function Home() {
       });
     }, 10);
 
+    // Restore window scroll position and remove filtering class after state update
     setTimeout(() => {
       window.scrollTo({
         top: scrollPosition,
-        behavior: "auto",
+        behavior: "auto", // Use 'auto' instead of 'smooth' to prevent visible scrolling
       });
 
       if (masonryElement) {
         masonryElement.classList.remove("filtering");
       }
-    }, 50);
+    }, 50); // Slight delay to ensure smooth transition
   };
 
+  // Replace the original toggleCategory function with our safe version
   const toggleCategory = handleToggleCategory;
 
   const projects: Project[] = [
-    // ... (Your projects array remains unchanged) ...
     // Animation Projects - Featured First
     {
       id: "Tag",
@@ -374,8 +455,12 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // Immediately set randomizedProjects from localStorage if available
+    // This allows the UI to render with cached project order while images load
     const storedProjects = getStoredProjects();
-    const dataVersion = "1.0";
+
+    // Add version check to force refresh when project data changes
+    const dataVersion = "1.0"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -383,24 +468,29 @@ export default function Home() {
       storedVersion === dataVersion
     ) {
       setRandomizedProjects(storedProjects);
+      // Show content immediately if we have stored projects
       setContentLoaded(true);
     } else {
+      // Clear existing data and store new version
       const newRandomized = shuffleArray(projects);
       setRandomizedProjects(newRandomized);
       localStorage.setItem("projectOrder", JSON.stringify(newRandomized));
       localStorage.setItem("projectDataVersion", dataVersion);
+      // Show content after a short delay for first-time visitors
       setTimeout(() => setContentLoaded(true), 300);
     }
 
+    // Initialize loading states for all projects
     const initialLoadingStates: Record<string, boolean> = {};
     projects.forEach((project) => {
       initialLoadingStates[project.id] = true;
     });
     setLoadingItems(initialLoadingStates);
 
+    // Set a timeout to ensure we show content even if images are slow to load
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1500); // Maximum loading time before showing content anyway
 
     return () => clearTimeout(loadingTimeout);
   }, []);
@@ -410,6 +500,8 @@ export default function Home() {
       let loadedCount = 0;
       const totalImages = projects.length;
       const dimensions: Record<string, { width: number; height: number }> = {};
+
+      // Create an array of promises to load all images in parallel
       const loadPromises = projects.map(async (project) => {
         try {
           if (!project.image) {
@@ -417,23 +509,32 @@ export default function Home() {
             loadedCount++;
             return;
           }
+
+          // Set initial dimensions based on type
           dimensions[project.id] =
             project.image.endsWith(".webm") || project.image.endsWith(".mp4")
-              ? { width: 1920, height: 1080 }
-              : { width: 400, height: 300 };
+              ? { width: 1920, height: 1080 } // Default video dimensions
+              : { width: 400, height: 300 }; // Default image dimensions
+
+          // Try to get actual dimensions
           const actualDimensions = await getImageDimensions(project.image);
           dimensions[project.id] = actualDimensions;
 
           loadedCount++;
+          // If we've loaded enough images to show a decent UI, remove loading state
           if (loadedCount > totalImages * 0.5 && isLoading) {
             setIsLoading(false);
           }
         } catch (error) {
           console.warn(`Using default dimensions for ${project.id}`);
           loadedCount++;
+          // Keep using the initial dimensions set above
         }
       });
+
+      // Wait for all images to load in parallel
       await Promise.all(loadPromises);
+
       setImageDimensions(dimensions);
       setIsLoading(false);
     };
@@ -448,11 +549,22 @@ export default function Home() {
       imageDimensions[project.id]?.width /
         imageDimensions[project.id]?.height || 1;
 
-    if (imageRatio > 1.7) return { cols: 4, rows: 3 };
-    else if (imageRatio > 1.3) return { cols: 3, rows: 3 };
-    else if (imageRatio > 0.8 && imageRatio < 1.2) return { cols: 2, rows: 3 };
-    else if (imageRatio < 0.6) return { cols: 2, rows: 4 };
-    else return { cols: 2, rows: 4 };
+    if (imageRatio > 1.7) {
+      // Very wide images (panorama)
+      return { cols: 4, rows: 3 };
+    } else if (imageRatio > 1.3) {
+      // Landscape
+      return { cols: 3, rows: 3 };
+    } else if (imageRatio > 0.8 && imageRatio < 1.2) {
+      // Square-ish
+      return { cols: 2, rows: 3 };
+    } else if (imageRatio < 0.6) {
+      // Very tall
+      return { cols: 2, rows: 4 };
+    } else {
+      // Portrait
+      return { cols: 2, rows: 4 };
+    }
   };
 
   const filteredProjects = randomizedProjects.filter((project: Project) => {
@@ -478,6 +590,7 @@ export default function Home() {
     }
   };
 
+  // Add skeleton array for the loading state
   const skeletonProjects = useMemo(
     () =>
       Array(9)
@@ -486,12 +599,17 @@ export default function Home() {
     []
   );
 
+  // Development utility - add to console for testing
   useEffect(() => {
     if (typeof window !== "undefined") {
-      (window as any).resetIntro = () => {};
+      (window as any).resetIntro = () => {
+        // localStorage.removeItem('hasSeenIntro');
+        // window.location.reload();
+      };
     }
   }, []);
 
+  // Function to handle individual item loading completion
   const handleItemLoaded = (projectId: string) => {
     setLoadingItems((prev) => ({
       ...prev,
@@ -499,21 +617,26 @@ export default function Home() {
     }));
   };
 
+  // Function to get poster image for video projects - using project-based mapping
   const getVideoPosterImage = (project: Project) => {
+    // Map each project to a reliable static image
     const projectPosterMap: Record<string, string> = {
       SmokeAnimation:
-        "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp",
+        "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp", // Use illustration as fallback
       MySafetyTV:
-        "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail(Safari).webp",
+        "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail(Safari).webp", // Use Tag poster as fallback
       Truckmate:
-        "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/TruckMateThumbnail(Safari).webp",
+        "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/TruckMateThumbnail(Safari).webp", // Use storyboard as fallback
     };
+
+    // Return mapped poster or use a reliable default
     return (
       projectPosterMap[project.id] ||
       "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/TagPoster1.webp"
     );
   };
 
+  // Function to get aspect ratio class for placeholders
   const getPlaceholderClass = (project: Project) => {
     const aspectRatio =
       imageDimensions[project.id]?.width /
@@ -526,6 +649,7 @@ export default function Home() {
     return "portrait";
   };
 
+  // Enhanced skeleton component using new CSS classes
   const ProjectSkeleton = () => (
     <div className="masonry-skeleton">
       {skeletonProjects.map((_, index) => (
@@ -554,6 +678,7 @@ export default function Home() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
+        /* Prevent hyphenation and mid-word breaks globally */
         * {
           -webkit-hyphens: none;
           -moz-hyphens: none;
@@ -562,11 +687,26 @@ export default function Home() {
           word-break: normal;
           overflow-wrap: normal;
         }
+        
+        /* Subtle loading spinner animation */
         .loading-spinner {
           transition: opacity 0.3s ease-in-out;
         }
+        
         .loading-spinner div {
           box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Improve mobile touch targets */
+        .mobile-touch-target {
+          min-height: 44px;
+          min-width: 44px;
+          touch-action: manipulation;
+        }
+        
+        /* Prevent zoom on double tap */
+        .no-zoom {
+          touch-action: manipulation;
         }
         `,
         }}
@@ -574,7 +714,7 @@ export default function Home() {
 
       <div
         ref={pageContainerRef}
-        className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern overflow-x-hidden relative"
+        className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern overflow-x-hidden relative no-zoom"
         suppressHydrationWarning
         style={{
           visibility: "visible",
@@ -583,6 +723,7 @@ export default function Home() {
           pointerEvents: "auto",
         }}
       >
+        {/* Background Sprites */}
         <BackgroundSprites />
         <main
           className={`${isMobile ? "pt-20" : "pt-32 md:pt-40"} transition-all duration-500 ease-in-out`}
@@ -593,12 +734,11 @@ export default function Home() {
           }}
         >
           <div className="container mx-auto px-4">
+            {/* Hero Section - Showreel and Intro side by side on desktop */}
             <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-[25vh]">
+              {/* Showreel Section - Left side on desktop, hidden on mobile */}
               {!isMobile && (
-                <div
-                  className="relative z-10 showreel-container lg:flex-1"
-                  style={{}}
-                >
+                <div className="relative z-10 showreel-container lg:flex-1">
                   <ScrollReveal direction="up" delay={100} duration={800}>
                     <div className="mb-8 lg:mb-0">
                       <div className="max-w-3xl mx-auto lg:max-w-none">
@@ -609,7 +749,7 @@ export default function Home() {
                           }}
                         >
                           <iframe
-                            src="https://player.vimeo.com/video/1093033927?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479"
+                            src="https://player.vimeo.com/video/1093033927?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
                             frameBorder="0"
                             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                             data-exclude-memory-management="true"
@@ -636,7 +776,9 @@ export default function Home() {
                   </ScrollReveal>
                 </div>
               )}
-              <div className="relative z-10 lg:flex-1 lg:max-w-lg" style={{}}>
+
+              {/* Introduction Section - Right side on desktop, bottom on mobile */}
+              <div className="relative z-10 lg:flex-1 lg:max-w-lg">
                 <ScrollReveal direction="up" duration={800}>
                   <Link
                     href="/about"
@@ -692,6 +834,7 @@ export default function Home() {
                     </div>
                   </Link>
 
+                  {/* Illustration */}
                   <div className="mt-8">
                     <ScrollReveal direction="up" duration={800} delay={200}>
                       <Link
@@ -726,7 +869,9 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Projects Section */}
             <div className="relative">
+              {/* Explore All Projects Heading */}
               <ScrollReveal direction="up" delay={100} duration={800}>
                 <div className="text-center mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
@@ -735,11 +880,8 @@ export default function Home() {
                 </div>
               </ScrollReveal>
 
-              <div
-                ref={categoriesRef}
-                className="relative z-10 mb-8"
-                style={{}}
-              >
+              {/* Categories Section - Always visible */}
+              <div ref={categoriesRef} className="relative z-10 mb-8">
                 <ScrollReveal direction="up" delay={150} duration={800}>
                   <div className="text-center py-4">
                     <div className="flex flex-wrap gap-3 justify-center">
@@ -751,6 +893,7 @@ export default function Home() {
                          px-4 py-2 font-satoshi text-sm transition-all duration-300
                          border-2 border-black dark:border-white
                          bg-[#F3F1E9] dark:bg-[#1A1818]
+                         mobile-touch-target
                          ${
                            selectedCategories.includes(category)
                              ? "text-white dark:text-black bg-black dark:bg-white scale-105"
@@ -769,10 +912,8 @@ export default function Home() {
             </div>
           </div>
 
-          <main
-            className="container mx-auto px-4 py-0 relative z-10"
-            style={{}}
-          >
+          <main className="container mx-auto px-4 py-0 relative z-10">
+            {/* Show skeleton during loading, but only if we haven't loaded content yet */}
             {isLoading && !contentLoaded ? (
               <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="text-center">
@@ -802,22 +943,30 @@ export default function Home() {
                       <ScrollReveal
                         key={project.id}
                         direction="up"
-                        delay={100 * (index % 3)}
-                        duration={600}
-                        distance="30px"
+                        delay={100 * (index % 3)} // Reduced delay for faster appearance
+                        duration={600} // Faster animation
+                        distance="30px" // Less distance to travel
                         easing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                         className="project-masonry-item"
                         style={
                           {
                             "--aspect-ratio": aspectRatio,
+                            // Add content-visibility for better performance
                             contentVisibility: index > 9 ? "auto" : "visible",
                             contain: index > 9 ? "content" : "none",
                           } as React.CSSProperties
                         }
                       >
                         <div
-                          className="group relative cursor-pointer"
-                          onClick={() => handleProjectClick(project.id)}
+                          className="group relative cursor-pointer mobile-touch-target no-zoom"
+                          onClick={(e) => handleProjectClick(project.id, e)}
+                          onTouchStart={handleTouchStart(project.id)}
+                          onTouchEnd={handleTouchEnd(project.id)}
+                          style={{
+                            WebkitTouchCallout: "none",
+                            WebkitUserSelect: "none",
+                            touchAction: "manipulation",
+                          }}
                         >
                           <div className="relative border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300">
                             <div
@@ -848,6 +997,7 @@ export default function Home() {
                                     const video = e.target as HTMLVideoElement;
                                     handleItemLoaded(project.id);
                                     video.play().catch(() => {
+                                      // Fallback: try playing on user interaction
                                       console.log(
                                         "Autoplay prevented, will play on hover"
                                       );
@@ -859,6 +1009,7 @@ export default function Home() {
                                     video.play().catch(() => {});
                                   }}
                                 >
+                                  {/* Prefer MP4 for Safari compatibility */}
                                   {project.image.endsWith(".mp4") ? (
                                     <source
                                       src={project.image}
@@ -922,7 +1073,7 @@ export default function Home() {
                                   src={project.image}
                                   alt={project.title}
                                   fill
-                                  quality={index < 6 ? 50 : 35}
+                                  quality={index < 6 ? 50 : 35} // Reduced quality for better memory usage
                                   priority={index < 3}
                                   loading={index < 6 ? "eager" : "lazy"}
                                   className={`object-cover w-full h-full transition-all duration-500 group-hover:scale-105 ${
@@ -933,7 +1084,7 @@ export default function Home() {
                                   sizes="(max-width: 640px) 90vw, 
                                        (max-width: 768px) 45vw, 
                                        (max-width: 1024px) 30vw,
-                                       20vw"
+                                       20vw" // More efficient sizes
                                   placeholder="blur"
                                   blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
                                     `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`
@@ -947,6 +1098,7 @@ export default function Home() {
                                 />
                               )}
 
+                              {/* Subtle loading indicator */}
                               {loadingItems[project.id] && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-10">
                                   <div className="loading-spinner">
@@ -958,8 +1110,8 @@ export default function Home() {
                               <div
                                 className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${
                                   isMobile
-                                    ? "opacity-100"
-                                    : "opacity-0 group-hover:opacity-100"
+                                    ? "opacity-100" // Always visible on mobile
+                                    : "opacity-0 group-hover:opacity-100" // Hover effect on desktop
                                 }`}
                               >
                                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -1002,10 +1154,7 @@ export default function Home() {
             )}
           </main>
 
-          <footer
-            className="container mx-auto px-4 py-6 mt-12 relative z-10"
-            style={{}}
-          >
+          <footer className="container mx-auto px-4 py-6 mt-12 relative z-10">
             <ScrollReveal direction="up" delay={400} duration={800}>
               <div className="flex justify-center space-x-6">
                 <div className="p-3 md:p-4 transition-all duration-300">
@@ -1035,9 +1184,16 @@ export default function Home() {
               isOpen={!!selectedProject}
               onClose={() => {
                 console.log("🚪 Modal onClose called");
+
+                // Log memory usage before restoration
                 logMemoryUsage("Before modal close");
+
+                // Restore home page media
                 restoreHomePageMedia();
+
+                // Log memory usage after restoration
                 setTimeout(() => logMemoryUsage("After media restored"), 100);
+
                 setSelectedProject(null);
               }}
               title={
@@ -1058,6 +1214,7 @@ export default function Home() {
             />
           )}
 
+          {/* Custom tooltip for illustration */}
           {showTooltip && (
             <div
               className="fixed z-50 pointer-events-none bg-black dark:bg-white text-white dark:text-black px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-white dark:border-black"
@@ -1071,6 +1228,8 @@ export default function Home() {
             </div>
           )}
         </main>
+
+        {/* Memory stats debugger - development only */}
         <MemoryStatsDebugger position="bottom-right" />
       </div>
     </>

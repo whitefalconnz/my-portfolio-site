@@ -1254,8 +1254,21 @@ export default function ProjectModal({
     description: string;
   } | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  });
   const [isTextExpanded, setIsTextExpanded] = useState(false);
+  const [mobileScrollY, setMobileScrollY] = useState(0);
+
+  // Capture scroll position immediately when modal opens on mobile
+  useEffect(() => {
+    if (isOpen && isTouchDevice) {
+      const scrollY = window.scrollY;
+      setMobileScrollY(scrollY);
+      console.log("Mobile scroll captured:", scrollY);
+    }
+  }, [isOpen, isTouchDevice]);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -1322,7 +1335,7 @@ export default function ProjectModal({
 
   // Adjust overlay position to account for body top offset when scroll is locked
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isTouchDevice) return;
 
     const scrollY = window.scrollY;
     const overlayEl = overlayRef.current;
@@ -1339,7 +1352,7 @@ export default function ProjectModal({
       // Restore original transform (default was 'none')
       overlayEl.style.transform = originalTransform || "none";
     };
-  }, [isOpen]);
+  }, [isOpen, isTouchDevice]);
 
   // Track modal content when it opens or content changes
   useEffect(() => {
@@ -1374,6 +1387,8 @@ export default function ProjectModal({
       const originalBodyTop = document.body.style.top;
       const originalBodyWidth = document.body.style.width;
       const scrollY = window.scrollY;
+
+      // Note: Mobile scroll position is now captured in dedicated useEffect above
 
       // Prevent scrolling while keeping background visible
       document.body.style.overflow = "hidden";
@@ -1413,6 +1428,7 @@ export default function ProjectModal({
           document.body.style.top = originalBodyTop;
           document.body.style.width = originalBodyWidth;
           window.scrollTo(0, scrollY);
+          setMobileScrollY(0); // Reset mobile scroll position
         }
 
         // Remove touch event listeners
@@ -1482,7 +1498,7 @@ export default function ProjectModal({
         }
       }
     };
-  }, [isOpen]);
+  }, [isOpen, isTouchDevice]);
 
   const handleClose = () => {
     onClose();
@@ -1496,7 +1512,7 @@ export default function ProjectModal({
       }, 250); // 250ms delay before allowing overlay to close
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, isTouchDevice]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     // Prevent immediate close right after opening (especially on mobile)
@@ -1817,8 +1833,9 @@ export default function ProjectModal({
         bottom: 0,
         margin: 0,
         padding: 0,
-        transform: "none",
+        transform: isTouchDevice ? `translateY(${mobileScrollY}px)` : "none", // Compensate for body shift on mobile
         touchAction: "none", // Additional touch prevention
+        position: "fixed", // Ensure fixed positioning on mobile
       }}
     >
       {/* Minimal header strip */}

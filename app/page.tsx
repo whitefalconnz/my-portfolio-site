@@ -115,46 +115,11 @@ export default function Home() {
   // Add state for filter button visibility based on scroll
   const [showFilterButton, setShowFilterButton] = useState(false);
   const categoriesRef = useRef<HTMLDivElement>(null);
-
-  // Draggable state - REMOVING FOR MEMORY OPTIMIZATION
-  // const isDraggable = false;
-  // const [hasBeenDragged, setHasBeenDragged] = useState(false);
-  // const [isDragging, setIsDragging] = useState(false);
-  // const [isPostDrag, setIsPostDrag] = useState(false);
-  // const postDragTimer = useRef<NodeJS.Timeout | null>(null);
-
-  // Hero context
   const { showHero, heroHeight } = useHero();
 
   // Tooltip state for illustration
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
-  // Motion values for smoother drag without React re-renders - REMOVING FOR MEMORY OPTIMIZATION
-  // const introX = useMotionValue(0);
-  // const introY = useMotionValue(0);
-  // const showreelX = useMotionValue(0);
-  // const showreelY = useMotionValue(0);
-  // const categoriesX = useMotionValue(0);
-  // const categoriesY = useMotionValue(0);
-  // const projectsGridX = useMotionValue(0);
-  // const projectsGridY = useMotionValue(0);
-  // const footerX = useMotionValue(0);
-  // const footerY = useMotionValue(0);
-
-  // Track z-index per draggable element so the active one always stays on top - REMOVING
-  // const [zIndexes, setZIndexes] = useState({
-  //   intro: 10,
-  //   showreel: 10,
-  //   categories: 10,
-  //   projectsGrid: 10,
-  //   footer: 10,
-  // });
-
-  // Add a base z-index counter to ensure proper stacking - REMOVING
-  // const [baseZIndex, setBaseZIndex] = useState(10);
-  // type DragKey = "intro" | "showreel" | "categories" | "projectsGrid" | "footer";
-  // const [activeDragKey, setActiveDragKey] = useState<DragKey | null>(null);
 
   useEffect(() => {
     // Detect Safari browser
@@ -218,13 +183,8 @@ export default function Home() {
   // Add scroll listener to show filter button when past featured section
   useEffect(() => {
     const handleScroll = () => {
-      // Show filter button when user scrolls past the featured section
-      // We'll use a scroll position threshold instead of element detection for better performance
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
-
-      // Show button when scrolled past approximately where featured section ends
-      // This is roughly after hero section + featured section (estimated ~1200px)
       setShowFilterButton(scrollY > viewportHeight * 1.2);
     };
 
@@ -236,86 +196,35 @@ export default function Home() {
     };
   }, []);
 
-  // Reset positions function
   const resetPositions = () => {
-    // introX.set(0);
-    // introY.set(0);
-    // showreelX.set(0);
-    // showreelY.set(0);
-    // categoriesX.set(0);
-    // categoriesY.set(0);
-    // projectsGridX.set(0);
-    // projectsGridY.set(0);
-    // footerX.set(0);
-    // footerY.set(0);
-    // setHasBeenDragged(false);
+    // This function is empty as the drag functionality was removed
   };
 
-  // Track when any element is dragged
   const onDragEnd = () => {
-    // setIsDragging(false);
-    // setActiveDragKey(null);
-    // setIsPostDrag(true);
-    // Clear any existing timer
-    // if (postDragTimer.current) {
-    //   clearTimeout(postDragTimer.current);
-    // }
-    // Set a timer to reset the post-drag state after 300ms
-    // postDragTimer.current = setTimeout(() => {
-    //   setIsPostDrag(false);
-    //   // Reset z-indices after drag is complete
-    //   setZIndexes((prev) => {
-    //     const newZIndexes = { ...prev };
-    //     Object.keys(newZIndexes).forEach((k) => {
-    //       newZIndexes[k as keyof typeof zIndexes] = baseZIndex;
-    //     });
-    //     return newZIndexes;
-    //   });
-    // }, 300);
+    // This function is empty as the drag functionality was removed
   };
 
+  // *** MODIFIED FUNCTION ***
   // Safe click handler that prevents clicks during/after drag
   const handleProjectClick = (projectId: string) => {
-    console.log("🔥 handleProjectClick called:", {
-      projectId,
-      // isDragging,
-      // isPostDrag,
-      selectedProject,
-      currentTime: new Date().toISOString(),
-    });
+    console.log("🔥 handleProjectClick called for project:", projectId);
 
-    // if (isDragging || isPostDrag) {
-    //   console.log("🚫 Click prevented due to drag state");
-    //   return; // Prevent clicks if dragging or just finished dragging
-    // }
-
-    console.log("✅ About to call setSelectedProject with:", projectId);
-
-    // Log memory usage before clearing
-    logMemoryUsage("Before modal open");
-
-    // Clear home page media to reduce memory usage
-    clearHomePageMedia();
-
-    // Log memory usage after clearing
-    setTimeout(() => logMemoryUsage("After media cleared"), 100);
-
+    // First, set the project state to trigger the modal opening.
+    // This is the most important step and should happen immediately.
     setSelectedProject(projectId);
-    console.log("✅ setSelectedProject called successfully");
+    console.log("✅ setSelectedProject called. Modal should now open.");
+
+    // Now, run the memory cleanup optimizations.
+    // This can happen after the state update has been dispatched.
+    logMemoryUsage("Before modal open");
+    clearHomePageMedia();
+    setTimeout(() => logMemoryUsage("After media cleared"), 100);
   };
 
   const categories = ["Animation", "Creative Advertising", "Illustration"];
 
-  // Safe toggle category handler that prevents clicks during/after drag
   const handleToggleCategory = (category: string) => {
-    // if (isDragging || isPostDrag) {
-    //   return; // Prevent toggles if dragging or just finished dragging
-    // }
-
-    // Save current window scroll position
     const scrollPosition = window.scrollY;
-
-    // Add filtering class for smooth transition
     const masonryElement = document.querySelector(".project-masonry");
     if (masonryElement) {
       masonryElement.classList.add("filtering");
@@ -327,12 +236,10 @@ export default function Home() {
         : [...prev, category]
     );
 
-    // Reset loading states for newly visible projects
     setTimeout(() => {
       setLoadingItems((prev) => {
         const newLoadingStates = { ...prev };
         filteredProjects.forEach((project) => {
-          // Only reset if the project wasn't already visible
           if (!prev.hasOwnProperty(project.id)) {
             newLoadingStates[project.id] = true;
           }
@@ -341,23 +248,22 @@ export default function Home() {
       });
     }, 10);
 
-    // Restore window scroll position and remove filtering class after state update
     setTimeout(() => {
       window.scrollTo({
         top: scrollPosition,
-        behavior: "auto", // Use 'auto' instead of 'smooth' to prevent visible scrolling
+        behavior: "auto",
       });
 
       if (masonryElement) {
         masonryElement.classList.remove("filtering");
       }
-    }, 50); // Slight delay to ensure smooth transition
+    }, 50);
   };
 
-  // Replace the original toggleCategory function with our safe version
   const toggleCategory = handleToggleCategory;
 
   const projects: Project[] = [
+    // ... (Your projects array remains unchanged) ...
     // Animation Projects - Featured First
     {
       id: "Tag",
@@ -367,7 +273,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "An animated short film exploring character development and storytelling through visual narrative.",
+        "Born from a personal moment of fever-induced terror, the narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
       categories: ["Animation"],
     },
     // Paintings and Illustrations
@@ -413,7 +319,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "Experimental animation exploring particle dynamics and fluid motion.",
+        "Personal film about addiction made in Blender grease pencil. Exploring the feeling of withdrawing from an addiction, my character makes his way through a journey on a train from irritation and panic to eventual recovery. A bear intermitenly comes into view tempting the character to smoke. People crowd the train and the character plunges into a panic where he almost loses his sanity only to barely resist smoking as the train comes out of the tunnel.",
       categories: ["Animation"],
     },
     {
@@ -424,7 +330,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "Animated safety awareness campaign combining education and entertainment.",
+        "I worked for an online safety training company called MySafetyTV. One other and I were tasked with creating the animated explainer videos for the company. There was a 2-4 week turnaround for each video from concept to execution. These videos are part of a learning course that is designed around that me and one other co-worker created.",
       categories: ["Animation", "Creative Advertising"],
     },
     // Update Creative Coding project
@@ -447,7 +353,7 @@ export default function Home() {
       aspectRatio: AspectRatio.LANDSCAPE,
       bgColor: "bg-[#2C4B7A]",
       description:
-        "Within a month I went through a design sprint of going through the human centred design process of observing and emphasising with my environment, finding a problem and then iteratively finding a design solution. In my local area I noticed that there were issues Truck comminucation and congestion issues often with three pizza stores, and many other fast food stores in veryy close proximity to each other in a confusing area to get to. After interviewing truck drivers and conducting market reserach I found that most truck drivers used google maps which does not have essential truck driver information they need.",
+        "Within a month, I went through a design sprint using the human-centred design process: observing and empathising with my environment, identifying a problem, and then iteratively finding a design solution. In my local area, I noticed there were truck communication and congestion issues, often with three pizza stores and many other fast food outlets in very close proximity to each other in a confusing area to access. After interviewing truck drivers and conducting market research, I found that most truck drivers used Google Maps, which does not provide the essential information they need.",
       categories: ["Animation", "Creative Advertising"],
     },
   ];
@@ -468,12 +374,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Immediately set randomizedProjects from localStorage if available
-    // This allows the UI to render with cached project order while images load
     const storedProjects = getStoredProjects();
-
-    // Add version check to force refresh when project data changes
-    const dataVersion = "1.0"; // Increment this when making changes to project data
+    const dataVersion = "1.0";
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -481,29 +383,24 @@ export default function Home() {
       storedVersion === dataVersion
     ) {
       setRandomizedProjects(storedProjects);
-      // Show content immediately if we have stored projects
       setContentLoaded(true);
     } else {
-      // Clear existing data and store new version
       const newRandomized = shuffleArray(projects);
       setRandomizedProjects(newRandomized);
       localStorage.setItem("projectOrder", JSON.stringify(newRandomized));
       localStorage.setItem("projectDataVersion", dataVersion);
-      // Show content after a short delay for first-time visitors
       setTimeout(() => setContentLoaded(true), 300);
     }
 
-    // Initialize loading states for all projects
     const initialLoadingStates: Record<string, boolean> = {};
     projects.forEach((project) => {
       initialLoadingStates[project.id] = true;
     });
     setLoadingItems(initialLoadingStates);
 
-    // Set a timeout to ensure we show content even if images are slow to load
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1500); // Maximum loading time before showing content anyway
+    }, 1500);
 
     return () => clearTimeout(loadingTimeout);
   }, []);
@@ -513,8 +410,6 @@ export default function Home() {
       let loadedCount = 0;
       const totalImages = projects.length;
       const dimensions: Record<string, { width: number; height: number }> = {};
-
-      // Create an array of promises to load all images in parallel
       const loadPromises = projects.map(async (project) => {
         try {
           if (!project.image) {
@@ -522,32 +417,23 @@ export default function Home() {
             loadedCount++;
             return;
           }
-
-          // Set initial dimensions based on type
           dimensions[project.id] =
             project.image.endsWith(".webm") || project.image.endsWith(".mp4")
-              ? { width: 1920, height: 1080 } // Default video dimensions
-              : { width: 400, height: 300 }; // Default image dimensions
-
-          // Try to get actual dimensions
+              ? { width: 1920, height: 1080 }
+              : { width: 400, height: 300 };
           const actualDimensions = await getImageDimensions(project.image);
           dimensions[project.id] = actualDimensions;
 
           loadedCount++;
-          // If we've loaded enough images to show a decent UI, remove loading state
           if (loadedCount > totalImages * 0.5 && isLoading) {
             setIsLoading(false);
           }
         } catch (error) {
           console.warn(`Using default dimensions for ${project.id}`);
           loadedCount++;
-          // Keep using the initial dimensions set above
         }
       });
-
-      // Wait for all images to load in parallel
       await Promise.all(loadPromises);
-
       setImageDimensions(dimensions);
       setIsLoading(false);
     };
@@ -562,22 +448,11 @@ export default function Home() {
       imageDimensions[project.id]?.width /
         imageDimensions[project.id]?.height || 1;
 
-    if (imageRatio > 1.7) {
-      // Very wide images (panorama)
-      return { cols: 4, rows: 3 };
-    } else if (imageRatio > 1.3) {
-      // Landscape
-      return { cols: 3, rows: 3 };
-    } else if (imageRatio > 0.8 && imageRatio < 1.2) {
-      // Square-ish
-      return { cols: 2, rows: 3 };
-    } else if (imageRatio < 0.6) {
-      // Very tall
-      return { cols: 2, rows: 4 };
-    } else {
-      // Portrait
-      return { cols: 2, rows: 4 };
-    }
+    if (imageRatio > 1.7) return { cols: 4, rows: 3 };
+    else if (imageRatio > 1.3) return { cols: 3, rows: 3 };
+    else if (imageRatio > 0.8 && imageRatio < 1.2) return { cols: 2, rows: 3 };
+    else if (imageRatio < 0.6) return { cols: 2, rows: 4 };
+    else return { cols: 2, rows: 4 };
   };
 
   const filteredProjects = randomizedProjects.filter((project: Project) => {
@@ -603,7 +478,6 @@ export default function Home() {
     }
   };
 
-  // Add skeleton array for the loading state
   const skeletonProjects = useMemo(
     () =>
       Array(9)
@@ -612,17 +486,12 @@ export default function Home() {
     []
   );
 
-  // Development utility - add to console for testing
   useEffect(() => {
     if (typeof window !== "undefined") {
-      (window as any).resetIntro = () => {
-        // localStorage.removeItem('hasSeenIntro');
-        // window.location.reload();
-      };
+      (window as any).resetIntro = () => {};
     }
   }, []);
 
-  // Function to handle individual item loading completion
   const handleItemLoaded = (projectId: string) => {
     setLoadingItems((prev) => ({
       ...prev,
@@ -630,26 +499,21 @@ export default function Home() {
     }));
   };
 
-  // Function to get poster image for video projects - using project-based mapping
   const getVideoPosterImage = (project: Project) => {
-    // Map each project to a reliable static image
     const projectPosterMap: Record<string, string> = {
       SmokeAnimation:
-        "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp", // Use illustration as fallback
+        "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp",
       MySafetyTV:
-        "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail(Safari).webp", // Use Tag poster as fallback
+        "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail(Safari).webp",
       Truckmate:
-        "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/TruckMateThumbnail(Safari).webp", // Use storyboard as fallback
+        "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/TruckMateThumbnail(Safari).webp",
     };
-
-    // Return mapped poster or use a reliable default
     return (
       projectPosterMap[project.id] ||
       "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/TagPoster1.webp"
     );
   };
 
-  // Function to get aspect ratio class for placeholders
   const getPlaceholderClass = (project: Project) => {
     const aspectRatio =
       imageDimensions[project.id]?.width /
@@ -662,7 +526,6 @@ export default function Home() {
     return "portrait";
   };
 
-  // Enhanced skeleton component using new CSS classes
   const ProjectSkeleton = () => (
     <div className="masonry-skeleton">
       {skeletonProjects.map((_, index) => (
@@ -691,7 +554,6 @@ export default function Home() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        /* Prevent hyphenation and mid-word breaks globally */
         * {
           -webkit-hyphens: none;
           -moz-hyphens: none;
@@ -700,12 +562,9 @@ export default function Home() {
           word-break: normal;
           overflow-wrap: normal;
         }
-        
-        /* Subtle loading spinner animation */
         .loading-spinner {
           transition: opacity 0.3s ease-in-out;
         }
-        
         .loading-spinner div {
           box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
@@ -724,7 +583,6 @@ export default function Home() {
           pointerEvents: "auto",
         }}
       >
-        {/* Background Sprites */}
         <BackgroundSprites />
         <main
           className={`${isMobile ? "pt-20" : "pt-32 md:pt-40"} transition-all duration-500 ease-in-out`}
@@ -735,32 +593,12 @@ export default function Home() {
           }}
         >
           <div className="container mx-auto px-4">
-            {/* Hero Section - Showreel and Intro side by side on desktop */}
             <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-[25vh]">
-              {/* Showreel Section - Left side on desktop, hidden on mobile */}
               {!isMobile && (
                 <div
                   className="relative z-10 showreel-container lg:flex-1"
-                  // drag={isElementDraggable("showreel")}
-                  // dragMomentum={false}
-                  // dragElastic={0}
-                  // dragConstraints={getDragConstraints()}
-                  // dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-                  // onDragStart={handleDragStart("showreel")}
-                  // onDragEnd={onDragEnd}
-                  style={
-                    {
-                      // zIndex: zIndexes.showreel,
-                      // pointerEvents:
-                      //   isDragging && activeDragKey !== "showreel"
-                      //     ? "none"
-                      //     : "auto",
-                      // x: showreelX,
-                      // y: showreelY,
-                    }
-                  }
+                  style={{}}
                 >
-                  {/* {isDraggable && <DragHandle />} */}
                   <ScrollReveal direction="up" delay={100} duration={800}>
                     <div className="mb-8 lg:mb-0">
                       <div className="max-w-3xl mx-auto lg:max-w-none">
@@ -771,7 +609,7 @@ export default function Home() {
                           }}
                         >
                           <iframe
-                            src="https://player.vimeo.com/video/1096106663?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                            src="https://player.vimeo.com/video/1093033927?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479"
                             frameBorder="0"
                             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                             data-exclude-memory-management="true"
@@ -798,27 +636,7 @@ export default function Home() {
                   </ScrollReveal>
                 </div>
               )}
-
-              {/* Introduction Section - Right side on desktop, bottom on mobile */}
-              <div
-                className="relative z-10 lg:flex-1 lg:max-w-lg"
-                // drag={isElementDraggable("intro")}
-                // dragMomentum={false}
-                // dragElastic={0}
-                // dragConstraints={getDragConstraints()}
-                // dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-                // onDragStart={handleDragStart("intro")}
-                // onDragEnd={onDragEnd}
-                style={
-                  {
-                    // zIndex: zIndexes.intro,
-                    // pointerEvents:
-                    //   isDragging && activeDragKey !== "intro" ? "none" : "auto",
-                    // x: introX,
-                    // y: introY,
-                  }
-                }
-              >
+              <div className="relative z-10 lg:flex-1 lg:max-w-lg" style={{}}>
                 <ScrollReveal direction="up" duration={800}>
                   <Link
                     href="/about"
@@ -835,11 +653,6 @@ export default function Home() {
                     }}
                   >
                     <div className="max-w-2xl mx-auto lg:max-w-none text-center lg:text-left border-2 border-black dark:border-white p-6 md:p-8 bg-[#F3F1E9] dark:bg-[#1A1818] relative group-hover:border-orange-500 transition-all duration-300">
-                      {/* {isDraggable && (
-                        <div className="absolute top-2 right-2">
-                          <DragHandle />
-                        </div>
-                      )} */}
                       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-mplus break-words overflow-wrap-anywhere">
                         <AnimatedText
                           text="Hi, I'm Jakob Backhouse"
@@ -879,7 +692,6 @@ export default function Home() {
                     </div>
                   </Link>
 
-                  {/* Illustration */}
                   <div className="mt-8">
                     <ScrollReveal direction="up" duration={800} delay={200}>
                       <Link
@@ -914,9 +726,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Projects Section */}
             <div className="relative">
-              {/* Explore All Projects Heading */}
               <ScrollReveal direction="up" delay={100} duration={800}>
                 <div className="text-center mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
@@ -925,30 +735,11 @@ export default function Home() {
                 </div>
               </ScrollReveal>
 
-              {/* Categories Section - Always visible */}
               <div
                 ref={categoriesRef}
                 className="relative z-10 mb-8"
-                // drag={isElementDraggable("categories")}
-                // dragMomentum={false}
-                // dragElastic={0}
-                // dragConstraints={getDragConstraints()}
-                // dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-                // onDragStart={handleDragStart("categories")}
-                // onDragEnd={onDragEnd}
-                style={
-                  {
-                    // zIndex: zIndexes.categories,
-                    // pointerEvents:
-                    //   isDragging && activeDragKey !== "categories"
-                    //     ? "none"
-                    //     : "auto",
-                    // x: categoriesX,
-                    // y: categoriesY,
-                  }
-                }
+                style={{}}
               >
-                {/* {isDraggable && <DragHandle />} */}
                 <ScrollReveal direction="up" delay={150} duration={800}>
                   <div className="text-center py-4">
                     <div className="flex flex-wrap gap-3 justify-center">
@@ -980,27 +771,8 @@ export default function Home() {
 
           <main
             className="container mx-auto px-4 py-0 relative z-10"
-            // drag={isElementDraggable("projectsGrid")}
-            // dragMomentum={false}
-            // dragElastic={0}
-            // dragConstraints={getDragConstraints()}
-            // dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-            // onDragStart={handleDragStart("projectsGrid")}
-            // onDragEnd={onDragEnd}
-            style={
-              {
-                // zIndex: zIndexes.projectsGrid,
-                // pointerEvents:
-                //   isDragging && activeDragKey !== "projectsGrid"
-                //     ? "none"
-                //     : "auto",
-                // x: projectsGridX,
-                // y: projectsGridY,
-              }
-            }
+            style={{}}
           >
-            {/* {isDraggable && <DragHandle />} */}
-            {/* Show skeleton during loading, but only if we haven't loaded content yet */}
             {isLoading && !contentLoaded ? (
               <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="text-center">
@@ -1030,15 +802,14 @@ export default function Home() {
                       <ScrollReveal
                         key={project.id}
                         direction="up"
-                        delay={100 * (index % 3)} // Reduced delay for faster appearance
-                        duration={600} // Faster animation
-                        distance="30px" // Less distance to travel
+                        delay={100 * (index % 3)}
+                        duration={600}
+                        distance="30px"
                         easing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                         className="project-masonry-item"
                         style={
                           {
                             "--aspect-ratio": aspectRatio,
-                            // Add content-visibility for better performance
                             contentVisibility: index > 9 ? "auto" : "visible",
                             contain: index > 9 ? "content" : "none",
                           } as React.CSSProperties
@@ -1077,7 +848,6 @@ export default function Home() {
                                     const video = e.target as HTMLVideoElement;
                                     handleItemLoaded(project.id);
                                     video.play().catch(() => {
-                                      // Fallback: try playing on user interaction
                                       console.log(
                                         "Autoplay prevented, will play on hover"
                                       );
@@ -1089,7 +859,6 @@ export default function Home() {
                                     video.play().catch(() => {});
                                   }}
                                 >
-                                  {/* Prefer MP4 for Safari compatibility */}
                                   {project.image.endsWith(".mp4") ? (
                                     <source
                                       src={project.image}
@@ -1153,7 +922,7 @@ export default function Home() {
                                   src={project.image}
                                   alt={project.title}
                                   fill
-                                  quality={index < 6 ? 50 : 35} // Reduced quality for better memory usage
+                                  quality={index < 6 ? 50 : 35}
                                   priority={index < 3}
                                   loading={index < 6 ? "eager" : "lazy"}
                                   className={`object-cover w-full h-full transition-all duration-500 group-hover:scale-105 ${
@@ -1164,7 +933,7 @@ export default function Home() {
                                   sizes="(max-width: 640px) 90vw, 
                                        (max-width: 768px) 45vw, 
                                        (max-width: 1024px) 30vw,
-                                       20vw" // More efficient sizes
+                                       20vw"
                                   placeholder="blur"
                                   blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
                                     `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`
@@ -1178,7 +947,6 @@ export default function Home() {
                                 />
                               )}
 
-                              {/* Subtle loading indicator */}
                               {loadingItems[project.id] && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-10">
                                   <div className="loading-spinner">
@@ -1187,7 +955,13 @@ export default function Home() {
                                 </div>
                               )}
 
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div
+                                className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${
+                                  isMobile
+                                    ? "opacity-100"
+                                    : "opacity-0 group-hover:opacity-100"
+                                }`}
+                              >
                                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                                   <h3 className="text-lg font-recoleta font-medium mb-2">
                                     {project.title}
@@ -1230,24 +1004,8 @@ export default function Home() {
 
           <footer
             className="container mx-auto px-4 py-6 mt-12 relative z-10"
-            // drag={isElementDraggable("footer")}
-            // dragMomentum={false}
-            // dragElastic={0}
-            // dragConstraints={getDragConstraints()}
-            // dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-            // onDragStart={handleDragStart("footer")}
-            // onDragEnd={onDragEnd}
-            style={
-              {
-                // zIndex: zIndexes.footer,
-                // pointerEvents:
-                //   isDragging && activeDragKey !== "footer" ? "none" : "auto",
-                // x: footerX,
-                // y: footerY,
-              }
-            }
+            style={{}}
           >
-            {/* {isDraggable && <DragHandle />} */}
             <ScrollReveal direction="up" delay={400} duration={800}>
               <div className="flex justify-center space-x-6">
                 <div className="p-3 md:p-4 transition-all duration-300">
@@ -1277,16 +1035,9 @@ export default function Home() {
               isOpen={!!selectedProject}
               onClose={() => {
                 console.log("🚪 Modal onClose called");
-
-                // Log memory usage before restoration
                 logMemoryUsage("Before modal close");
-
-                // Restore home page media
                 restoreHomePageMedia();
-
-                // Log memory usage after restoration
                 setTimeout(() => logMemoryUsage("After media restored"), 100);
-
                 setSelectedProject(null);
               }}
               title={
@@ -1307,7 +1058,6 @@ export default function Home() {
             />
           )}
 
-          {/* Custom tooltip for illustration */}
           {showTooltip && (
             <div
               className="fixed z-50 pointer-events-none bg-black dark:bg-white text-white dark:text-black px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-white dark:border-black"
@@ -1321,8 +1071,6 @@ export default function Home() {
             </div>
           )}
         </main>
-
-        {/* Memory stats debugger - development only */}
         <MemoryStatsDebugger position="bottom-right" />
       </div>
     </>

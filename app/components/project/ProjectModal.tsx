@@ -137,7 +137,7 @@ const creativeCodingCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_3.webp",
           title: "Example photo 1",
           description:
-            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks.",
+            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks. Based in central park in Wellington, NZ",
         },
       ],
     },
@@ -148,14 +148,15 @@ const creativeCodingCampaign: Campaign = {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp",
           title: "Example photo 2",
-          description: "P5.js photo manipulation with painterly effect.",
+          description:
+            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks. Based in central park in Wellington, NZ",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_2.webp",
           title: "Example photo 3",
           description:
-            "P5.js photo manipulation exploring brush stroke effects.",
+            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks. Based in central park in Wellington, NZ",
         },
       ],
     },
@@ -172,14 +173,13 @@ const smokeAnimationCampaign: Campaign = {
         {
           image: "vimeo:913926901",
           title: "Smoke Animation",
-          description:
-            "Personal film about addiction made in Blender grease pencil. Explores feeling of being stuck and terrorized.",
+          description: "The ful short film",
         },
         {
           image: "vimeo:1104662949",
           title: "Smoke Animatic",
           description:
-            "The animatic was similar to final animation but scenes were cut due to time constraints.",
+            "The animatic was similar to final animation but scenes were cut due to time constraints. The first establishing shot of the city is one that I would like to add in. Although the suffocating effect of always being in the train does work for the film in conveying the innescapable feeling of addiction.",
         },
       ],
     },
@@ -219,7 +219,7 @@ const smokeAnimationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/StoryBoard4.webp",
           title: "Storyboard Panel 5",
           description:
-            "Character confused but accepting new reality. Snapped out by 'Alright' - arrives at destination.",
+            "Character confused but accepting and happy for the first time in a long time. Snapped out of daze by 'Alright' - arrives at destination.",
         },
       ],
     },
@@ -231,7 +231,7 @@ const smokeAnimationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/CharacterLookDevelopment.webp",
           title: "Character Look Development",
           description:
-            "Reference drawings for character expressions since film revolves around character's face.",
+            "Reference drawings for character expressions since film revolves around character's face I thought it was important to get some solid referencess.",
         },
         {
           image:
@@ -250,7 +250,7 @@ const smokeAnimationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/BackhouseJakob_ANFX301_Project3.webm",
           title: "Animation Experiments",
           description:
-            "Proof of concept experiment. First 2D animation completed.",
+            "Proof of concept experiment. First 2D animation I've ever done.",
         },
       ],
     },
@@ -269,15 +269,15 @@ const illustrationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/HighaltitudeLandScape(compressed).webp",
           title: "High Altitude Landscape",
           description:
-            "A serene mountain landscape capturing the majesty of high-altitude environments.",
+            "Personal digital painting done in Photoshop. I was inspired by a walk I went on a long time ago in Mangawhero Forest, I loved the extreme colours and the sparkling, magical feeling everything had",
         },
         {
           image: getCDNUrl(
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/SaddleRoadQuickSketch.webp"
           ),
-          title: "Saddle Road Quick Sketch",
+          title: "Saddle Road Quick Study",
           description:
-            "Quick study capturing the essence of a rural landscape.",
+            "Personal digital painting done in Photoshop. A quick study done based on a photo my mum took in saddle road.",
         },
         {
           image: getCDNUrl(
@@ -285,7 +285,7 @@ const illustrationCampaign: Campaign = {
           ),
           title: "Wellington Rooftop",
           description:
-            "First in a series exploring light and shadow based on Wellington and other city tropes and characters taken from the animated film Akria.",
+            "Personal digital painting done in Procreate. First in a series exploring light and shadow based on Wellington and other city tropes and characters taken from the animated film Akria.",
         },
       ],
     },
@@ -324,8 +324,9 @@ const illustrationCampaign: Campaign = {
           image: getCDNUrl(
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/11.webp"
           ),
-          title: "Series Study #2",
-          description: "Second piece exploring natural light phenomena.",
+          title: "Abstract alien world painting",
+          description:
+            "This was a digital painting painted on top of a blender model. I honestly can't remember what the concept behind this painting was.",
         },
       ],
     },
@@ -343,7 +344,7 @@ const tagCampaign: Campaign = {
           image: "vimeo:1093033927",
           title: "Tag Trailer",
           description:
-            "Born from a personal moment of fever-induced terror, the narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
+            "Trailer for tag to promote the short film to potential collaborators and film festivals. It is a scene directly out of the short film so that it could also be used as a proof of concept.",
         },
         {
           image: "vimeo:1104662194",
@@ -361,63 +362,63 @@ const tagCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background0.5.webp",
           title: "Background 1",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background1.webp",
           title: "Background 2",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background2.webp",
           title: "Background 3",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background3.webp",
           title: "Background 4",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distort. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background5.webp",
           title: "Background 5",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background5.5.webp",
           title: "Background 6",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background5.75.webp",
           title: "Background 7",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background6.webp",
           title: "Background 8",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background7.webp",
           title: "Background 9",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the childs panic grows and things start to warp and distory. Inititally the background colours and style was more grounded and based of reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, disctored and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
         },
         {
           image:
@@ -589,7 +590,7 @@ const tagCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TrailerCollateral/BackhouseStudios.webp",
           title: "Backhouse Studios",
           description:
-            "A studio logo design that I created for my own studio. I wanted it to feel authentic.",
+            "A studio logo design that I created for my own studio. I wanted it to feel authentic to myself.",
         },
       ],
     },
@@ -618,7 +619,7 @@ const truckmateCampaign: Campaign = {
           image: "vimeo:1104663506",
           title: "Project Animatic",
           description:
-            "Storyboard animatic showing the narrative flow and timing for the explainer video.",
+            "Storyboard animatic showing the narrative flow and timing for the explainer video. During the creation of this I was focused on what the key message was that I wanted to communicate and how to d othis efficently in 30 seconds.",
         },
       ],
     },
@@ -630,7 +631,7 @@ const truckmateCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
           title: "Animated Logo",
           description:
-            "Dynamic logo animation created for the Truckmate brand identity.",
+            "Dynamic logo animation created for the Truckmate brand identity. To be shown at the end of video ads. Potentially even as a moving logo on a webesite",
         },
       ],
     },
@@ -642,7 +643,7 @@ const truckmateCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMD1R6_Mockup.webp",
           title: "Promotional Poster",
           description:
-            "Marketing poster design promoting the Truckmate platform and services.",
+            "The idea behind this poster was that it would strike a chord with truckers when they are out late at night and don't know where they are going because their app doesn't give them truck specific information.",
         },
       ],
     },
@@ -660,7 +661,7 @@ const mysafetyTVCampaign: Campaign = {
           image: "vimeo:855235415",
           title: "Heavy Vehicle Restraining Loads",
           description:
-            "Safety training video focusing on proper load restraining techniques and best practices.",
+            "Safety training video focusing on proper heavy vehicle load restraining techniques and best practices. Created in After Effects and Blender, combining 2D and 3D animation.",
         },
       ],
     },
@@ -671,7 +672,7 @@ const mysafetyTVCampaign: Campaign = {
           image: "vimeo:1105289544",
           title: "Heavy Vehicle Distractions",
           description:
-            "Safety training video focusing on the dangers of distractions for heavy vehicle operators.",
+            "Safety training video focusing on the dangers of distractions for heavy vehicle operators. Created in After Effects and Blender, combining 2D and 3D animation.",
         },
       ],
     },
@@ -682,7 +683,7 @@ const mysafetyTVCampaign: Campaign = {
           image: "vimeo:1105289367",
           title: "Heavy Vehicle Speeding",
           description:
-            "Safety training video focusing on the dangers of speeding for heavy vehicle operators.",
+            "Safety training video focusing on the dangers of speeding for heavy vehicle operators. Created in After Effects and Blender, combining 2D and 3D animation.",
         },
       ],
     },
@@ -694,14 +695,14 @@ const mysafetyTVCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/Storyboard_MySafetyTV.webp",
           title: "MySafetyTV Storyboard",
           description:
-            "Comprehensive storyboard outlining the visual narrative and educational sequence for the safety training content.",
+            "Storyboard development for a promotional video to be used on the MySafetyTV website. Created in Procreate.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/Storyboard_MySafetyTV%201.webp",
           title: "MySafetyTV Storyboard Panel 2",
           description:
-            "Continuation of the storyboard showcasing the next sequence in the safety training content.",
+            "Storyboard development for a promotional video to be used on the MySafetyTV website. Created in Procreate.",
         },
       ],
     },

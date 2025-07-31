@@ -2082,27 +2082,29 @@ export default function ProjectModal({
         />
       </div>
 
-      <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none hidden md:flex z-[110]">
-        <button
-          onClick={onPrevious}
-          className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasPrevious ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
-          disabled={!hasPrevious}
-          aria-label="Previous project"
-          style={{ zIndex: 111 }}
-        >
-          <ChevronLeft className="h-8 w-8 text-black dark:text-white" />
-        </button>
+      {!isTouchDevice && (
+        <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none md:flex z-[110]">
+          <button
+            onClick={onPrevious}
+            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasPrevious ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
+            disabled={!hasPrevious}
+            aria-label="Previous project"
+            style={{ zIndex: 111 }}
+          >
+            <ChevronLeft className="h-8 w-8 text-black dark:text-white" />
+          </button>
 
-        <button
-          onClick={onNext}
-          className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasNext ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
-          disabled={!hasNext}
-          aria-label="Next project"
-          style={{ zIndex: 111 }}
-        >
-          <ChevronRight className="h-8 w-8 text-black dark:text-white" />
-        </button>
-      </div>
+          <button
+            onClick={onNext}
+            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasNext ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
+            disabled={!hasNext}
+            aria-label="Next project"
+            style={{ zIndex: 111 }}
+          >
+            <ChevronRight className="h-8 w-8 text-black dark:text-white" />
+          </button>
+        </div>
+      )}
 
       <div
         ref={modalContainerRef}

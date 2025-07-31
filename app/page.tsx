@@ -249,9 +249,15 @@ export default function Home() {
     });
   };
 
-  // Mobile-optimized touch handlers
+  // FIX: Enhanced mobile-optimized touch handlers for better modal interaction
   const handleTouchStart = (projectId: string) => (event: React.TouchEvent) => {
-    console.log("📱 Touch start on project:", projectId);
+    if (process.env.NODE_ENV === "development") {
+      console.log("📱 Touch start on project:", projectId);
+    }
+
+    // FIX: Prevent any potential interference with modal opening
+    event.stopPropagation();
+
     // Store the initial touch to compare with touchend
     const touch = event.touches[0];
     (event.currentTarget as any).initialTouch = {
@@ -262,12 +268,21 @@ export default function Home() {
   };
 
   const handleTouchEnd = (projectId: string) => (event: React.TouchEvent) => {
-    console.log("📱 Touch end on project:", projectId);
+    if (process.env.NODE_ENV === "development") {
+      console.log("📱 Touch end on project:", projectId);
+    }
+
+    // FIX: Prevent any potential interference with modal opening
+    event.stopPropagation();
+    event.preventDefault();
+
     const element = event.currentTarget as any;
     const initialTouch = element.initialTouch;
 
     if (!initialTouch) {
-      console.log("📱 No initial touch found, treating as click");
+      if (process.env.NODE_ENV === "development") {
+        console.log("📱 No initial touch found, treating as click");
+      }
       handleProjectClick(projectId, event);
       return;
     }
@@ -277,15 +292,17 @@ export default function Home() {
     const deltaY = Math.abs(changedTouch.clientY - initialTouch.y);
     const deltaTime = Date.now() - initialTouch.time;
 
-    // Consider it a tap if movement is minimal and duration is short
-    const isTap = deltaX < 10 && deltaY < 10 && deltaTime < 500;
+    // FIX: More lenient tap detection for mobile users
+    const isTap = deltaX < 15 && deltaY < 15 && deltaTime < 750;
 
-    console.log("📱 Touch analysis:", {
-      deltaX,
-      deltaY,
-      deltaTime,
-      isTap,
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log("📱 Touch analysis:", {
+        deltaX,
+        deltaY,
+        deltaTime,
+        isTap,
+      });
+    }
 
     if (isTap) {
       handleProjectClick(projectId, event);
@@ -1183,18 +1200,44 @@ export default function Home() {
             <ProjectModal
               isOpen={!!selectedProject}
               onClose={() => {
-                console.log("🚪 Modal onClose called");
+                if (process.env.NODE_ENV === "development") {
+                  console.log("🚪 Modal onClose called");
+                }
 
-                // Log memory usage before restoration
-                logMemoryUsage("Before modal close");
+                // FIX: Enhanced modal close with better restoration
+                try {
+                  // Log memory usage before restoration
+                  logMemoryUsage("Before modal close");
 
-                // Restore home page media
-                restoreHomePageMedia();
+                  // Restore home page media
+                  restoreHomePageMedia();
 
-                // Log memory usage after restoration
-                setTimeout(() => logMemoryUsage("After media restored"), 100);
+                  // FIX: Add additional restoration steps for mobile
+                  if (typeof window !== "undefined") {
+                    // Ensure pointer events are restored
+                    document.body.style.pointerEvents = "auto";
 
-                setSelectedProject(null);
+                    // Force a layout recalculation
+                    setTimeout(() => {
+                      window.dispatchEvent(new Event("resize"));
+                    }, 50);
+                  }
+
+                  // Log memory usage after restoration
+                  setTimeout(() => logMemoryUsage("After media restored"), 100);
+
+                  setSelectedProject(null);
+
+                  if (process.env.NODE_ENV === "development") {
+                    console.log("✅ Modal closed successfully");
+                  }
+                } catch (error) {
+                  if (process.env.NODE_ENV === "development") {
+                    console.error("Error closing modal:", error);
+                  }
+                  // Fallback: still try to close
+                  setSelectedProject(null);
+                }
               }}
               title={
                 filteredProjects.find((p) => p.id === selectedProject)?.title ||

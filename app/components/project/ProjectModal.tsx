@@ -1260,21 +1260,16 @@ export default function ProjectModal({
   });
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const [mobileScrollY, setMobileScrollY] = useState(0);
-
-  // Capture scroll position immediately when modal opens on mobile
-  useEffect(() => {
-    if (isOpen && isTouchDevice) {
-      const scrollY = window.scrollY;
-      setMobileScrollY(scrollY);
-      console.log("Mobile scroll captured:", scrollY);
-    }
-  }, [isOpen, isTouchDevice]);
+  // FIX: Add modal settled state to prevent accidental early closes
+  const [isModalSettled, setIsModalSettled] = useState(false);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const imageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const overlayClickable = useRef(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
+  // FIX: Add ref to track if this is the first open for positioning
+  const isFirstOpenRef = useRef(true);
 
   // Auto memory management for modal content
   const { trackAllElements, getStats: getModalTrackingStats } =
@@ -1333,26 +1328,46 @@ export default function ProjectModal({
     return () => observer.disconnect();
   }, []);
 
-  // Adjust overlay position to account for body top offset when scroll is locked
+  // FIX: Improved modal positioning to fix wrong spots and positioning issues
   useEffect(() => {
-    if (!isOpen || isTouchDevice) return;
+    if (!isOpen) return;
 
     const scrollY = window.scrollY;
     const overlayEl = overlayRef.current;
 
     if (!overlayEl) return;
 
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        "Setting modal position - scrollY:",
+        scrollY,
+        "isTouchDevice:",
+        isTouchDevice,
+        "isFirstOpen:",
+        isFirstOpenRef.current
+      );
+    }
+
     // Store original transform so we can restore it later
     const originalTransform = overlayEl.style.transform;
 
-    // Compensate for the negative body top shift
-    overlayEl.style.transform = `translateY(${scrollY}px)`;
+    // FIX: Apply positioning for both touch and non-touch devices, but differently
+    if (isTouchDevice) {
+      // FIX: For mobile, only apply translateY on initial open and reset positioning on project change
+      if (isFirstOpenRef.current) {
+        overlayEl.style.transform = `translateY(${scrollY}px)`;
+        isFirstOpenRef.current = false;
+      }
+    } else {
+      // For desktop, compensate for the negative body top shift
+      overlayEl.style.transform = `translateY(${scrollY}px)`;
+    }
 
     return () => {
       // Restore original transform (default was 'none')
       overlayEl.style.transform = originalTransform || "none";
     };
-  }, [isOpen, isTouchDevice]);
+  }, [isOpen, isTouchDevice, selectedProject]); // FIX: Add selectedProject dependency to reset positioning
 
   // Track modal content when it opens or content changes
   useEffect(() => {
@@ -1370,6 +1385,13 @@ export default function ProjectModal({
     }
   }, [isOpen, selectedProject, trackAllElements, getModalTrackingStats]);
 
+  // FIX: Reset positioning reference when modal closes or project changes
+  useEffect(() => {
+    if (!isOpen) {
+      isFirstOpenRef.current = true;
+    }
+  }, [isOpen, selectedProject]);
+
   // Early return - keep it simple and working
   if (!isOpen) {
     return null;
@@ -1377,34 +1399,56 @@ export default function ProjectModal({
 
   console.log("ProjectModal render:", { isOpen, selectedProject, title });
 
-  // Enhanced scroll prevention that keeps background visible
+  // FIX: Enhanced scroll prevention and restoration with better mobile handling
   useEffect(() => {
     if (isOpen) {
-      // Store original values
+      // Store more original styles for better restoration
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
       const originalBodyPosition = document.body.style.position;
       const originalBodyTop = document.body.style.top;
       const originalBodyWidth = document.body.style.width;
+      const originalBodyHeight = document.body.style.height;
+      const originalDocumentHeight = document.documentElement.style.height;
+      const originalBodyTouchAction = document.body.style.touchAction;
       const scrollY = window.scrollY;
 
-      // Note: Mobile scroll position is now captured in dedicated useEffect above
+      if (process.env.NODE_ENV === "development") {
+        console.log("Setting up scroll prevention - scrollY:", scrollY);
+      }
 
       // Prevent scrolling while keeping background visible
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
 
-      // For mobile devices, also fix the body position to prevent scroll
+      // FIX: For mobile devices, store more state and apply better positioning
       if (isTouchDevice) {
+        setMobileScrollY(scrollY); // Store scroll position for modal positioning
         document.body.style.position = "fixed";
         document.body.style.top = `-${scrollY}px`;
         document.body.style.width = "100%";
+        document.body.style.height = "100%";
+        document.documentElement.style.height = "100%";
+        document.body.style.touchAction = "none";
       }
 
-      // Prevent touch scrolling on the modal overlay
+      // FIX: Improved touch scroll prevention with better content detection
       const preventTouchScroll = (e: TouchEvent) => {
+        const target = e.target as HTMLElement;
+
         // Allow scrolling within the modal content, but prevent on the overlay
         if (e.target === overlayRef.current) {
+          e.preventDefault();
+        }
+
+        // FIX: Also prevent if touching outside content areas
+        const isContentArea =
+          target.closest('[ref="contentRef"]') ||
+          target.closest("img") ||
+          target.closest("video") ||
+          target.closest("iframe");
+
+        if (!isContentArea && e.target === overlayRef.current) {
           e.preventDefault();
         }
       };
@@ -1418,16 +1462,32 @@ export default function ProjectModal({
       });
 
       return () => {
-        // Restore original overflow
+        if (process.env.NODE_ENV === "development") {
+          console.log("Restoring scroll - scrollY:", scrollY);
+        }
+
+        // FIX: Restore original overflow
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalHtmlOverflow;
 
-        // Restore original body styles and scroll position
+        // FIX: Improved restoration for mobile devices
         if (isTouchDevice) {
           document.body.style.position = originalBodyPosition;
           document.body.style.top = originalBodyTop;
           document.body.style.width = originalBodyWidth;
+          document.body.style.height = originalBodyHeight;
+          document.documentElement.style.height = originalDocumentHeight;
+          document.body.style.touchAction = originalBodyTouchAction;
+
+          // FIX: Force scroll restoration and re-enable interactions
           window.scrollTo(0, scrollY);
+          document.body.style.pointerEvents = "auto";
+
+          // FIX: Force re-render/reflow to ensure header reappears and scrolling works
+          setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+          }, 100);
+
           setMobileScrollY(0); // Reset mobile scroll position
         }
 
@@ -1438,18 +1498,30 @@ export default function ProjectModal({
     }
   }, [isOpen, isTouchDevice]);
 
-  // Device detection
+  // FIX: Enhanced device detection with orientation change support
   useEffect(() => {
     const checkTouchDevice = () => {
       setIsTouchDevice(
         "ontouchstart" in window || navigator.maxTouchPoints > 0
       );
+
+      if (process.env.NODE_ENV === "development") {
+        console.log(
+          "Touch device detection - isTouch:",
+          "ontouchstart" in window || navigator.maxTouchPoints > 0
+        );
+      }
     };
 
     checkTouchDevice();
     window.addEventListener("resize", checkTouchDevice);
+    // FIX: Add orientation change detection for mobile devices
+    window.addEventListener("orientationchange", checkTouchDevice);
 
-    return () => window.removeEventListener("resize", checkTouchDevice);
+    return () => {
+      window.removeEventListener("resize", checkTouchDevice);
+      window.removeEventListener("orientationchange", checkTouchDevice);
+    };
   }, []);
 
   // Enhanced keyboard navigation
@@ -1500,29 +1572,91 @@ export default function ProjectModal({
     };
   }, [isOpen, isTouchDevice]);
 
+  // FIX: Enhanced close handler with mobile delay and error boundary
   const handleClose = () => {
-    onClose();
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      overlayClickable.current = false;
-      const timer = setTimeout(() => {
-        overlayClickable.current = true;
-      }, 250); // 250ms delay before allowing overlay to close
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, isTouchDevice]);
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    // Prevent immediate close right after opening (especially on mobile)
-    if (!overlayClickable.current) {
+    // FIX: Block early closures using isModalSettled
+    if (!isModalSettled) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("Close blocked - modal not settled yet");
+      }
       return;
     }
 
-    // On touch devices, only close if clicking directly on the overlay background
+    try {
+      // FIX: Add delay for mobile to allow animations/transitions to complete
+      if (isTouchDevice) {
+        setTimeout(() => {
+          onClose();
+        }, 200);
+      } else {
+        onClose();
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("Error in handleClose:", error);
+      }
+      // Fallback: still try to close
+      onClose();
+    }
+  };
+
+  // FIX: Enhanced overlay clickable logic with extended delay for mobile
+  useEffect(() => {
+    if (isOpen) {
+      overlayClickable.current = false;
+      setIsModalSettled(false);
+
+      // FIX: Extend delay to 500ms for mobile, keep 250ms for desktop
+      const overlayDelay = isTouchDevice ? 500 : 250;
+      const overlayTimer = setTimeout(() => {
+        overlayClickable.current = true;
+      }, overlayDelay);
+
+      // FIX: Set modal settled after 300ms delay
+      const settledTimer = setTimeout(() => {
+        setIsModalSettled(true);
+      }, 300);
+
+      return () => {
+        clearTimeout(overlayTimer);
+        clearTimeout(settledTimer);
+      };
+    }
+  }, [isOpen, isTouchDevice]);
+
+  // FIX: Enhanced overlay click handler with better mobile touch detection
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        "Overlay click detected - isTouch:",
+        isTouchDevice,
+        "target:",
+        (e.target as HTMLElement).tagName,
+        "overlayClickable:",
+        overlayClickable.current,
+        "isModalSettled:",
+        isModalSettled
+      );
+    }
+
+    // FIX: Prevent immediate close right after opening (especially on mobile)
+    if (!overlayClickable.current || !isModalSettled) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("Overlay click ignored - not ready");
+      }
+      return;
+    }
+
+    // FIX: Add e.stopPropagation() to prevent event bubbling
+    e.stopPropagation();
+
+    // FIX: Enhanced touch device handling - strictly limit closure to overlay element only
     if (isTouchDevice) {
+      // Only close if clicking directly on the overlay background
       if (e.target === overlayRef.current) {
+        if (process.env.NODE_ENV === "development") {
+          console.log("Touch device overlay click - closing modal");
+        }
         handleClose();
       }
       return;
@@ -1533,12 +1667,29 @@ export default function ProjectModal({
       e.target === overlayRef.current ||
       (e.target as HTMLElement)?.closest('[data-clickable-area="close"]')
     ) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("Desktop overlay click - closing modal");
+      }
       handleClose();
     }
   };
 
-  // Prevent touch scrolling on overlay
+  // FIX: Enhanced touch handlers that ignore content elements
   const handleTouchMove = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+
+    // FIX: Ignore events if they target content elements (images, videos, contentRef area)
+    const isContentElement =
+      target.closest("img") ||
+      target.closest("video") ||
+      target.closest("iframe") ||
+      target.closest('[ref="contentRef"]') ||
+      contentRef.current?.contains(target);
+
+    if (isContentElement) {
+      return; // Allow legitimate interactions inside the modal
+    }
+
     // Only prevent if touching the overlay itself, not content within
     if (e.target === overlayRef.current) {
       e.preventDefault();
@@ -1546,6 +1697,20 @@ export default function ProjectModal({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+
+    // FIX: Ignore events if they target content elements (images, videos, contentRef area)
+    const isContentElement =
+      target.closest("img") ||
+      target.closest("video") ||
+      target.closest("iframe") ||
+      target.closest('[ref="contentRef"]') ||
+      contentRef.current?.contains(target);
+
+    if (isContentElement) {
+      return; // Allow legitimate interactions inside the modal
+    }
+
     // Only prevent if touching the overlay itself, not content within
     if (e.target === overlayRef.current) {
       e.preventDefault();
@@ -1656,7 +1821,8 @@ export default function ProjectModal({
   const renderContent = () => {
     if (selectedProject === "Creative Advertising") {
       return (
-        <div className="space-y-0">
+        // FIX: Add key to force re-render on project change for fresh positioning
+        <div key={selectedProject} className="space-y-0">
           {talesFromTheSunCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1672,7 +1838,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "BumbleGanttWithTheWind") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {bumbleGanttCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1688,7 +1854,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "CreativeCoding") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {creativeCodingCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1704,7 +1870,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "SmokeAnimation") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {smokeAnimationCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1720,7 +1886,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "Illustrations") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {illustrationCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1736,7 +1902,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "Tag") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {tagCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1752,7 +1918,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "Truckmate") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {truckmateCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1768,7 +1934,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "MySafetyTV") {
       return (
-        <div className="space-y-0">
+        <div key={selectedProject} className="space-y-0">
           {mysafetyTVCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1786,6 +1952,7 @@ export default function ProjectModal({
       // For projects with just a single image
       return (
         <div
+          key={selectedProject}
           className={`w-full ${!isTouchDevice ? "snap-start" : ""} flex items-center justify-center py-10 md:py-16 px-4 md:px-14`}
           data-image-info={JSON.stringify({
             image: image,
@@ -1827,13 +1994,15 @@ export default function ProjectModal({
         height: "100vh",
         maxWidth: "100vw",
         maxHeight: "100vh",
-        top: 0,
+        // FIX: Ensure modal is anchored correctly relative to pre-open scroll position
+        top: isTouchDevice ? `${mobileScrollY}px` : 0,
         left: 0,
         right: 0,
         bottom: 0,
         margin: 0,
         padding: 0,
-        transform: isTouchDevice ? `translateY(${mobileScrollY}px)` : "none", // Compensate for body shift on mobile
+        // FIX: Use consistent translateY compensation for mobile
+        transform: isTouchDevice ? `translateY(-${mobileScrollY}px)` : "none",
         touchAction: "none", // Additional touch prevention
         position: "fixed", // Ensure fixed positioning on mobile
       }}
@@ -1922,13 +2091,28 @@ export default function ProjectModal({
       <div
         ref={modalContainerRef}
         className="flex flex-col md:flex-row w-full h-full px-3 pt-16 md:pt-18 pb-8 md:gap-2 lg:gap-3 justify-start max-w-full max-h-full overflow-hidden"
+        style={{
+          // FIX: Ensure proper positioning to prevent offset issues
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
       >
         {/* Content area */}
         <div
           ref={contentRef}
           data-clickable-area={isTouchDevice ? "" : "close"}
           onScroll={handleScroll}
-          className="w-full md:w-[60%] lg:w-[62%] flex-1 overflow-y-auto relative md:pr-4 lg:pr-6 max-w-full max-h-full md:pb-8 pb-32"
+          // FIX: Add touch event isolation to prevent interference with overlay
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          className="w-full md:w-[60%] lg:w-[62%] flex-1 relative md:pr-4 lg:pr-6 max-w-full max-h-full md:pb-8 pb-32"
+          style={{
+            // FIX: For touch devices, set overflow-y: auto to allow internal scrolling
+            overflowY: isTouchDevice ? "auto" : "auto",
+          }}
           onClick={(e) => {
             // Don't close on touch devices to prevent accidental closes
             if (isTouchDevice) {
@@ -2047,8 +2231,8 @@ export default function ProjectModal({
     </div>
   );
 
-  // Render modal via React portal so it overlays entire viewport regardless of scroll context
-  return typeof window !== "undefined" && isOpen
+  // FIX: Enhanced portal creation with conditional check to ensure document.body exists
+  return typeof window !== "undefined" && isOpen && document.body
     ? createPortal(modal, document.body)
     : null;
 }

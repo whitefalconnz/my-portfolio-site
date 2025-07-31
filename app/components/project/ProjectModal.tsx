@@ -1258,9 +1258,14 @@ export default function ProjectModal({
     if (typeof window === "undefined") return false;
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   });
-  const [isTextExpanded, setIsTextExpanded] = useState(false);
+
+  // MODIFICATION: Replaced single state with independent states for each text block
+  const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [showOverviewMore, setShowOverviewMore] = useState(false);
+  const [showDetailsMore, setShowDetailsMore] = useState(false);
+
   const [mobileScrollY, setMobileScrollY] = useState(0);
-  // FIX: Add modal settled state to prevent accidental early closes
   const [isModalSettled, setIsModalSettled] = useState(false);
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -1268,8 +1273,41 @@ export default function ProjectModal({
   const imageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const overlayClickable = useRef(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  // FIX: Add ref to track if this is the first open for positioning
   const isFirstOpenRef = useRef(true);
+
+  // MODIFICATION: Refs for text paragraphs to check for overflow
+  const overviewTextRef = useRef<HTMLParagraphElement>(null);
+  const detailsTextRef = useRef<HTMLParagraphElement>(null);
+
+  // MODIFICATION: Effect to check for text overflow on mobile
+  useEffect(() => {
+    // Only run this logic on touch devices where this UI is visible
+    if (!isOpen || !isTouchDevice) return;
+
+    // Reset expansion state when the selected project changes
+    setIsOverviewExpanded(false);
+    setIsDetailsExpanded(false);
+
+    // Use a timeout to ensure the DOM has rendered and styles are applied
+    const timer = setTimeout(() => {
+      const overviewEl = overviewTextRef.current;
+      if (overviewEl) {
+        // Check if the content's full height is greater than its visible (clamped) height
+        setShowOverviewMore(overviewEl.scrollHeight > overviewEl.clientHeight);
+      } else {
+        setShowOverviewMore(false);
+      }
+
+      const detailsEl = detailsTextRef.current;
+      if (detailsEl) {
+        setShowDetailsMore(detailsEl.scrollHeight > detailsEl.clientHeight);
+      } else {
+        setShowDetailsMore(false);
+      }
+    }, 150); // A small delay ensures accurate measurement
+
+    return () => clearTimeout(timer);
+  }, [isOpen, isTouchDevice, description, activeItem, selectedProject]);
 
   // Auto memory management for modal content
   const { trackAllElements, getStats: getModalTrackingStats } =
@@ -2189,7 +2227,7 @@ export default function ProjectModal({
         </div>
       </div>
 
-      {/* Mobile bottom text overlay with view more functionality */}
+      {/* MODIFICATION: Mobile bottom text overlay with improved "View more" functionality */}
       <div
         className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 dark:from-black/90 via-white/70 dark:via-black/70 to-transparent p-4 z-[120]"
         style={{
@@ -2200,16 +2238,17 @@ export default function ProjectModal({
           <h2 className="text-lg font-bold text-orange-500 mb-2">{title}</h2>
           <div className="relative">
             <p
-              className={`text-sm text-black/90 dark:text-white/90 leading-relaxed transition-all duration-300 ${isTextExpanded ? "" : "line-clamp-2"}`}
+              ref={overviewTextRef}
+              className={`text-sm text-black/90 dark:text-white/90 leading-relaxed transition-all duration-300 ${isOverviewExpanded ? "" : "line-clamp-2"}`}
             >
               {description}
             </p>
-            {description.length > 100 && (
+            {showOverviewMore && (
               <button
-                onClick={() => setIsTextExpanded(!isTextExpanded)}
+                onClick={() => setIsOverviewExpanded(!isOverviewExpanded)}
                 className="text-xs text-black/70 dark:text-white/70 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
               >
-                {isTextExpanded ? "View less" : "View more"}
+                {isOverviewExpanded ? "View less" : "View more"}
               </button>
             )}
           </div>
@@ -2225,16 +2264,17 @@ export default function ProjectModal({
                 {activeItem.description && (
                   <div className="relative">
                     <p
-                      className={`text-xs text-black/80 dark:text-white/80 leading-normal ${isTextExpanded ? "" : "line-clamp-2"}`}
+                      ref={detailsTextRef}
+                      className={`text-xs text-black/80 dark:text-white/80 leading-normal ${isDetailsExpanded ? "" : "line-clamp-2"}`}
                     >
                       {activeItem.description}
                     </p>
-                    {activeItem.description.length > 80 && (
+                    {showDetailsMore && (
                       <button
-                        onClick={() => setIsTextExpanded(!isTextExpanded)}
+                        onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
                         className="text-xs text-black/60 dark:text-white/60 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
                       >
-                        {isTextExpanded ? "View less" : "View more"}
+                        {isDetailsExpanded ? "View less" : "View more"}
                       </button>
                     )}
                   </div>

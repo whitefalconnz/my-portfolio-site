@@ -851,37 +851,39 @@ export default function Home() {
                     </div>
                   </Link>
 
-                  {/* Illustration */}
-                  <div className="mt-8">
-                    <ScrollReveal direction="up" duration={800} delay={200}>
-                      <Link
-                        href="/about"
-                        className="block border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300 cursor-pointer group"
-                        onMouseEnter={(e) => {
-                          setShowTooltip(true);
-                          setTooltipPosition({ x: e.clientX, y: e.clientY });
-                        }}
-                        onMouseLeave={() => setShowTooltip(false)}
-                        onMouseMove={(e) => {
-                          if (showTooltip) {
-                            setTooltipPosition({
-                              x: e.clientX,
-                              y: e.clientY,
-                            });
-                          }
-                        }}
-                      >
-                        <FadeInImage
-                          src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
-                          alt="Decorative illustration - Click to visit about page"
-                          width={720}
-                          height={540}
-                          priority={false}
-                          className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </Link>
-                    </ScrollReveal>
-                  </div>
+                  {/* Illustration - Only show on desktop */}
+                  {!isMobile && (
+                    <div className="mt-8">
+                      <ScrollReveal direction="up" duration={800} delay={200}>
+                        <Link
+                          href="/about"
+                          className="block border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300 cursor-pointer group"
+                          onMouseEnter={(e) => {
+                            setShowTooltip(true);
+                            setTooltipPosition({ x: e.clientX, y: e.clientY });
+                          }}
+                          onMouseLeave={() => setShowTooltip(false)}
+                          onMouseMove={(e) => {
+                            if (showTooltip) {
+                              setTooltipPosition({
+                                x: e.clientX,
+                                y: e.clientY,
+                              });
+                            }
+                          }}
+                        >
+                          <FadeInImage
+                            src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
+                            alt="Decorative illustration - Click to visit about page"
+                            width={720}
+                            height={540}
+                            priority={false}
+                            className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </Link>
+                      </ScrollReveal>
+                    </div>
+                  )}
                 </ScrollReveal>
               </div>
             </div>

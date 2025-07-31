@@ -1736,6 +1736,27 @@ export default function ProjectModal({
     [hasScrolled]
   );
 
+  // New useEffect for handling mobile viewport height
+  useEffect(() => {
+    const setDocHeight = () => {
+      document.documentElement.style.setProperty(
+        "--doc-height",
+        `${window.innerHeight}px`
+      );
+    };
+
+    if (isTouchDevice) {
+      window.addEventListener("resize", setDocHeight);
+      setDocHeight();
+    }
+
+    return () => {
+      if (isTouchDevice) {
+        window.removeEventListener("resize", setDocHeight);
+      }
+    };
+  }, [isTouchDevice]);
+
   const renderContentSection = (section: ContentSection) => {
     return (
       <div className="space-y-0">
@@ -1991,9 +2012,8 @@ export default function ProjectModal({
           ? "none"
           : "blur(8px) saturate(180%)",
         width: "100vw",
-        height: "100vh",
-        maxWidth: "100vw",
-        maxHeight: "100vh",
+        height: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
+        maxHeight: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
         // FIX: Ensure modal is anchored correctly relative to pre-open scroll position
         top: isTouchDevice ? `${mobileScrollY}px` : 0,
         left: 0,
@@ -2098,6 +2118,7 @@ export default function ProjectModal({
           left: 0,
           width: "100%",
           height: "100%",
+          paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
         {/* Content area */}
@@ -2111,7 +2132,8 @@ export default function ProjectModal({
           className="w-full md:w-[60%] lg:w-[62%] flex-1 relative md:pr-4 lg:pr-6 max-w-full max-h-full md:pb-8 pb-32"
           style={{
             // FIX: For touch devices, set overflow-y: auto to allow internal scrolling
-            overflowY: isTouchDevice ? "auto" : "auto",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
           }}
           onClick={(e) => {
             // Don't close on touch devices to prevent accidental closes
@@ -2168,7 +2190,12 @@ export default function ProjectModal({
       </div>
 
       {/* Mobile bottom text overlay with view more functionality */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 dark:from-black/90 via-white/70 dark:via-black/70 to-transparent p-4 z-[120]">
+      <div
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 dark:from-black/90 via-white/70 dark:via-black/70 to-transparent p-4 z-[120]"
+        style={{
+          paddingBottom: "calc(env(safe-area-inset-bottom, 1rem) + 1rem)",
+        }}
+      >
         <div className="text-left">
           <h2 className="text-lg font-bold text-orange-500 mb-2">{title}</h2>
           <div className="relative">

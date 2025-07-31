@@ -97,6 +97,43 @@ export default function Home() {
     trackAllElements,
     getAutoTrackingStats,
   ]);
+  // Add Open Graph and Twitter meta tags for link thumbnail
+  // Uses the same image as the "Creative Coding" project item
+  // (https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp)
+  // This ensures a nice preview when sharing the link
+
+  {
+    /* Open Graph and Twitter Card meta tags for link previews */
+  }
+  <head>
+    <meta property="og:title" content="Jakob Backhouse Portfolio" />
+    <meta
+      property="og:description"
+      content="Design generalist with a focus on 2D frame by frame animation, creative advertising, and illustration. Explore my portfolio of animation, illustration, and creative projects."
+    />
+    <meta
+      property="og:image"
+      content="https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp"
+    />
+    <meta property="og:image:alt" content="Creative Coding project thumbnail" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jakobbackhouse.com/" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jakob Backhouse Portfolio" />
+    <meta
+      name="twitter:description"
+      content="Design generalist with a focus on 2D frame by frame animation, creative advertising, and illustration. Explore my portfolio of animation, illustration, and creative projects."
+    />
+    <meta
+      name="twitter:image"
+      content="https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Creative Coding project thumbnail"
+    />
+  </head>;
 
   // Re-track elements when filter changes (some images become visible/hidden)
   useEffect(() => {

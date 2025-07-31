@@ -371,7 +371,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "Born from a personal moment of fever-induced terror, the narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
+        "Inspired by a personal moment of fever-induced terror, this narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
       categories: ["Animation"],
     },
     // Paintings and Illustrations
@@ -395,7 +395,7 @@ export default function Home() {
       aspectRatio: AspectRatio.LANDSCAPE,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "A small team and I were tasked with creating a campaign to spread awareness for sun safety in New Zealand. We created a campaign that used cheesy and grotesque horror tropes to convince people to be more sun safe",
+        "A small team and I were tasked with creating a campaign to spread awareness about sun safety in New Zealand. We developed a campaign that used cheesy and grotesque horror tropes to convince people to be more sun safe.",
       categories: ["Creative Advertising"],
     },
     {
@@ -406,7 +406,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "Mock collaboration with Bumble addressing how Gen Z develop 'ICKs' as an excuse for human imperfections, promoting the app as a safe platform for vulnerability.",
+        "A mock collaboration with Bumble addressing how Gen Z develop 'ICKs' as an excuse for human imperfections, promoting the app as a safe platform for vulnerability.",
       categories: ["Creative Advertising"],
     },
     {
@@ -417,7 +417,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "Personal film about addiction made in Blender grease pencil. Exploring the feeling of withdrawing from an addiction, my character makes his way through a journey on a train from irritation and panic to eventual recovery. A bear intermitenly comes into view tempting the character to smoke. People crowd the train and the character plunges into a panic where he almost loses his sanity only to barely resist smoking as the train comes out of the tunnel.",
+        "A personal film about addiction made in Blender Grease Pencil. Exploring the feeling of withdrawing from an addiction, my character makes his way through a journey on a train, from irritation and panic to eventual recovery. A bear intermittently comes into view, tempting the character to smoke. People crowd the train, and the character plunges into a panic where he almost loses his sanity, only to barely resist smoking as the train comes out of the tunnel.",
       categories: ["Animation"],
     },
     {
@@ -428,7 +428,7 @@ export default function Home() {
       aspectRatio: AspectRatio.PORTRAIT,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "I worked for an online safety training company called MySafetyTV. One other and I were tasked with creating the animated explainer videos for the company. There was a 2-4 week turnaround for each video from concept to execution. These videos are part of a learning course that is designed around that me and one other co-worker created.",
+        "I worked for an online safety training company called MySafetyTV. One other person and I were tasked with creating the animated explainer videos for the company. There was a 2–4 week turnaround for each video from concept to execution. These videos are part of a learning course that my co-worker and I created.",
       categories: ["Animation", "Creative Advertising"],
     },
     // Update Creative Coding project
@@ -440,7 +440,7 @@ export default function Home() {
       aspectRatio: AspectRatio.SQUARE,
       bgColor: "bg-[#5C3E3C]",
       description:
-        "How can I create an image manipulator in p5.js that can turn any photo into a painting? What type of images and style should I use to convey the feeling of going for bush walks when I was younger? To create this effect I thought of how paintings are created and what makes them look like a paitning. The primary reason is the effect of using a brush and so the focus of the project was creating the effect of brush strokes in the slightly random but logical way that a painter would create them.",
+        "How can I create an image manipulator in p5.js that can turn any photo into a painting? What type of images and style should I use to convey the feeling of going for bush walks when I was younger? To create this effect, I thought about how paintings are made and what makes them look like paintings. The primary reason is the effect of using a brush, so the focus of the project was creating the effect of brush strokes in the slightly random but logical way that a painter would create them.",
       categories: ["Illustration"],
     },
     {

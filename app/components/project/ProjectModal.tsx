@@ -53,7 +53,7 @@ const talesFromTheSunCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/Storyboard_TalesFromTheSun.webp",
           title: "Tales from the Sun Storyboard",
           description:
-            "Horror-inspired video ad for sun safety targeting young males. Uses 80s 'Tales From the Crypt' and 2000s scary movie aesthetics.",
+            "A horror-inspired video ad for sun safety targeting young males. Uses 80s 'Tales From the Crypt' and 2000s scary movie aesthetics.",
         },
       ],
     },
@@ -65,20 +65,20 @@ const talesFromTheSunCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/TheIssueTalesFromTheSun.webp",
           title: "The Issue",
           description:
-            "Young males in NZ have a 'she'll be right' attitude about sun protection despite high UV rates.",
+            "Young males in NZ have a 'she'll be right' attitude about sun protection despite high UV levels.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/InsightTalesFromTheSun.webp",
           title: "Campaign Insight",
           description:
-            "Young males care about attractiveness to the opposite gender. Link sun damage to being undesirable.",
+            "Young males care about being attractive to the opposite gender. The campaign links sun damage to being undesirable.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/SingleMindedMessageTalesFromTheSun.webp",
           title: "Single Minded Message",
-          description: "Don't be a crayfish, wear sunblock",
+          description: "Don't be a crayfish, wear sunblock.",
         },
       ],
     },
@@ -97,28 +97,28 @@ const bumbleGanttCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/Storyboard_BumbleICK%20(2).webp",
           title: "BumbleICK Storyboard",
           description:
-            "Mock Bumble collaboration addressing Gen Z's use of 'ICKs' as excuses for human imperfections. Promotes open, safe platform for vulnerability.",
+            "A mock Bumble collaboration addressing Gen Z's use of 'ICKs' as excuses for human imperfections. Promotes Bumble as an open, safe platform for vulnerability.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/GenZDevelopsICKSSlide.webp",
           title: "Insight",
           description:
-            "Gen Z develops ICKs as excuses for human imperfections. Campaign promotes Bumble as safe space for vulnerability.",
+            "Gen Z develops ICKs as excuses for human imperfections. The campaign promotes Bumble as a safe space for vulnerability.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/KickTheIckSlide.webp",
           title: "ICK Billboard",
           description:
-            "Provocative billboard design for BumbleGantt campaign targeting Gen Z audience.",
+            "Provocative billboard design for the BumbleGantt campaign targeting a Gen Z audience.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/CatchingIcksIsBadForYou.webp",
-          title: "Single minded message",
+          title: "Single Minded Message",
           description:
-            "Catching an ICK is bad for you. Promotes compassionate, inclusive dating culture.",
+            "Catching an ICK is bad for you. Promotes a compassionate, inclusive dating culture.",
         },
       ],
     },
@@ -135,9 +135,9 @@ const creativeCodingCampaign: Campaign = {
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_3.webp",
-          title: "Example photo 1",
+          title: "Example Photo 1",
           description:
-            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks. Based in central park in Wellington, NZ",
+            "Photo manipulated with p5.js to create a pixelated, painterly effect evoking childhood walks. Based in Central Park, Wellington, NZ.",
         },
       ],
     },
@@ -147,16 +147,16 @@ const creativeCodingCampaign: Campaign = {
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp",
-          title: "Example photo 2",
+          title: "Example Photo 2",
           description:
-            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks. Based in central park in Wellington, NZ",
+            "Photo manipulated with p5.js to create a pixelated, painterly effect evoking childhood walks. Based in Central Park, Wellington, NZ.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_2.webp",
-          title: "Example photo 3",
+          title: "Example Photo 3",
           description:
-            "Photo manipulated with p5.js to create pixelated painterly effect evoking childhood walks. Based in central park in Wellington, NZ",
+            "Photo manipulated with p5.js to create a pixelated, painterly effect evoking childhood walks. Based in Central Park, Wellington, NZ.",
         },
       ],
     },
@@ -173,13 +173,13 @@ const smokeAnimationCampaign: Campaign = {
         {
           image: "vimeo:913926901",
           title: "Smoke Animation",
-          description: "The ful short film",
+          description: "The full short film.",
         },
         {
           image: "vimeo:1104662949",
           title: "Smoke Animatic",
           description:
-            "The animatic was similar to final animation but scenes were cut due to time constraints. The first establishing shot of the city is one that I would like to add in. Although the suffocating effect of always being in the train does work for the film in conveying the innescapable feeling of addiction.",
+            "The animatic was similar to the final animation, but some scenes were cut due to time constraints. The first establishing shot of the city is one I would like to add in. Although the suffocating effect of always being in the train works for the film in conveying the inescapable feeling of addiction.",
         },
       ],
     },
@@ -191,35 +191,35 @@ const smokeAnimationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/StoryBoard.webp",
           title: "Storyboard Panel 1",
           description:
-            "Establishes train setting and mood. Bear appears as transcendent character when light passes.",
+            "Establishes the train setting and mood. The bear appears as a transcendent character when light passes.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/StoryBoard1.webp",
           title: "Storyboard Panel 2",
           description:
-            "Character gets increasingly annoyed with train noises. Bear irritates him further.",
+            "The character gets increasingly annoyed with train noises. The bear irritates him further.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/StoryBoard2.webp",
           title: "Storyboard Panel 3",
           description:
-            "People pile into train, enters tunnel. Character's darkest moment.",
+            "People pile into the train as it enters a tunnel. The character reaches his darkest moment.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/StoryBoard3.webp",
           title: "Storyboard Panel 4",
           description:
-            "Character bewildered, goes for smoke. Train leaves tunnel revealing great view.",
+            "The character, bewildered, goes for a smoke. The train leaves the tunnel, revealing a great view.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/StoryBoard4.webp",
           title: "Storyboard Panel 5",
           description:
-            "Character confused but accepting and happy for the first time in a long time. Snapped out of daze by 'Alright' - arrives at destination.",
+            "The character is confused but accepting and happy for the first time in a long while. He is snapped out of his daze by 'Alright'—he arrives at his destination.",
         },
       ],
     },
@@ -231,14 +231,14 @@ const smokeAnimationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/CharacterLookDevelopment.webp",
           title: "Character Look Development",
           description:
-            "Reference drawings for character expressions since film revolves around character's face I thought it was important to get some solid referencess.",
+            "Reference drawings for character expressions. Since the film revolves around the character's face, I thought it was important to get some solid references.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/BearAndCharacterSketches.webp",
           title: "Bear and Character Sketches",
           description:
-            "Preparatory sketches exploring different looks. Chose simplest designs for easy animation.",
+            "Preparatory sketches exploring different looks. I chose the simplest designs for easy animation.",
         },
       ],
     },
@@ -250,7 +250,7 @@ const smokeAnimationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/BackhouseJakob_ANFX301_Project3.webm",
           title: "Animation Experiments",
           description:
-            "Proof of concept experiment. First 2D animation I've ever done.",
+            "Proof of concept experiment. The first 2D animation I've ever done.",
         },
       ],
     },
@@ -269,7 +269,7 @@ const illustrationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/HighaltitudeLandScape(compressed).webp",
           title: "High Altitude Landscape",
           description:
-            "Personal digital painting done in Photoshop. I was inspired by a walk I went on a long time ago in Mangawhero Forest, I loved the extreme colours and the sparkling, magical feeling everything had",
+            "Personal digital painting done in Photoshop. I was inspired by a walk I went on a long time ago in Mangawhero Forest. I loved the extreme colours and the sparkling, magical feeling everything had.",
         },
         {
           image: getCDNUrl(
@@ -277,7 +277,7 @@ const illustrationCampaign: Campaign = {
           ),
           title: "Saddle Road Quick Study",
           description:
-            "Personal digital painting done in Photoshop. A quick study done based on a photo my mum took in saddle road.",
+            "Personal digital painting done in Photoshop. A quick study based on a photo my mum took on Saddle Road.",
         },
         {
           image: getCDNUrl(
@@ -285,7 +285,7 @@ const illustrationCampaign: Campaign = {
           ),
           title: "Wellington Rooftop",
           description:
-            "Personal digital painting done in Procreate. First in a series exploring light and shadow based on Wellington and other city tropes and characters taken from the animated film Akria.",
+            "Personal digital painting done in Procreate. First in a series exploring light and shadow based on Wellington and other city tropes and characters taken from the animated film Akira.",
         },
       ],
     },
@@ -297,7 +297,7 @@ const illustrationCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/Run(compressed).webp",
           title: "Run",
           description:
-            "Personal digital painting created in Photoshop, based on a photo taken in the forest next to the Mount Victoria look out in Wellington",
+            "Personal digital painting created in Photoshop, based on a photo taken in the forest next to the Mount Victoria lookout in Wellington.",
         },
         {
           image: getCDNUrl(
@@ -305,7 +305,7 @@ const illustrationCampaign: Campaign = {
           ),
           title: "Bright Lights",
           description:
-            "Personal digital painting created in Procreate, based on a personal experience I had of climbing around abandoned buildings in Wellington",
+            "Personal digital painting created in Procreate, based on a personal experience I had climbing around abandoned buildings in Wellington.",
         },
         {
           image: getCDNUrl(
@@ -313,7 +313,7 @@ const illustrationCampaign: Campaign = {
           ),
           title: "Photobash",
           description:
-            "Mixed media digital artwork combining photography and painting. It was primarily an exercise to learn how to photobash in Photoshop. But I created a narrative of aliens invading a city and warping time as they are interdimesnional aliens ",
+            "Mixed media digital artwork combining photography and painting. It was primarily an exercise to learn how to photobash in Photoshop, but I created a narrative of aliens invading a city and warping time, as they are interdimensional aliens.",
         },
       ],
     },
@@ -324,9 +324,9 @@ const illustrationCampaign: Campaign = {
           image: getCDNUrl(
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/11.webp"
           ),
-          title: "Abstract alien world painting",
+          title: "Abstract Alien World Painting",
           description:
-            "This was a digital painting painted on top of a blender model. I honestly can't remember what the concept behind this painting was.",
+            "This is a digital painting created on top of a Blender model. I honestly can't remember what the concept behind this painting was.",
         },
       ],
     },
@@ -344,13 +344,13 @@ const tagCampaign: Campaign = {
           image: "vimeo:1093033927",
           title: "Tag Trailer",
           description:
-            "Trailer for tag to promote the short film to potential collaborators and film festivals. It is a scene directly out of the short film so that it could also be used as a proof of concept.",
+            "Trailer for Tag to promote the short film to potential collaborators and film festivals. It is a scene directly from the short film, so it could also be used as a proof of concept.",
         },
         {
           image: "vimeo:1104662194",
           title: "Tag Full Short Film Animatic",
           description:
-            "I began storyboarding this concept years ago in collaboration with Michelle Pretorious, we each developed storyboards intending to animate whichever we preferred together. Though our collaboration ended due to time constraints, I chose to develop my early storyboard individually. What started as personally interesting animation revealed deeper meaning through reflective practices of documenting my thoughts through writing, getting feedback from peers, friends and lecturers through the animatic, character development and a poem. ",
+            "I began storyboarding this concept years ago in collaboration with Michelle Pretorious. We each developed storyboards intending to animate whichever we preferred together. Though our collaboration ended due to time constraints, I chose to develop my early storyboard individually. What started as a personally interesting animation revealed deeper meaning through reflective practices: documenting my thoughts through writing, getting feedback from peers, friends, and lecturers through the animatic, character development, and a poem.",
         },
       ],
     },
@@ -362,70 +362,70 @@ const tagCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background0.5.webp",
           title: "Background 1",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background1.webp",
           title: "Background 2",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background2.webp",
           title: "Background 3",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background3.webp",
           title: "Background 4",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background5.webp",
           title: "Background 5",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background5.5.webp",
           title: "Background 6",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background5.75.webp",
           title: "Background 7",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background6.webp",
           title: "Background 8",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/Background7.webp",
           title: "Background 9",
           description:
-            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. Intended to look like a child drew them. The bright saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially the background colours and style was more grounded and based off reference but gradually through colour scripting and focusing on what the backgrounds needed to represent for the narrative they become more playful, distorted and colourful.",
+            "Digitally created with watercolour and crayon brushes, these backgrounds represent a child-like view of the world. They are intended to look like a child drew them. The bright, saturated colours become more intense as the child's panic grows and things start to warp and distort. Initially, the background colours and style were more grounded and based on reference, but gradually, through colour scripting and focusing on what the backgrounds needed to represent for the narrative, they became more playful, distorted, and colourful.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Backgrounds/OriginalFence%20Background.webp",
-          title: "Alternative background style",
+          title: "Alternative Background Style",
           description:
-            "During the process of creating these backgrounds I experimented with many different styles. This style was too detailed and realistic, I like my new backgrounds because they are more expressive of the characters inner world",
+            "During the process of creating these backgrounds, I experimented with many different styles. This style was too detailed and realistic. I like my new backgrounds because they are more expressive of the character's inner world.",
         },
       ],
     },
@@ -437,21 +437,21 @@ const tagCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/Character_Model_Sheet_Sketches.webp",
           title: "Initial Character Model Sheet Sketches",
           description:
-            "Initially when developing my character I was thinking about creating them out of simple shapes so that they could be easily maniputed in 3D. I also knew that since the shortfilm revolved around the characters expressions that the face would have to be able to show this",
+            "When developing my character, I initially thought about creating them out of simple shapes so they could be easily manipulated in 3D. I also knew that since the short film revolved around the character's expressions, the face would have to be able to show this.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/CharacterColourPicking.webp",
           title: "Character Color Picking",
           description:
-            "While figuring out what colour I wanted my character to be I wanted them to feel relatable so the audience could see themselvse in them.",
+            "While figuring out what colour I wanted my character to be, I wanted them to feel relatable so the audience could see themselves in them.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/Character_Model_Sheet_Colour.webp",
           title: "Character Model Sheet - Color",
           description:
-            "Later the colour of my character changed from this. It had too much of a simpsons feeling to it with the yellow. It gave the character a naive happy-go-lucky feeling to it that did not fit the story",
+            "Later, the colour of my character changed from this. It had too much of a Simpsons feeling to it with the yellow. It gave the character a naive, happy-go-lucky feeling that did not fit the story.",
         },
         {
           image:
@@ -468,23 +468,23 @@ const tagCampaign: Campaign = {
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/MonstersOG.webp",
-          title: "Monster Initial sketches",
+          title: "Monster Initial Sketches",
           description:
-            "These monsters were inspired by child like depictions of monsters because they are intended to look like they came from a childs imagination. Like in the backgrounds I used a digital crayon brush to create them.",
+            "These monsters were inspired by child-like depictions of monsters because they are intended to look like they came from a child's imagination. As with the backgrounds, I used a digital crayon brush to create them.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/MonsterConcepts.webp",
           title: "Monster Development Sketches",
           description:
-            "For these monster devemopments I was thinking about how I could show them moving around my scene three dimensionally. So I modifed my original drawings by constructing them around basic shapes. Although I felt like some of the originaly personality was lost in these so for the final monsters shown in the scene the monsters were modified a bit further ",
+            "For these monster developments, I was thinking about how I could show them moving around my scene three-dimensionally. So I modified my original drawings by constructing them around basic shapes. Although I felt like some of the original personality was lost in these, for the final monsters shown in the scene, the monsters were modified a bit further.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/MonsterDev.webp",
           title: "Monster Development",
           description:
-            "For these monster devemopments I was thinking about how I could show them moving around my scene three dimensionally. So I modifed my original drawings by constructing them around basic shapes. Although I felt like some of the originaly personality was lost in these so for the final monsters shown in the scene the monsters were modified a bit further ",
+            "For these monster developments, I was thinking about how I could show them moving around my scene three-dimensionally. So I modified my original drawings by constructing them around basic shapes. Although I felt like some of the original personality was lost in these, for the final monsters shown in the scene, the monsters were modified a bit further.",
         },
       ],
     },
@@ -496,77 +496,77 @@ const tagCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/ColourScriptDraft1.webp",
           title: "Color Script Draft",
           description:
-            "Creating a colour script was a really helpful exercise in breaking me away from realistic colours. While creating this I was focusing only on how the colours made me feel and if this was right for the story",
+            "Creating a colour script was a really helpful exercise in breaking me away from realistic colours. While creating this, I focused only on how the colours made me feel and whether this was right for the story.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard1.png",
           title: "Storyboard Frame 1",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take ",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard2.png",
           title: "Storyboard Frame 2",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take ",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard3.png",
           title: "Storyboard Frame 3",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard4.png",
           title: "Storyboard Frame 4",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard5.png",
           title: "Storyboard Frame 5",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard6.png",
           title: "Storyboard Frame 6",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard7.png",
           title: "Storyboard Frame 7",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard7.5.png",
           title: "Storyboard Frame 8",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard8.png",
           title: "Storyboard Frame 9",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/TagFullStoryboard9.png",
           title: "Storyboard Frame 10",
           description:
-            "This storyboard went through a few iterations before coming to its final state. Initially the main character was a girl when I was working with a friend - Michelle Pretorious but I decided to make it a boy so I could use myself as a reference easier. storyboard created in Storyboard Pro, it was helpful writing notes and alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was something that was very helpful since it would allow me to get a better sense of the scene before committing and properly plan out how long everything should take",
+            "This storyboard went through a few iterations before coming to its final state. Initially, the main character was a girl when I was working with a friend—Michelle Pretorious—but I decided to make it a boy so I could use myself as a reference more easily. The storyboard was created in Storyboard Pro. It was helpful writing notes alongside each frame for fleshing out aspects further and being creative with the possibilities. I also learned that figuring out how long each specific action (at least roughly) should take before doing any animation was very helpful, as it allowed me to get a better sense of the scene before committing and to properly plan out how long everything should take.",
         },
       ],
     },
@@ -576,9 +576,9 @@ const tagCampaign: Campaign = {
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TrailerCollateral/TagPoster_Cinema.webp",
-          title: "Mock up Cinema Poster",
+          title: "Mock-up Cinema Poster",
           description:
-            "A mock up of what the poster would look like if it was printed on a cinema poster in light house cinemas wellington on Cuba street",
+            "A mock-up of what the poster would look like if it was printed as a cinema poster in Light House Cinemas, Wellington, on Cuba Street.",
         },
       ],
     },
@@ -605,10 +605,10 @@ const truckmateCampaign: Campaign = {
       title: "Main Explainer Video",
       content: [
         {
-          image: "vimeo: 1105289689",
+          image: "vimeo:1105289689",
           title: "Truckmate Explainer Video",
           description:
-            "The final explainer video for Truckmate. To be primarily shown on youtube but also designed for other social media platforms",
+            "The final explainer video for Truckmate. Primarily shown on YouTube but also designed for other social media platforms.",
         },
       ],
     },
@@ -619,7 +619,7 @@ const truckmateCampaign: Campaign = {
           image: "vimeo:1104663506",
           title: "Project Animatic",
           description:
-            "Storyboard animatic showing the narrative flow and timing for the explainer video. During the creation of this I was focused on what the key message was that I wanted to communicate and how to d othis efficently in 30 seconds.",
+            "Storyboard animatic showing the narrative flow and timing for the explainer video. During the creation of this, I focused on the key message I wanted to communicate and how to do this efficiently in 30 seconds.",
         },
       ],
     },
@@ -631,7 +631,7 @@ const truckmateCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
           title: "Animated Logo",
           description:
-            "Dynamic logo animation created for the Truckmate brand identity. To be shown at the end of video ads. Potentially even as a moving logo on a webesite",
+            "Dynamic logo animation created for the Truckmate brand identity. To be shown at the end of video ads. Potentially even as a moving logo on a website.",
         },
       ],
     },
@@ -643,7 +643,7 @@ const truckmateCampaign: Campaign = {
             "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMD1R6_Mockup.webp",
           title: "Promotional Poster",
           description:
-            "The idea behind this poster was that it would strike a chord with truckers when they are out late at night and don't know where they are going because their app doesn't give them truck specific information.",
+            "The idea behind this poster was that it would strike a chord with truckers when they are out late at night and don't know where they are going because their app doesn't give them truck-specific information.",
         },
       ],
     },

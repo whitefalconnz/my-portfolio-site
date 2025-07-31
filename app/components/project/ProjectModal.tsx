@@ -1364,7 +1364,7 @@ export default function ProjectModal({
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [selectedProject]); // FIX: Re-run when project changes
 
   // FIX: Improved modal positioning to fix wrong spots and positioning issues
   useEffect(() => {
@@ -1403,7 +1403,9 @@ export default function ProjectModal({
 
     return () => {
       // Restore original transform (default was 'none')
-      overlayEl.style.transform = originalTransform || "none";
+      if (overlayEl) {
+        overlayEl.style.transform = originalTransform || "none";
+      }
     };
   }, [isOpen, isTouchDevice, selectedProject]); // FIX: Add selectedProject dependency to reset positioning
 
@@ -1428,7 +1430,7 @@ export default function ProjectModal({
     if (!isOpen) {
       isFirstOpenRef.current = true;
     }
-  }, [isOpen, selectedProject]);
+  }, [isOpen]); // FIX: Only depend on isOpen to reset on close
 
   // Early return - keep it simple and working
   if (!isOpen) {
@@ -1481,7 +1483,7 @@ export default function ProjectModal({
 
         // FIX: Also prevent if touching outside content areas
         const isContentArea =
-          target.closest('[ref="contentRef"]') ||
+          target.closest('[data-id="content-ref"]') ||
           target.closest("img") ||
           target.closest("video") ||
           target.closest("iframe");
@@ -1539,15 +1541,11 @@ export default function ProjectModal({
   // FIX: Enhanced device detection with orientation change support
   useEffect(() => {
     const checkTouchDevice = () => {
-      setIsTouchDevice(
-        "ontouchstart" in window || navigator.maxTouchPoints > 0
-      );
+      const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      setIsTouchDevice(touch);
 
       if (process.env.NODE_ENV === "development") {
-        console.log(
-          "Touch device detection - isTouch:",
-          "ontouchstart" in window || navigator.maxTouchPoints > 0
-        );
+        console.log("Touch device detection - isTouch:", touch);
       }
     };
 
@@ -1592,7 +1590,7 @@ export default function ProjectModal({
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isOpen, hasNext, hasPrevious]);
+  }, [isOpen, hasNext, hasPrevious, onNext, onPrevious]); // FIX: Add onNext/onPrevious dependencies
 
   // Cleanup effect to ensure no interference when modal is closed
   useEffect(() => {
@@ -1608,10 +1606,10 @@ export default function ProjectModal({
         }
       }
     };
-  }, [isOpen, isTouchDevice]);
+  }, [isOpen]);
 
   // FIX: Enhanced close handler with mobile delay and error boundary
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     // FIX: Block early closures using isModalSettled
     if (!isModalSettled) {
       if (process.env.NODE_ENV === "development") {
@@ -1636,7 +1634,7 @@ export default function ProjectModal({
       // Fallback: still try to close
       onClose();
     }
-  };
+  }, [onClose, isTouchDevice, isModalSettled]);
 
   // FIX: Enhanced overlay clickable logic with extended delay for mobile
   useEffect(() => {
@@ -1721,7 +1719,7 @@ export default function ProjectModal({
       target.closest("img") ||
       target.closest("video") ||
       target.closest("iframe") ||
-      target.closest('[ref="contentRef"]') ||
+      target.closest('[data-id="content-ref"]') ||
       contentRef.current?.contains(target);
 
     if (isContentElement) {
@@ -1742,7 +1740,7 @@ export default function ProjectModal({
       target.closest("img") ||
       target.closest("video") ||
       target.closest("iframe") ||
-      target.closest('[ref="contentRef"]') ||
+      target.closest('[data-id="content-ref"]') ||
       contentRef.current?.contains(target);
 
     if (isContentElement) {
@@ -1800,7 +1798,7 @@ export default function ProjectModal({
       <div className="space-y-0">
         {section.content.map((item, i) => (
           <div
-            key={i}
+            key={item.image + i} // FIX: more unique key
             className="w-full min-h-[80vh] flex flex-col md:flex-row items-center justify-center py-4 md:py-4 pl-4 pr-8 md:pl-10 md:pr-6"
             data-image-info={JSON.stringify(item)}
             ref={(el) => {
@@ -1878,10 +1876,14 @@ export default function ProjectModal({
   );
 
   const renderContent = () => {
+    // FIX: Using a key on the outer div to force a re-mount when the project changes.
+    // This is a robust way to prevent state from a previous project's modal from
+    // bleeding into the next one, which is a likely cause of the iPad issue.
+    const key = selectedProject;
+
     if (selectedProject === "Creative Advertising") {
       return (
-        // FIX: Add key to force re-render on project change for fresh positioning
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {talesFromTheSunCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1897,7 +1899,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "BumbleGanttWithTheWind") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {bumbleGanttCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1913,7 +1915,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "CreativeCoding") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {creativeCodingCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1929,7 +1931,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "SmokeAnimation") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {smokeAnimationCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1945,7 +1947,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "Illustrations") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {illustrationCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1961,7 +1963,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "Tag") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {tagCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1977,7 +1979,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "Truckmate") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {truckmateCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -1993,7 +1995,7 @@ export default function ProjectModal({
       );
     } else if (selectedProject === "MySafetyTV") {
       return (
-        <div key={selectedProject} className="space-y-0">
+        <div key={key} className="space-y-0">
           {mysafetyTVCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
@@ -2011,7 +2013,7 @@ export default function ProjectModal({
       // For projects with just a single image
       return (
         <div
-          key={selectedProject}
+          key={key}
           className={`w-full ${!isTouchDevice ? "snap-start" : ""} flex items-center justify-center py-10 md:py-16 px-4 md:px-14`}
           data-image-info={JSON.stringify({
             image: image,
@@ -2053,14 +2055,14 @@ export default function ProjectModal({
         height: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
         maxHeight: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
         // FIX: Ensure modal is anchored correctly relative to pre-open scroll position
-        top: isTouchDevice ? `${mobileScrollY}px` : 0,
+        top: 0,
         left: 0,
         right: 0,
         bottom: 0,
         margin: 0,
         padding: 0,
-        // FIX: Use consistent translateY compensation for mobile
-        transform: isTouchDevice ? `translateY(-${mobileScrollY}px)` : "none",
+        // FIX: Use consistent translateY compensation for all devices now, but reset on project change
+        transform: `translateY(0)`,
         touchAction: "none", // Additional touch prevention
         position: "fixed", // Ensure fixed positioning on mobile
       }}
@@ -2125,7 +2127,10 @@ export default function ProjectModal({
       {/* Navigation buttons - hidden on mobile */}
       <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none hidden md:flex z-[110]">
         <button
-          onClick={onPrevious}
+          onClick={(e) => {
+            e.stopPropagation();
+            onPrevious();
+          }} // FIX: Stop propagation
           className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasPrevious ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
           disabled={!hasPrevious}
           aria-label="Previous project"
@@ -2135,7 +2140,10 @@ export default function ProjectModal({
         </button>
 
         <button
-          onClick={onNext}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNext();
+          }} // FIX: Stop propagation
           className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasNext ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
           disabled={!hasNext}
           aria-label="Next project"
@@ -2162,6 +2170,7 @@ export default function ProjectModal({
         {/* Content area */}
         <div
           ref={contentRef}
+          data-id="content-ref" // FIX: Use a data attribute for easier selection
           data-clickable-area={isTouchDevice ? "" : "close"}
           onScroll={handleScroll}
           // FIX: Add touch event isolation to prevent interference with overlay

@@ -208,7 +208,7 @@ export default function Header() {
               </Link>
             </motion.div>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/jakobbackhouse_/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform hover:scale-110"
@@ -218,7 +218,7 @@ export default function Header() {
               </svg>
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/jakob-backhouse/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform hover:scale-110"

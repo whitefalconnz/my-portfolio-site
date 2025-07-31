@@ -1180,6 +1180,8 @@ export default function Home() {
                   <Link
                     href="https://www.instagram.com/jakobbackhouse_/"
                     className="text-black dark:text-white hover:text-orange-500 transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <Instagram className="w-6 h-6" />
                     <span className="sr-only">Instagram</span>
@@ -1189,6 +1191,8 @@ export default function Home() {
                   <Link
                     href="https://www.linkedin.com/in/jakob-backhouse/"
                     className="text-black dark:text-white hover:text-orange-500 transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <Linkedin className="w-6 h-6" />
                     <span className="sr-only">LinkedIn</span>

@@ -1245,7 +1245,7 @@ export default function ProjectModal({
   selectedProject,
   setSelectedProject,
 }: ProjectModalProps) {
-  // State management - simplified but with all needed features
+  // State management
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeItem, setActiveItem] = useState<ContentItem | null>(null);
@@ -1258,41 +1258,50 @@ export default function ProjectModal({
     if (typeof window === "undefined") return false;
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   });
-
-  // MODIFICATION: Replaced single state with independent states for each text block
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const [showOverviewMore, setShowOverviewMore] = useState(false);
   const [showDetailsMore, setShowDetailsMore] = useState(false);
-
   const [mobileScrollY, setMobileScrollY] = useState(0);
   const [isModalSettled, setIsModalSettled] = useState(false);
 
+  // Refs
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const imageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const overlayClickable = useRef(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const isFirstOpenRef = useRef(true);
-
-  // MODIFICATION: Refs for text paragraphs to check for overflow
   const overviewTextRef = useRef<HTMLParagraphElement>(null);
   const detailsTextRef = useRef<HTMLParagraphElement>(null);
 
-  // MODIFICATION: Effect to check for text overflow on mobile
+  // MODIFICATION: This effect runs whenever the user navigates to a new project.
+  // It resets the state to ensure no stale data from the previous project is shown.
   useEffect(() => {
-    // Only run this logic on touch devices where this UI is visible
+    // 1. Reset the active item state to null. This immediately removes the description
+    //    from the previous project, fixing the core issue.
+    setActiveItem(null);
+    setActivePDF(null);
+
+    // 2. Reset the scroll position of the content area to the top for a fresh view.
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+
+    // 3. Reset the "View more" state for mobile descriptions.
+    setIsOverviewExpanded(false);
+    setIsDetailsExpanded(false);
+  }, [selectedProject]);
+
+  useEffect(() => {
     if (!isOpen || !isTouchDevice) return;
 
-    // Reset expansion state when the selected project changes
     setIsOverviewExpanded(false);
     setIsDetailsExpanded(false);
 
-    // Use a timeout to ensure the DOM has rendered and styles are applied
     const timer = setTimeout(() => {
       const overviewEl = overviewTextRef.current;
       if (overviewEl) {
-        // Check if the content's full height is greater than its visible (clamped) height
         setShowOverviewMore(overviewEl.scrollHeight > overviewEl.clientHeight);
       } else {
         setShowOverviewMore(false);
@@ -1304,22 +1313,20 @@ export default function ProjectModal({
       } else {
         setShowDetailsMore(false);
       }
-    }, 150); // A small delay ensures accurate measurement
+    }, 150);
 
     return () => clearTimeout(timer);
   }, [isOpen, isTouchDevice, description, activeItem, selectedProject]);
 
-  // Auto memory management for modal content
   const { trackAllElements, getStats: getModalTrackingStats } =
     useAutoImageTracking(modalContainerRef, {
       enabled: isOpen,
       debugLog: process.env.NODE_ENV === "development",
       selector: "img, video, iframe",
       trackOnMount: true,
-      retryInterval: 1500, // Check for new elements more frequently in modals
+      retryInterval: 1500,
     });
 
-  // Navigation logic (now internal)
   const currentProjectIndex = selectedProject
     ? filteredProjects.findIndex((p) => p.id === selectedProject)
     : -1;
@@ -1334,39 +1341,53 @@ export default function ProjectModal({
       setSelectedProject(filteredProjects[currentProjectIndex - 1].id);
   };
 
-  // Set up intersection observer to track which image is in view
+  // MODIFICATION: The IntersectionObserver setup is now in an effect that correctly
+  // re-runs when the project changes, ensuring it always observes the current content.
   useEffect(() => {
-    if (!contentRef.current) return;
+    if (!contentRef.current || !isOpen) return;
 
     const options = {
       root: contentRef.current,
-      threshold: 0.6, // Image needs to be 60% visible
+      threshold: 0.6, // Item needs to be 60% visible
     };
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const imageInfo = JSON.parse(
-            entry.target.getAttribute("data-image-info") || "{}"
-          );
-          setActiveItem({
-            image: imageInfo.image || "",
-            title: imageInfo.title || "",
-            description: imageInfo.description || "",
-          });
+          try {
+            const imageInfo = JSON.parse(
+              entry.target.getAttribute("data-image-info") || "{}"
+            );
+            if (imageInfo && imageInfo.image) {
+              setActiveItem({
+                image: imageInfo.image,
+                title: imageInfo.title || "",
+                description: imageInfo.description || "",
+              });
+            }
+          } catch (error) {
+            console.error("Failed to parse image info:", error);
+          }
         }
       });
     }, options);
 
-    // Observe all image containers
-    imageRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
+    // Use a timeout to ensure refs are populated after a re-render before observing.
+    const timer = setTimeout(() => {
+      imageRefs.current.forEach((ref) => {
+        if (ref) observer.observe(ref);
+      });
+    }, 100);
 
-    return () => observer.disconnect();
-  }, []);
+    // Cleanup disconnects the observer when the effect re-runs or the modal closes.
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+    // The dependency array now includes `isOpen` and `selectedProject`.
+    // This is the key fix that makes the observer responsive to project changes.
+  }, [isOpen, selectedProject]);
 
-  // FIX: Improved modal positioning to fix wrong spots and positioning issues
   useEffect(() => {
     if (!isOpen) return;
 
@@ -1386,31 +1407,24 @@ export default function ProjectModal({
       );
     }
 
-    // Store original transform so we can restore it later
     const originalTransform = overlayEl.style.transform;
 
-    // FIX: Apply positioning for both touch and non-touch devices, but differently
     if (isTouchDevice) {
-      // FIX: For mobile, only apply translateY on initial open and reset positioning on project change
       if (isFirstOpenRef.current) {
         overlayEl.style.transform = `translateY(${scrollY}px)`;
         isFirstOpenRef.current = false;
       }
     } else {
-      // For desktop, compensate for the negative body top shift
       overlayEl.style.transform = `translateY(${scrollY}px)`;
     }
 
     return () => {
-      // Restore original transform (default was 'none')
       overlayEl.style.transform = originalTransform || "none";
     };
-  }, [isOpen, isTouchDevice, selectedProject]); // FIX: Add selectedProject dependency to reset positioning
+  }, [isOpen, isTouchDevice, selectedProject]);
 
-  // Track modal content when it opens or content changes
   useEffect(() => {
     if (isOpen && selectedProject) {
-      // Delay tracking to ensure modal content is rendered
       const timer = setTimeout(() => {
         trackAllElements();
 
@@ -1423,24 +1437,20 @@ export default function ProjectModal({
     }
   }, [isOpen, selectedProject, trackAllElements, getModalTrackingStats]);
 
-  // FIX: Reset positioning reference when modal closes or project changes
   useEffect(() => {
     if (!isOpen) {
       isFirstOpenRef.current = true;
     }
   }, [isOpen, selectedProject]);
 
-  // Early return - keep it simple and working
   if (!isOpen) {
     return null;
   }
 
   console.log("ProjectModal render:", { isOpen, selectedProject, title });
 
-  // FIX: Enhanced scroll prevention and restoration with better mobile handling
   useEffect(() => {
     if (isOpen) {
-      // Store more original styles for better restoration
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
       const originalBodyPosition = document.body.style.position;
@@ -1455,13 +1465,11 @@ export default function ProjectModal({
         console.log("Setting up scroll prevention - scrollY:", scrollY);
       }
 
-      // Prevent scrolling while keeping background visible
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
 
-      // FIX: For mobile devices, store more state and apply better positioning
       if (isTouchDevice) {
-        setMobileScrollY(scrollY); // Store scroll position for modal positioning
+        setMobileScrollY(scrollY);
         document.body.style.position = "fixed";
         document.body.style.top = `-${scrollY}px`;
         document.body.style.width = "100%";
@@ -1470,16 +1478,13 @@ export default function ProjectModal({
         document.body.style.touchAction = "none";
       }
 
-      // FIX: Improved touch scroll prevention with better content detection
       const preventTouchScroll = (e: TouchEvent) => {
         const target = e.target as HTMLElement;
 
-        // Allow scrolling within the modal content, but prevent on the overlay
         if (e.target === overlayRef.current) {
           e.preventDefault();
         }
 
-        // FIX: Also prevent if touching outside content areas
         const isContentArea =
           target.closest('[ref="contentRef"]') ||
           target.closest("img") ||
@@ -1491,7 +1496,6 @@ export default function ProjectModal({
         }
       };
 
-      // Add touch event listeners with passive: false to ensure preventDefault works
       document.addEventListener("touchstart", preventTouchScroll, {
         passive: false,
       });
@@ -1504,11 +1508,9 @@ export default function ProjectModal({
           console.log("Restoring scroll - scrollY:", scrollY);
         }
 
-        // FIX: Restore original overflow
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalHtmlOverflow;
 
-        // FIX: Improved restoration for mobile devices
         if (isTouchDevice) {
           document.body.style.position = originalBodyPosition;
           document.body.style.top = originalBodyTop;
@@ -1517,26 +1519,22 @@ export default function ProjectModal({
           document.documentElement.style.height = originalDocumentHeight;
           document.body.style.touchAction = originalBodyTouchAction;
 
-          // FIX: Force scroll restoration and re-enable interactions
           window.scrollTo(0, scrollY);
           document.body.style.pointerEvents = "auto";
 
-          // FIX: Force re-render/reflow to ensure header reappears and scrolling works
           setTimeout(() => {
             window.dispatchEvent(new Event("resize"));
           }, 100);
 
-          setMobileScrollY(0); // Reset mobile scroll position
+          setMobileScrollY(0);
         }
 
-        // Remove touch event listeners
         document.removeEventListener("touchstart", preventTouchScroll);
         document.removeEventListener("touchmove", preventTouchScroll);
       };
     }
   }, [isOpen, isTouchDevice]);
 
-  // FIX: Enhanced device detection with orientation change support
   useEffect(() => {
     const checkTouchDevice = () => {
       setIsTouchDevice(
@@ -1553,7 +1551,6 @@ export default function ProjectModal({
 
     checkTouchDevice();
     window.addEventListener("resize", checkTouchDevice);
-    // FIX: Add orientation change detection for mobile devices
     window.addEventListener("orientationchange", checkTouchDevice);
 
     return () => {
@@ -1562,7 +1559,6 @@ export default function ProjectModal({
     };
   }, []);
 
-  // Enhanced keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -1594,14 +1590,10 @@ export default function ProjectModal({
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [isOpen, hasNext, hasPrevious]);
 
-  // Cleanup effect to ensure no interference when modal is closed
   useEffect(() => {
     return () => {
-      // Cleanup when component unmounts or isOpen changes
       if (!isOpen) {
-        // Ensure no pointer-events interference
         document.body.style.pointerEvents = "";
-        // Clear any transforms that might interfere
         const overlayEl = overlayRef.current;
         if (overlayEl) {
           overlayEl.style.transform = "none";
@@ -1610,9 +1602,7 @@ export default function ProjectModal({
     };
   }, [isOpen, isTouchDevice]);
 
-  // FIX: Enhanced close handler with mobile delay and error boundary
   const handleClose = () => {
-    // FIX: Block early closures using isModalSettled
     if (!isModalSettled) {
       if (process.env.NODE_ENV === "development") {
         console.log("Close blocked - modal not settled yet");
@@ -1621,7 +1611,6 @@ export default function ProjectModal({
     }
 
     try {
-      // FIX: Add delay for mobile to allow animations/transitions to complete
       if (isTouchDevice) {
         setTimeout(() => {
           onClose();
@@ -1633,24 +1622,20 @@ export default function ProjectModal({
       if (process.env.NODE_ENV === "development") {
         console.error("Error in handleClose:", error);
       }
-      // Fallback: still try to close
       onClose();
     }
   };
 
-  // FIX: Enhanced overlay clickable logic with extended delay for mobile
   useEffect(() => {
     if (isOpen) {
       overlayClickable.current = false;
       setIsModalSettled(false);
 
-      // FIX: Extend delay to 500ms for mobile, keep 250ms for desktop
       const overlayDelay = isTouchDevice ? 500 : 250;
       const overlayTimer = setTimeout(() => {
         overlayClickable.current = true;
       }, overlayDelay);
 
-      // FIX: Set modal settled after 300ms delay
       const settledTimer = setTimeout(() => {
         setIsModalSettled(true);
       }, 300);
@@ -1662,7 +1647,6 @@ export default function ProjectModal({
     }
   }, [isOpen, isTouchDevice]);
 
-  // FIX: Enhanced overlay click handler with better mobile touch detection
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (process.env.NODE_ENV === "development") {
       console.log(
@@ -1677,7 +1661,6 @@ export default function ProjectModal({
       );
     }
 
-    // FIX: Prevent immediate close right after opening (especially on mobile)
     if (!overlayClickable.current || !isModalSettled) {
       if (process.env.NODE_ENV === "development") {
         console.log("Overlay click ignored - not ready");
@@ -1685,12 +1668,9 @@ export default function ProjectModal({
       return;
     }
 
-    // FIX: Add e.stopPropagation() to prevent event bubbling
     e.stopPropagation();
 
-    // FIX: Enhanced touch device handling - strictly limit closure to overlay element only
     if (isTouchDevice) {
-      // Only close if clicking directly on the overlay background
       if (e.target === overlayRef.current) {
         if (process.env.NODE_ENV === "development") {
           console.log("Touch device overlay click - closing modal");
@@ -1700,7 +1680,6 @@ export default function ProjectModal({
       return;
     }
 
-    // On desktop, close if clicking on overlay or content area marked as closeable
     if (
       e.target === overlayRef.current ||
       (e.target as HTMLElement)?.closest('[data-clickable-area="close"]')
@@ -1712,11 +1691,9 @@ export default function ProjectModal({
     }
   };
 
-  // FIX: Enhanced touch handlers that ignore content elements
   const handleTouchMove = (e: React.TouchEvent) => {
     const target = e.target as HTMLElement;
 
-    // FIX: Ignore events if they target content elements (images, videos, contentRef area)
     const isContentElement =
       target.closest("img") ||
       target.closest("video") ||
@@ -1725,10 +1702,9 @@ export default function ProjectModal({
       contentRef.current?.contains(target);
 
     if (isContentElement) {
-      return; // Allow legitimate interactions inside the modal
+      return;
     }
 
-    // Only prevent if touching the overlay itself, not content within
     if (e.target === overlayRef.current) {
       e.preventDefault();
     }
@@ -1737,7 +1713,6 @@ export default function ProjectModal({
   const handleTouchStart = (e: React.TouchEvent) => {
     const target = e.target as HTMLElement;
 
-    // FIX: Ignore events if they target content elements (images, videos, contentRef area)
     const isContentElement =
       target.closest("img") ||
       target.closest("video") ||
@@ -1746,10 +1721,9 @@ export default function ProjectModal({
       contentRef.current?.contains(target);
 
     if (isContentElement) {
-      return; // Allow legitimate interactions inside the modal
+      return;
     }
 
-    // Only prevent if touching the overlay itself, not content within
     if (e.target === overlayRef.current) {
       e.preventDefault();
     }
@@ -1759,7 +1733,6 @@ export default function ProjectModal({
     setEnlargedImage(imageSrc);
   };
 
-  // Track scroll position
   const handleScroll = useCallback(
     (e: any) => {
       const target = e.target;
@@ -1774,7 +1747,6 @@ export default function ProjectModal({
     [hasScrolled]
   );
 
-  // New useEffect for handling mobile viewport height
   useEffect(() => {
     const setDocHeight = () => {
       document.documentElement.style.setProperty(
@@ -1809,7 +1781,6 @@ export default function ProjectModal({
           >
             <div className="w-full h-full flex flex-col items-center justify-center">
               <div className="w-full md:w-full flex items-center justify-center h-full">
-                {/* Debug logging for development */}
                 {process.env.NODE_ENV === "development" &&
                   (() => {
                     console.log("Rendering content item:", {
@@ -1880,7 +1851,6 @@ export default function ProjectModal({
   const renderContent = () => {
     if (selectedProject === "Creative Advertising") {
       return (
-        // FIX: Add key to force re-render on project change for fresh positioning
         <div key={selectedProject} className="space-y-0">
           {talesFromTheSunCampaign.sections.map((section, idx) => (
             <div key={idx}>
@@ -2008,7 +1978,6 @@ export default function ProjectModal({
         </div>
       );
     } else {
-      // For projects with just a single image
       return (
         <div
           key={selectedProject}
@@ -2037,14 +2006,13 @@ export default function ProjectModal({
       ref={overlayRef}
       className={`fixed inset-0 z-[100] overflow-hidden ${
         isTouchDevice
-          ? "bg-white dark:bg-black" // Opaque background for mobile/touch devices
-          : "bg-white/95 dark:bg-black/95 backdrop-blur-md" // Light/dark semi-transparent with blur for desktop
+          ? "bg-white dark:bg-black"
+          : "bg-white/95 dark:bg-black/95 backdrop-blur-md"
       }`}
       onClick={handleOverlayClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       style={{
-        // Only apply backdrop filters on non-touch devices for performance
         backdropFilter: isTouchDevice ? "none" : "blur(8px) saturate(180%)",
         WebkitBackdropFilter: isTouchDevice
           ? "none"
@@ -2052,24 +2020,20 @@ export default function ProjectModal({
         width: "100vw",
         height: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
         maxHeight: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
-        // FIX: Ensure modal is anchored correctly relative to pre-open scroll position
         top: isTouchDevice ? `${mobileScrollY}px` : 0,
         left: 0,
         right: 0,
         bottom: 0,
         margin: 0,
         padding: 0,
-        // FIX: Use consistent translateY compensation for mobile
         transform: isTouchDevice ? `translateY(-${mobileScrollY}px)` : "none",
-        touchAction: "none", // Additional touch prevention
-        position: "fixed", // Ensure fixed positioning on mobile
+        touchAction: "none",
+        position: "fixed",
       }}
     >
-      {/* Minimal header strip */}
       {!enlargedImage && (
         <div className="absolute top-0 left-0 right-0 z-[110] bg-white/30 dark:bg-black/30 backdrop-blur-sm">
           <div className="relative flex items-center px-3 md:px-4 py-2 md:py-3">
-            {/* Left side - About and Contact links (desktop only) */}
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/about"
@@ -2085,15 +2049,12 @@ export default function ProjectModal({
               </Link>
             </div>
 
-            {/* Mobile spacer to maintain center alignment */}
             <div className="md:hidden w-0"></div>
 
-            {/* Center - Jakob's Portfolio (absolutely centered) */}
             <div className="absolute left-1/2 transform -translate-x-1/2 text-black/90 dark:text-white/90 text-sm md:text-base lg:text-lg font-recoleta font-bold">
               Jakob's Portfolio
             </div>
 
-            {/* Right side - Close button */}
             <div className="ml-auto">
               <button
                 onClick={handleClose}
@@ -2107,7 +2068,6 @@ export default function ProjectModal({
         </div>
       )}
 
-      {/* Progress bar - at the true bottom edge of header */}
       <div className="absolute top-[50px] md:top-[58px] left-0 right-0 h-[1px] bg-black/10 dark:bg-white/15 backdrop-blur-sm z-[106]">
         <div
           className="h-full bg-black/70 dark:bg-white/80 transition-all duration-500 ease-out blur-[0.5px]"
@@ -2122,7 +2082,6 @@ export default function ProjectModal({
         />
       </div>
 
-      {/* Navigation buttons - hidden on mobile */}
       <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none hidden md:flex z-[110]">
         <button
           onClick={onPrevious}
@@ -2145,12 +2104,10 @@ export default function ProjectModal({
         </button>
       </div>
 
-      {/* Modal content - constrained to viewport */}
       <div
         ref={modalContainerRef}
         className="flex flex-col md:flex-row w-full h-full px-3 pt-16 md:pt-18 pb-8 md:gap-2 lg:gap-3 justify-start max-w-full max-h-full overflow-hidden"
         style={{
-          // FIX: Ensure proper positioning to prevent offset issues
           position: "absolute",
           top: 0,
           left: 0,
@@ -2159,27 +2116,22 @@ export default function ProjectModal({
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
-        {/* Content area */}
         <div
           ref={contentRef}
           data-clickable-area={isTouchDevice ? "" : "close"}
           onScroll={handleScroll}
-          // FIX: Add touch event isolation to prevent interference with overlay
           onTouchStart={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
           className="w-full md:w-[60%] lg:w-[62%] flex-1 relative md:pr-4 lg:pr-6 max-w-full max-h-full md:pb-8 pb-32"
           style={{
-            // FIX: For touch devices, set overflow-y: auto to allow internal scrolling
             overflowY: "auto",
             WebkitOverflowScrolling: "touch",
           }}
           onClick={(e) => {
-            // Don't close on touch devices to prevent accidental closes
             if (isTouchDevice) {
               return;
             }
 
-            // Don't close if clicking on images, videos, or interactive elements
             const target = e.target as HTMLElement;
             if (
               target.tagName === "IMG" ||
@@ -2196,7 +2148,6 @@ export default function ProjectModal({
           <div className="w-full">{renderContent()}</div>
         </div>
 
-        {/* Title and description sidebar - desktop only (enhanced) */}
         <div className="hidden md:block md:w-[35%] lg:w-[32%] xl:w-[30%] md:pl-6 lg:pl-8 xl:pl-10 md:pr-14 lg:pr-20 xl:pr-24 flex-none flex flex-col overflow-y-auto mt-4 lg:mt-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-4 max-w-full max-h-full">
           <div className="text-left">
             <h2 className="text-2xl lg:text-3xl font-bold text-orange-500 mb-3 leading-tight">
@@ -2206,7 +2157,6 @@ export default function ProjectModal({
               {description}
             </p>
 
-            {/* Current image information */}
             <div className="mt-4 border-t border-black/10 dark:border-white/10 pt-4 min-h-[100px] relative">
               {activeItem &&
                 activeItem.title &&
@@ -2227,7 +2177,6 @@ export default function ProjectModal({
         </div>
       </div>
 
-      {/* MODIFICATION: Mobile bottom text overlay with improved "View more" functionality */}
       <div
         className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 dark:from-black/90 via-white/70 dark:via-black/70 to-transparent p-4 z-[120]"
         style={{
@@ -2253,7 +2202,6 @@ export default function ProjectModal({
             )}
           </div>
 
-          {/* Current image information for mobile */}
           {activeItem &&
             activeItem.title &&
             activeItem.title !== selectedProject && (
@@ -2284,7 +2232,6 @@ export default function ProjectModal({
         </div>
       </div>
 
-      {/* Image viewer */}
       {enlargedImage && (
         <ImageViewer
           src={enlargedImage}
@@ -2293,12 +2240,10 @@ export default function ProjectModal({
         />
       )}
 
-      {/* Memory stats debugger - development only */}
       <MemoryStatsDebugger position="bottom-left" />
     </div>
   );
 
-  // FIX: Enhanced portal creation with conditional check to ensure document.body exists
   return typeof window !== "undefined" && isOpen && document.body
     ? createPortal(modal, document.body)
     : null;

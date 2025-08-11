@@ -1,63 +1,74 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode, Suspense } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  Suspense,
+} from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface LoadingContextType {
-  isLoading: boolean
-  setIsLoading: (loading: boolean) => void
-  transitionState: 'entering' | 'visible' | 'exiting'
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+  transitionState: "entering" | "visible" | "exiting";
 }
 
-const LoadingContext = createContext<LoadingContextType | undefined>(undefined)
+const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 function LoadingProviderInner({ children }: { children: ReactNode }) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [transitionState, setTransitionState] = useState<'entering' | 'visible' | 'exiting'>('entering')
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const [isLoading, setIsLoading] = useState(true);
+  const [transitionState, setTransitionState] = useState<
+    "entering" | "visible" | "exiting"
+  >("entering");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     // Initial page load
-    setTimeout(() => setTransitionState('visible'), 100)
+    setTimeout(() => setTransitionState("visible"), 100);
     const timer = setTimeout(() => {
-      setTransitionState('exiting')
+      setTransitionState("exiting");
       setTimeout(() => {
-        setIsLoading(false)
-      }, 600)
-    }, 1500)
+        setIsLoading(false);
+      }, 600);
+    }, 1500);
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!isLoading && (pathname || searchParams)) {
       // Immediately hide content and show loading
-      setIsLoading(true)
-      setTransitionState('entering')
-      
-      // Show loading animation
-      setTimeout(() => setTransitionState('visible'), 100)
-      const timer = setTimeout(() => {
-        setTransitionState('exiting')
-        setTimeout(() => {
-          setIsLoading(false)
-        }, 600)
-      }, 1000)
+      setIsLoading(true);
+      setTransitionState("entering");
 
-      return () => clearTimeout(timer)
+      // Show loading animation
+      setTimeout(() => setTransitionState("visible"), 100);
+      const timer = setTimeout(() => {
+        setTransitionState("exiting");
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 600);
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
-  }, [pathname, searchParams])
+  }, [pathname, searchParams]);
 
   return (
-    <LoadingContext.Provider value={{ 
-      isLoading, 
-      setIsLoading, 
-      transitionState 
-    }}>
+    <LoadingContext.Provider
+      value={{
+        isLoading,
+        setIsLoading,
+        transitionState,
+      }}
+    >
       {children}
     </LoadingContext.Provider>
-  )
+  );
 }
 
 // Simple Suspense fallback without the orange cube
@@ -75,7 +86,7 @@ function SuspenseFallback() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function LoadingProvider({ children }: { children: ReactNode }) {
@@ -83,13 +94,13 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     <Suspense fallback={<SuspenseFallback />}>
       <LoadingProviderInner>{children}</LoadingProviderInner>
     </Suspense>
-  )
+  );
 }
 
 export function useLoading() {
-  const context = useContext(LoadingContext)
+  const context = useContext(LoadingContext);
   if (context === undefined) {
-    throw new Error('useLoading must be used within a LoadingProvider')
+    throw new Error("useLoading must be used within a LoadingProvider");
   }
-  return context
+  return context;
 }

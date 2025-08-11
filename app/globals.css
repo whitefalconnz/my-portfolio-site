@@ -94,11 +94,6 @@
   /* Prevent initial flicker on mobile */
   * {
     -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 
   /* Anti-flicker for initial page load */
@@ -220,21 +215,18 @@ textarea[class*="hover:border-orange-500"]:hover {
   border-color: #f97316 !important;
 }
 
-/* Prevent text selection */
-* {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Allow text selection for specific elements if needed (like input fields) */
-input, 
-textarea {
+/* Improve accessibility: allow text selection globally */
+html, body, * {
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
+}
+
+/* Focus-visible outline for keyboard users */
+:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
 }
 
 /* Add these new retro spark styles */

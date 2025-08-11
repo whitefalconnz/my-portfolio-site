@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 interface ScrollRevealProps {
@@ -34,6 +34,17 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     triggerOnce,
   });
 
+  // Respect user preference for reduced motion
+  const [reducedMotion, setReducedMotion] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+
   const getTransformValue = () => {
     switch (direction) {
       case 'up':
@@ -51,13 +62,15 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     }
   };
 
-  const baseStyle: React.CSSProperties = {
-    opacity: 0,
-    transform: getTransformValue(),
-    transition: `opacity ${duration}ms ${easing}, transform ${duration}ms ${easing}`,
-    transitionDelay: `${delay}ms`,
-    willChange: 'opacity, transform',
-  };
+  const baseStyle: React.CSSProperties = reducedMotion
+    ? {}
+    : {
+        opacity: 0,
+        transform: getTransformValue(),
+        transition: `opacity ${duration}ms ${easing}, transform ${duration}ms ${easing}`,
+        transitionDelay: `${delay}ms`,
+        willChange: 'opacity, transform',
+      };
 
   const activeStyle: React.CSSProperties = {
     opacity: 1,
@@ -71,7 +84,8 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       style={{
         ...style,
         ...baseStyle,
-        ...(isInView ? activeStyle : {}),
+        ...(reducedMotion ? { opacity: 1, transform: 'none' } : {}),
+        ...(!reducedMotion && isInView ? activeStyle : {}),
       }}
     >
       {children}

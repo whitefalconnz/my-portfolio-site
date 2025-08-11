@@ -97,43 +97,7 @@ export default function Home() {
     trackAllElements,
     getAutoTrackingStats,
   ]);
-  // Add Open Graph and Twitter meta tags for link thumbnail
-  // Uses the same image as the "Creative Coding" project item
-  // (https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp)
-  // This ensures a nice preview when sharing the link
-
-  {
-    /* Open Graph and Twitter Card meta tags for link previews */
-  }
-  <head>
-    <meta property="og:title" content="Jakob Backhouse Portfolio" />
-    <meta
-      property="og:description"
-      content="Design generalist with a focus on 2D frame by frame animation, creative advertising, and illustration. Explore my portfolio of animation, illustration, and creative projects."
-    />
-    <meta
-      property="og:image"
-      content="https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp"
-    />
-    <meta property="og:image:alt" content="Creative Coding project thumbnail" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://jakobbackhouse.com/" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Jakob Backhouse Portfolio" />
-    <meta
-      name="twitter:description"
-      content="Design generalist with a focus on 2D frame by frame animation, creative advertising, and illustration. Explore my portfolio of animation, illustration, and creative projects."
-    />
-    <meta
-      name="twitter:image"
-      content="https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp"
-    />
-    <meta
-      name="twitter:image:alt"
-      content="Creative Coding project thumbnail"
-    />
-  </head>;
+  // Social meta tags are now defined in `app/metadata.ts`
 
   // Re-track elements when filter changes (some images become visible/hidden)
   useEffect(() => {
@@ -824,7 +788,7 @@ export default function Home() {
                             }}
                           />
                         </div>
-                        <Script src="https://player.vimeo.com/api/player.js" />
+                        {/* Vimeo API is loaded globally in layout */}
                       </div>
                     </div>
                   </ScrollReveal>
@@ -866,6 +830,9 @@ export default function Home() {
                         with a focus on{" "}
                         <span className="font-bold text-orange-500">
                           2D frame by frame animation
+                        </span>{" "}
+                        <span className="font-bold text-orange-500">
+                          and instructional design
                         </span>
                         . I have 3+ years professional experience creating{" "}
                         <span className="font-bold text-orange-500">
@@ -961,6 +928,14 @@ export default function Home() {
                           {category}
                         </motion.button>
                       ))}
+                      {/* Compact floating toggle for mobile */}
+                      <motion.button
+                        onClick={() => setShowFilters((s) => !s)}
+                        className="lg:hidden px-4 py-2 border-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black"
+                        aria-expanded={showFilters}
+                      >
+                        {showFilters ? "Hide filters" : "Filters"}
+                      </motion.button>
                     </div>
                   </div>
                 </ScrollReveal>

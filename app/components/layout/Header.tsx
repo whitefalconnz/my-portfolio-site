@@ -163,7 +163,7 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="font-recoleta text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap"
+              className="font-recoleta text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap hover:text-orange-500 transition-colors"
             >
               Jakob's Portfolio
             </Link>

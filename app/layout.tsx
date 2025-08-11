@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
 import React, { Suspense } from "react";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "./components/common/theme-provider";
 import LoadingProvider from "./components/common/LoadingProvider";
 import ScrollProgressBar from "./components/common/ScrollProgressBar";
-import { metadata } from "./metadata";
 import HeroSection from "./components/common/HeroSection";
 import SparkEffect from "./components/animations/SparkEffect";
 import Header from "./components/layout/Header";
@@ -13,10 +11,14 @@ import { HeroProvider } from "./contexts/HeroContext";
 import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
 import ScrollbarManager from "./components/common/ScrollbarManager";
 
+// Re-export route metadata so Next.js can pick it up from a dedicated file
+export { metadata } from "./metadata";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
+  display: "swap",
 });
 
 const satoshi = localFont({
@@ -51,6 +53,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Performance: DNS preconnects for external media/CDN/providers */}
+        <link rel="preconnect" href="https://media.jakobbackhouse.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://player.vimeo.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="anonymous" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
@@ -59,7 +66,11 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <script src="https://player.vimeo.com/api/player.js" async></script>
+        {/* Theme colors for light/dark */}
+        <meta name="theme-color" content="#F3F1E9" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#1A1818" media="(prefers-color-scheme: dark)" />
+        {/* Defer Vimeo API load; Next will dedupe where also loaded */}
+        <script src="https://player.vimeo.com/api/player.js" defer></script>
       </head>
       <body
         className={`${geistSans.variable} ${satoshi.variable} ${recoleta.variable} antialiased bg-white text-black dark:bg-[#1A1818] dark:text-white`}

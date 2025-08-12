@@ -54,10 +54,26 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Performance: DNS preconnects for external media/CDN/providers */}
-        <link rel="preconnect" href="https://media.jakobbackhouse.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://player.vimeo.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://media.jakobbackhouse.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://res.cloudinary.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://player.vimeo.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://i.vimeocdn.com"
+          crossOrigin="anonymous"
+        />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
@@ -67,8 +83,16 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         {/* Theme colors for light/dark */}
-        <meta name="theme-color" content="#F3F1E9" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#1A1818" media="(prefers-color-scheme: dark)" />
+        <meta
+          name="theme-color"
+          content="#F3F1E9"
+          media="(prefers-color-scheme: light)"
+        />
+        <meta
+          name="theme-color"
+          content="#1A1818"
+          media="(prefers-color-scheme: dark)"
+        />
         {/* Defer Vimeo API load; Next will dedupe where also loaded */}
         <script src="https://player.vimeo.com/api/player.js" defer></script>
       </head>

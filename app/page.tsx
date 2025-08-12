@@ -4,14 +4,21 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
-import { Instagram, Linkedin, Twitter, RotateCcw } from "lucide-react";
+import {
+  Instagram,
+  Linkedin,
+  Twitter,
+  RotateCcw,
+  Palette,
+  Film,
+  Megaphone,
+} from "lucide-react";
 import ProjectModal from "./components/project/ProjectModal";
 import "./grid.css";
 import Header from "./components/layout/Header";
 import { AspectRatio, type Project } from "./types/project";
 import "./styles/grid.css";
 import { getImageDimensions } from "./utils/imageUtils";
-import SparkEffect from "./components/animations/SparkEffect";
 import ScrollReveal from "./components/animations/ScrollReveal";
 import BackgroundSprites from "./components/animations/BackgroundSprites";
 import AnimatedText from "./utils/AnimatedText";
@@ -111,7 +118,6 @@ export default function Home() {
   }, [selectedCategories, contentLoaded, trackAllElements]);
 
   // Add state for collapsible categories
-  const [showFilters, setShowFilters] = useState(false);
 
   // Add state for filter button visibility based on scroll
   const [showFilterButton, setShowFilterButton] = useState(false);
@@ -913,29 +919,30 @@ export default function Home() {
                           key={category}
                           onClick={() => toggleCategory(category)}
                           className={`
-                         px-4 py-2 font-satoshi text-sm transition-all duration-300
-                         border-2 border-black dark:border-white
-                         bg-[#F3F1E9] dark:bg-[#1A1818]
-                         mobile-touch-target
-                         ${
-                           selectedCategories.includes(category)
-                             ? "text-white dark:text-black bg-black dark:bg-white scale-105"
-                             : "text-black dark:text-white hover:border-orange-500 hover:scale-102"
-                         }
-                       `}
+                             px-4 py-2 font-satoshi text-sm transition-all duration-300
+                             border-2 border-black dark:border-white
+                             bg-[#F3F1E9] dark:bg-[#1A1818]
+                             mobile-touch-target
+                             ${
+                               selectedCategories.includes(category)
+                                 ? "text-white dark:text-black bg-black dark:bg-white scale-105"
+                                 : "text-black dark:text-white hover:border-orange-500 hover:scale-102"
+                             }
+                           `}
                           aria-pressed={selectedCategories.includes(category)}
                         >
+                          {category === "Illustration" && (
+                            <Palette className="w-3 h-3 inline mr-1 align-[-2px]" />
+                          )}
+                          {category === "Animation" && (
+                            <Film className="w-3 h-3 inline mr-1 align-[-2px]" />
+                          )}
+                          {category === "Creative Advertising" && (
+                            <Megaphone className="w-3 h-3 inline mr-1 align-[-2px]" />
+                          )}
                           {category}
                         </motion.button>
                       ))}
-                      {/* Compact floating toggle for mobile */}
-                      <motion.button
-                        onClick={() => setShowFilters((s) => !s)}
-                        className="lg:hidden px-4 py-2 border-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black"
-                        aria-expanded={showFilters}
-                      >
-                        {showFilters ? "Hide filters" : "Filters"}
-                      </motion.button>
                     </div>
                   </div>
                 </ScrollReveal>
@@ -1158,15 +1165,27 @@ export default function Home() {
                                         <span
                                           key={catIndex}
                                           className={`
-                                        text-xs px-2 py-1 transition-all duration-300
-                                        border-2 border-white/50 bg-[#F3F1E9]/90 dark:bg-[#1A1818]/90
-                                        ${
-                                          selectedCategories.includes(category)
-                                            ? "text-black dark:text-white bg-white dark:bg-black border-white dark:border-black"
-                                            : "text-black dark:text-white hover:border-orange-500"
-                                        }
-                                      `}
+                                          text-xs px-2 py-1 transition-all duration-300
+                                          border-2 border-white/50 bg-[#F3F1E9]/90 dark:bg-[#1A1818]/90
+                                          ${
+                                            selectedCategories.includes(
+                                              category
+                                            )
+                                              ? "text-black dark:text-white bg-white dark:bg-black border-white dark:border-black"
+                                              : "text-black dark:text-white hover:border-orange-500"
+                                          }
+                                        `}
                                         >
+                                          {category === "Illustration" && (
+                                            <Palette className="w-3 h-3 inline mr-1" />
+                                          )}
+                                          {category === "Animation" && (
+                                            <Film className="w-3 h-3 inline mr-1" />
+                                          )}
+                                          {category ===
+                                            "Creative Advertising" && (
+                                            <Megaphone className="w-3 h-3 inline mr-1" />
+                                          )}
                                           {category}
                                         </span>
                                       )
@@ -1187,6 +1206,21 @@ export default function Home() {
 
           <footer className="container mx-auto px-4 py-6 mt-12 relative z-10">
             <ScrollReveal direction="up" delay={400} duration={800}>
+              <div className="text-center mb-3">
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-satoshi">
+                  Designed and built entirely by{" "}
+                  <Link
+                    href="/about"
+                    className="underline decoration-transparent hover:decoration-inherit hover:text-orange-500 transition-colors"
+                  >
+                    Jakob Backhouse
+                  </Link>{" "}
+                </p>
+                <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-satoshi mt-1">
+                  © {new Date().getFullYear()} Jakob Backhouse. All rights
+                  reserved.
+                </p>
+              </div>
               <div className="flex justify-center space-x-6">
                 <div className="p-3 md:p-4 transition-all duration-300">
                   <Link

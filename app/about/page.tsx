@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
 import { Mail, Briefcase, Palette, Download } from "lucide-react";
 import { Badge } from "../components/ui/badge";
-import SparkEffect from "../components/animations/SparkEffect";
 import BackgroundSprites from "../components/animations/BackgroundSprites";
 import { motion } from "framer-motion";
 import FadeInImage from "../components/common/FadeInImage";

@@ -1,5 +1,14 @@
 {
-  "node": {},
+  "node": {
+    "81e939a86e4eb1c69728e571161c65e7aa3133f0": {
+      "workers": {
+        "app/contact/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fjakobbackhouse%2FDocuments%2FCareer%2FPortfolioWebsite%2Fmy-portfolio-site%2Fapp%2Fcontact%2Factions.ts%22%2C%5B%22sendEmail%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/contact/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
-  "encryptionKey": "xyGjIG45+PZ/lSCAmyhvahKNKdUw0B3Z0J+1YBCqKic="
+  "encryptionKey": "wGhfxy4APxXSbD3+lR9Z4QYEmjdjN+TkALi4CwU20ak="
 }

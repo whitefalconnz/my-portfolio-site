@@ -273,6 +273,14 @@ const illustrationCampaign: Campaign = {
         },
         {
           image: getCDNUrl(
+            "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/RBackgroundScene3Pencil(0.4).webp"
+          ),
+          title: "Alternative Tag Tennis Court Background",
+          description:
+            "This background was created at an early stage when working on TAG. It would have been nice to continue this style for the rest of the backgrounds but it was very time consuming.",
+        },
+        {
+          image: getCDNUrl(
             "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/SaddleRoadQuickSketch.webp"
           ),
           title: "Saddle Road Quick Study",
@@ -301,7 +309,7 @@ const illustrationCampaign: Campaign = {
         },
         {
           image: getCDNUrl(
-            "https:/media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/BrightLights.webp"
+            "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/BrightLights.webp"
           ),
           title: "Bright Lights",
           description:

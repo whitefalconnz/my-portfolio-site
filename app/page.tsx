@@ -438,12 +438,23 @@ export default function Home() {
         "I worked for an online safety training company called MySafetyTV. One other person and I were tasked with creating the animated explainer videos for the company. There was a 2–4 week turnaround for each video from concept to execution. These videos are part of a learning course that my co-worker and I created.",
       categories: ["Animation", "Creative Advertising"],
     },
+    {
+      id: "3D Animation",
+      title: "3D Animation",
+      image:
+        "https://media.jakobbackhouse.com/Img_and_Vid/PigBoyPortfolio/SpiritzThumbnail-min.jpg",
+      aspectRatio: AspectRatio.LANDSCAPE,
+      bgColor: "bg-[#2C4B7A]",
+      description:
+        "A selection of 3D work created in Blender, Maya and Unreal Engine.",
+      categories: ["Animation"],
+    },
     // Update Creative Coding project
     {
       id: "CreativeCoding",
       title: "Creative Coding",
       image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_1.webp",
+        "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_2.webp",
       aspectRatio: AspectRatio.SQUARE,
       bgColor: "bg-[#5C3E3C]",
       description:

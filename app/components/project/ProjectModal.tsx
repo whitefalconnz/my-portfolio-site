@@ -709,6 +709,61 @@ const mysafetyTVCampaign: Campaign = {
   ],
 };
 
+const threeDAnimationCampaign: Campaign = {
+  id: "3DAnimation",
+  title: "3D Animation",
+  sections: [
+    {
+      title: "Animations",
+      content: [
+        {
+          image: "https://vimeo.com/1109286944?share=copy",
+          title: "Spiritz",
+          description:
+            "A short film created in Unreal Engine over the course of one week for a university assignment. The story follows a simple journey about searching for a friend, with all 3D environments designed and built by me.",
+        },
+        {
+          image:
+            "https://media.jakobbackhouse.com/Img_and_Vid/PigBoyPortfolio/Pigboy.webp",
+          title: "Pigboy",
+          description:
+            "During the Covid lockdown, I developed a 3D character named Pigboy using Blender, Maya, Unreal Engine, Marvelous Designer, and After Effects. Inspired by the jester archetype, Pigboy is a cursed character who would fit perfectly into a medieval fantasy story.",
+        },
+        {
+          image: "vimeo:1109520003",
+          title: "Pigboy Stage Fright",
+          description:
+            "Pigboy drops his juggling ball on stage, capturing a moment of vulnerability.",
+        },
+        {
+          image: "vimeo:1109520044",
+          title: "Pigboy Stagefright POV",
+          description:
+            "A point-of-view shot as Pigboy reaches down to pick up his juggling ball.",
+        },
+        {
+          image: "https://vimeo.com/1109287367?share=copy",
+          title: "Tim Christie Wolf Sculpture",
+          description:
+            "I was commissioned to create a 3D model based on a 2D wolf painting by Tim Christie. Using Blender and creative camera focal length techniques, I achieved the illusion of the model shifting from 3D to 2D.",
+        },
+        {
+          image: "https://vimeo.com/1109287279?share=copy",
+          title: "Tim Christie Dubai Sculpture",
+          description:
+            "Tim Christie requested a 3D model of his concept for a woven metal sculpture. Working from only a 2D SVG file, I figured out how to model a complex woven structure in Blender.",
+        },
+        {
+          image: "https://vimeo.com/1109286695?share=copy",
+          title: "Sun Chaser",
+          description:
+            "A quick short film inspired by the myth of Icarus. I created the environment, character, and animation entirely in Blender.",
+        },
+      ],
+    },
+  ],
+};
+
 interface ProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -805,27 +860,18 @@ const LazyVideo = ({
 
   // Subtle loading indicator component
   const SubtleLoader = () => (
-    <>
-      <style>
-        {`
-          @keyframes modalSpinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-          .modal-spinner {
-            animation: modalSpinner 1s linear infinite;
-          }
-        `}
-      </style>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="modal-spinner w-8 h-8 border-2 border-white/20 border-t-white rounded-full"></div>
-          <div className="text-white/70 text-xs font-light tracking-wide">
-            Loading video...
-          </div>
+    <div
+      className="absolute inset-0 flex items-center justify-center"
+      role="status"
+      aria-label="Loading video"
+    >
+      <div className="flex flex-col items-center space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin will-change-transform"></div>
+        <div className="text-white/70 text-xs font-light tracking-wide">
+          Loading video...
         </div>
       </div>
-    </>
+    </div>
   );
 
   const ErrorFallback = () => (
@@ -1001,27 +1047,18 @@ const LazyVimeoEmbed = ({
 
   // Subtle loading indicator component
   const SubtleLoader = () => (
-    <>
-      <style>
-        {`
-          @keyframes vimeoSpinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-          .vimeo-spinner {
-            animation: vimeoSpinner 1s linear infinite;
-          }
-        `}
-      </style>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="vimeo-spinner w-8 h-8 border-2 border-white/20 border-t-white rounded-full"></div>
-          <div className="text-white/70 text-xs font-light tracking-wide">
-            Loading video...
-          </div>
+    <div
+      className="absolute inset-0 flex items-center justify-center"
+      role="status"
+      aria-label="Loading video"
+    >
+      <div className="flex flex-col items-center space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin will-change-transform"></div>
+        <div className="text-white/70 text-xs font-light tracking-wide">
+          Loading video...
         </div>
       </div>
-    </>
+    </div>
   );
 
   const ErrorFallback = () => (
@@ -1972,6 +2009,22 @@ export default function ProjectModal({
                     section.pdfUrl,
                     section.title,
                     mysafetyTVCampaign.title
+                  )}
+            </div>
+          ))}
+        </div>
+      );
+    } else if (selectedProject === "3D Animation") {
+      return (
+        <div key={selectedProject} className="space-y-0">
+          {threeDAnimationCampaign.sections.map((section, idx) => (
+            <div key={idx}>
+              {"content" in section
+                ? renderContentSection(section)
+                : renderPDFSection(
+                    (section as any).pdfUrl,
+                    section.title,
+                    threeDAnimationCampaign.title
                   )}
             </div>
           ))}

@@ -846,10 +846,10 @@ export default function Home() {
                         </span>{" "}
                         with a focus on{" "}
                         <span className="font-bold text-orange-500">
-                          2D frame by frame animation
+                          2D frame by frame animation,
                         </span>{" "}
                         <span className="font-bold text-orange-500">
-                          and instructional design
+                          instructional design and 3D environments
                         </span>
                         . I have 3+ years professional experience creating{" "}
                         <span className="font-bold text-orange-500">

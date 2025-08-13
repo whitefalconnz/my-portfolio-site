@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
-import { Mail, Briefcase, Palette, Download } from "lucide-react";
+import { Mail, Briefcase, Palette } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import BackgroundSprites from "../components/animations/BackgroundSprites";
 import { motion } from "framer-motion";
@@ -313,25 +313,6 @@ export default function AboutPage() {
                   >
                     <Mail className="h-4 w-4" />
                     JakobBackhouse@gmail.com
-                  </motion.a>
-                  <motion.a
-                    href="https://media.jakobbackhouse.com/Img_and_Vid/JakobBackhouse_CV.pdf"
-                    download="Jakob_Backhouse_CV.pdf"
-                    className="inline-flex items-center gap-2 bg-[#FFFFFF] px-3 py-1.5 text-black
-                        hover:border-orange-500 transition-all text-sm border-2"
-                    initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
-                    style={{ borderColor: "rgba(0, 0, 0, 0)" }}
-                    animate={{
-                      borderColor: isLoaded
-                        ? isDarkMode
-                          ? "rgba(255, 255, 255, 1)"
-                          : "rgba(0, 0, 0, 1)"
-                        : "rgba(0, 0, 0, 0)",
-                      transition: { delay: 0.55, duration: 0.5 },
-                    }}
-                  >
-                    <Download className="h-4 w-4" />
-                    Download CV
                   </motion.a>
                 </div>
               </div>

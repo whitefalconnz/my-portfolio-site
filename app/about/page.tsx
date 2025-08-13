@@ -192,7 +192,9 @@ export default function AboutPage() {
                     "Digital Illustration",
                     "Storyboarding",
                     "UI Design",
-                    "After Effects vector animation or ToonBoom frame by frame animation",
+                    "Instructional Design",
+                    "3D Environment Design",
+                    "After Effects Vector Animation or Toon Boom Frame by Frame Animation",
                   ].map((skill, index) => (
                     <motion.div
                       key={skill}
@@ -276,9 +278,10 @@ export default function AboutPage() {
                 <p className="text-sm leading-relaxed text-secondary/60 dark:text-secondary-light/60">
                   <br></br>For the past four years, I've been immersed in the
                   design industry, I specialise in crafting boutique frame by
-                  frame and vector based explainer video animation. Although I
-                  have wide range of knowledge working with clients to make
-                  websites, graphic design and 3D animation.
+                  frame and mixed media (Blender & vector) explainer video
+                  animation. Although I have wide range of knowledge working
+                  with clients to make websites, graphic design and 3D
+                  animation.
                   <br></br>
                   <br></br>Recently I have been involved in a startup where I
                   built extensive content, from our core educational animations
@@ -309,7 +312,7 @@ export default function AboutPage() {
                     }}
                   >
                     <Mail className="h-4 w-4" />
-                    Jakobbackhouse@gmail.com
+                    JakobBackhouse@gmail.com
                   </motion.a>
                   <motion.a
                     href="https://media.jakobbackhouse.com/Img_and_Vid/JakobBackhouse_CV.pdf"

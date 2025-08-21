@@ -838,36 +838,23 @@ export default function Home() {
                           disablePixels={!contentLoaded}
                         />
                       </h1>
-                      <div className="w-80 h-[1px] bg-black/50 dark:bg-white/50 mx-auto lg:mx-0 mb-6"></div>
+                      <div className="w-full h-[1px] bg-black/50 dark:bg-white/50 mx-auto lg:mx-0 mb-6"></div>
                       <p className="text-base md:text-lg text-black dark:text-white mb-6 whitespace-normal break-normal hyphens-none">
-                        I am a{" "}
-                        <span className="font-bold text-orange-500">
-                          design generalist
-                        </span>{" "}
-                        with a focus on{" "}
-                        <span className="font-bold text-orange-500">
-                          2D frame by frame animation,
-                        </span>{" "}
-                        <span className="font-bold text-orange-500">
-                          instructional design and 3D environments
-                        </span>
-                        . I have 3+ years professional experience creating{" "}
-                        <span className="font-bold text-orange-500">
-                          2D animated explainer videos
-                        </span>
-                        . I have also worked on creating websites for clients
-                        and designing online learning assessments. What I love
-                        most about design is the{" "}
-                        <span className="font-bold text-orange-500">
-                          collaborative magic
-                        </span>
-                        . How teams can transform overwhelming problems into
-                        elegant solutions that emerge from our{" "}
-                        <span className="font-bold text-orange-500">
-                          collective creativity
-                        </span>
-                        , solutions that feel almost impossible to have
-                        conceived alone.
+                        I am a design generalist with a focus on 2D frame by
+                        frame animation, instructional design and 3D
+                        environments. I have 3+ years professional experience
+                        creating 2D animated vector videos explainer videos. I
+                        have also worked on creating websites for clients and
+                        designing online learning assessments.
+                        <br />
+                        <br />
+                        Currently on the side I am working on TAG a solo 2D
+                        animated frame by frame short film animation that I hope
+                        to get into film festivals.
+                        <br />
+                        <br />
+                        Always open to collaboration so feel free to send any
+                        ideas my way.
                       </p>
                     </div>
                   </Link>

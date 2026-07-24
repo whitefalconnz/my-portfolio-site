@@ -7,10 +7,20 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-    domains: ['res.cloudinary.com'], // Allow Cloudinary images
+    remotePatterns: [
+      { protocol: 'https', hostname: 'media.jakobbackhouse.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+    ],
   },
   // Enable compression
   compress: true,
+  // Strip console output from production bundles, keeping error/warn for triage
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
+  },
   // Enable experimental features for better performance
   experimental: {
     // Temporarily disabled optimizeCss to fix deployment issues
@@ -20,19 +30,22 @@ const nextConfig = {
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
-      // Optimize bundle splitting
+      // Optimize bundle splitting. framer-motion gets a higher priority so it
+      // lands in its own cacheable chunk rather than the catch-all vendor one.
       config.optimization.splitChunks = {
         chunks: 'all',
         cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
           framer: {
             test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
             name: 'framer-motion',
             chunks: 'all',
+            priority: 10,
+          },
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 1,
           },
         },
       };
@@ -41,13 +54,4 @@ const nextConfig = {
   },
 };
 
-export default {
-  images: {
-    domains: [
-      'media.jakobbackhouse.com',
-      'res.cloudinary.com',
-      // ...any other domains you use
-    ],
-  },
-  // ...other config
-}
+export default nextConfig;

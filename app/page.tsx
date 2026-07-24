@@ -35,19 +35,118 @@ import { motion } from "framer-motion";
 import { useAutoImageTracking } from "./hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "./components/common/MemoryStatsDebugger";
 
+// Static project data. Declared at module scope so it keeps a stable identity
+// across renders -- when this lived inside the component it produced a new array
+// every render, retriggering the image-dimension effect in an endless loop.
+const projects: Project[] = [
+  // Animation Projects - Featured First
+  {
+    id: "Tag",
+    title: "Tag",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/TagPoster1.webp",
+    aspectRatio: AspectRatio.PORTRAIT,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "Inspired by a personal moment of fever-induced terror, this narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
+    categories: ["Animation"],
+  },
+  // Paintings and Illustrations
+  {
+    id: "Illustrations",
+    title: "Illustrations & Paintings",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/SaddleRoadQuickSketch.webp",
+    aspectRatio: AspectRatio.PORTRAIT,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "A collection of digital paintings, illustrations, and traditional artworks exploring various themes and techniques.",
+    categories: ["Illustration"],
+  },
+  // Creative Advertising Projects
+  {
+    id: "Creative Advertising",
+    title: "Tales from the Sun",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/Storyboard_TalesFromTheSun.webp",
+    aspectRatio: AspectRatio.LANDSCAPE,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "A small team and I were tasked with creating a campaign to spread awareness about sun safety in New Zealand. We developed a campaign that used cheesy and grotesque horror tropes to convince people to be more sun safe.",
+    categories: ["Creative Advertising"],
+  },
+  {
+    id: "BumbleGanttWithTheWind",
+    title: "Bumble ICK Campaign",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/Storyboard_BumbleICK%20(2).webp",
+    aspectRatio: AspectRatio.PORTRAIT,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "A mock collaboration with Bumble addressing how Gen Z develop 'ICKs' as an excuse for human imperfections, promoting the app as a safe platform for vulnerability.",
+    categories: ["Creative Advertising"],
+  },
+  {
+    id: "SmokeAnimation",
+    title: "Smoke Animation",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokePreview.webm",
+    aspectRatio: AspectRatio.PORTRAIT,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "A personal film about addiction made in Blender Grease Pencil. Exploring the feeling of withdrawing from an addiction, my character makes his way through a journey on a train, from irritation and panic to eventual recovery. A bear intermittently comes into view, tempting the character to smoke. People crowd the train, and the character plunges into a panic where he almost loses his sanity, only to barely resist smoking as the train comes out of the tunnel.",
+    categories: ["Animation"],
+  },
+  {
+    id: "MySafetyTV",
+    title: "MySafetyTV",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail.webm",
+    aspectRatio: AspectRatio.PORTRAIT,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "I worked for an online safety training company called MySafetyTV. One other person and I were tasked with creating the animated explainer videos for the company. There was a 2–4 week turnaround for each video from concept to execution. These videos are part of a learning course that my co-worker and I created.",
+    categories: ["Animation", "Creative Advertising"],
+  },
+  {
+    id: "3D Animation",
+    title: "3D Animation",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/PigBoyPortfolio/SpiritzThumbnail-min.jpg",
+    aspectRatio: AspectRatio.LANDSCAPE,
+    bgColor: "bg-[#2C4B7A]",
+    description:
+      "A selection of 3D work created in Blender, Maya and Unreal Engine.",
+    categories: ["Animation"],
+  },
+  // Update Creative Coding project
+  {
+    id: "CreativeCoding",
+    title: "Creative Coding",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_2.webp",
+    aspectRatio: AspectRatio.SQUARE,
+    bgColor: "bg-[#5C3E3C]",
+    description:
+      "How can I create an image manipulator in p5.js that can turn any photo into a painting? What type of images and style should I use to convey the feeling of going for bush walks when I was younger? To create this effect, I thought about how paintings are made and what makes them look like paintings. The primary reason is the effect of using a brush, so the focus of the project was creating the effect of brush strokes in the slightly random but logical way that a painter would create them.",
+    categories: ["Illustration"],
+  },
+  {
+    id: "Truckmate",
+    title: "Truckmate",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
+    aspectRatio: AspectRatio.LANDSCAPE,
+    bgColor: "bg-[#2C4B7A]",
+    description:
+      "Within a month, I went through a design sprint using the human-centred design process: observing and empathising with my environment, identifying a problem, and then iteratively finding a design solution. In my local area, I noticed there were truck communication and congestion issues, often with three pizza stores and many other fast food outlets in very close proximity to each other in a confusing area to access. After interviewing truck drivers and conducting market research, I found that most truck drivers used Google Maps, which does not provide the essential information they need.",
+    categories: ["Animation", "Creative Advertising"],
+  },
+];
+
 export default function Home() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
-  // Debug selected project state
-  useEffect(() => {
-    console.log("🔍 selectedProject state changed:", {
-      selectedProject,
-      shouldRenderModal: !!selectedProject,
-      projectFound: selectedProject
-        ? !!projects.find((p) => p.id === selectedProject)
-        : null,
-    });
-  }, [selectedProject]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [imageDimensions, setImageDimensions] = useState<
     Record<string, { width: number; height: number }>
@@ -191,21 +290,28 @@ export default function Home() {
 
   // Add scroll listener to show filter button when past featured section
   useEffect(() => {
-    const handleScroll = () => {
-      // Show filter button when user scrolls past the featured section
-      // We'll use a scroll position threshold instead of element detection for better performance
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
+    let frame = 0;
 
+    // Read layout inside a rAF so a fast scroll coalesces into one measurement
+    // per frame instead of one per scroll event.
+    const measure = () => {
+      frame = 0;
       // Show button when scrolled past approximately where featured section ends
-      // This is roughly after hero section + featured section (estimated ~1200px)
-      setShowFilterButton(scrollY > viewportHeight * 1.2);
+      const past = window.scrollY > window.innerHeight * 1.2;
+      // Only setState on an actual change -- otherwise every frame re-renders the page.
+      setShowFilterButton((prev) => (prev === past ? prev : past));
     };
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Check initial position
+    const handleScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(measure);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    measure(); // Check initial position
 
     return () => {
+      if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -225,34 +331,17 @@ export default function Home() {
     projectId: string,
     event?: React.MouseEvent | React.TouchEvent
   ) => {
-    console.log("🔥 handleProjectClick called:", {
-      projectId,
-      selectedProject,
-      currentTime: new Date().toISOString(),
-      eventType: event?.type,
-    });
-
     // Prevent event bubbling and default behavior
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    console.log("✅ About to call setSelectedProject with:", projectId);
-
-    // Add a small delay to ensure state updates properly on mobile
+    // Defer to the next frame so state updates settle properly on mobile
     requestAnimationFrame(() => {
-      // Log memory usage before clearing
-      logMemoryUsage("Before modal open");
-
       // Clear home page media to reduce memory usage
       clearHomePageMedia();
-
-      // Log memory usage after clearing
-      setTimeout(() => logMemoryUsage("After media cleared"), 100);
-
       setSelectedProject(projectId);
-      console.log("✅ setSelectedProject called successfully");
     });
   };
 
@@ -368,111 +457,6 @@ export default function Home() {
   // Replace the original toggleCategory function with our safe version
   const toggleCategory = handleToggleCategory;
 
-  const projects: Project[] = [
-    // Animation Projects - Featured First
-    {
-      id: "Tag",
-      title: "Tag",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/TagPoster1.webp",
-      aspectRatio: AspectRatio.PORTRAIT,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "Inspired by a personal moment of fever-induced terror, this narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
-      categories: ["Animation"],
-    },
-    // Paintings and Illustrations
-    {
-      id: "Illustrations",
-      title: "Illustrations & Paintings",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/PersonalPaintings/SaddleRoadQuickSketch.webp",
-      aspectRatio: AspectRatio.PORTRAIT,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "A collection of digital paintings, illustrations, and traditional artworks exploring various themes and techniques.",
-      categories: ["Illustration"],
-    },
-    // Creative Advertising Projects
-    {
-      id: "Creative Advertising",
-      title: "Tales from the Sun",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/Storyboard_TalesFromTheSun.webp",
-      aspectRatio: AspectRatio.LANDSCAPE,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "A small team and I were tasked with creating a campaign to spread awareness about sun safety in New Zealand. We developed a campaign that used cheesy and grotesque horror tropes to convince people to be more sun safe.",
-      categories: ["Creative Advertising"],
-    },
-    {
-      id: "BumbleGanttWithTheWind",
-      title: "Bumble ICK Campaign",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/Storyboard_BumbleICK%20(2).webp",
-      aspectRatio: AspectRatio.PORTRAIT,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "A mock collaboration with Bumble addressing how Gen Z develop 'ICKs' as an excuse for human imperfections, promoting the app as a safe platform for vulnerability.",
-      categories: ["Creative Advertising"],
-    },
-    {
-      id: "SmokeAnimation",
-      title: "Smoke Animation",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokePreview.webm",
-      aspectRatio: AspectRatio.PORTRAIT,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "A personal film about addiction made in Blender Grease Pencil. Exploring the feeling of withdrawing from an addiction, my character makes his way through a journey on a train, from irritation and panic to eventual recovery. A bear intermittently comes into view, tempting the character to smoke. People crowd the train, and the character plunges into a panic where he almost loses his sanity, only to barely resist smoking as the train comes out of the tunnel.",
-      categories: ["Animation"],
-    },
-    {
-      id: "MySafetyTV",
-      title: "MySafetyTV",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail.webm",
-      aspectRatio: AspectRatio.PORTRAIT,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "I worked for an online safety training company called MySafetyTV. One other person and I were tasked with creating the animated explainer videos for the company. There was a 2–4 week turnaround for each video from concept to execution. These videos are part of a learning course that my co-worker and I created.",
-      categories: ["Animation", "Creative Advertising"],
-    },
-    {
-      id: "3D Animation",
-      title: "3D Animation",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/PigBoyPortfolio/SpiritzThumbnail-min.jpg",
-      aspectRatio: AspectRatio.LANDSCAPE,
-      bgColor: "bg-[#2C4B7A]",
-      description:
-        "A selection of 3D work created in Blender, Maya and Unreal Engine.",
-      categories: ["Animation"],
-    },
-    // Update Creative Coding project
-    {
-      id: "CreativeCoding",
-      title: "Creative Coding",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_2.webp",
-      aspectRatio: AspectRatio.SQUARE,
-      bgColor: "bg-[#5C3E3C]",
-      description:
-        "How can I create an image manipulator in p5.js that can turn any photo into a painting? What type of images and style should I use to convey the feeling of going for bush walks when I was younger? To create this effect, I thought about how paintings are made and what makes them look like paintings. The primary reason is the effect of using a brush, so the focus of the project was creating the effect of brush strokes in the slightly random but logical way that a painter would create them.",
-      categories: ["Illustration"],
-    },
-    {
-      id: "Truckmate",
-      title: "Truckmate",
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
-      aspectRatio: AspectRatio.LANDSCAPE,
-      bgColor: "bg-[#2C4B7A]",
-      description:
-        "Within a month, I went through a design sprint using the human-centred design process: observing and empathising with my environment, identifying a problem, and then iteratively finding a design solution. In my local area, I noticed there were truck communication and congestion issues, often with three pizza stores and many other fast food outlets in very close proximity to each other in a confusing area to access. After interviewing truck drivers and conducting market research, I found that most truck drivers used Google Maps, which does not provide the essential information they need.",
-      categories: ["Animation", "Creative Advertising"],
-    },
-  ];
 
   const getStoredProjects = () => {
     if (typeof window === "undefined") return [];
@@ -531,6 +515,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadImageDimensions = async () => {
       let loadedCount = 0;
       const totalImages = projects.length;
@@ -557,11 +543,10 @@ export default function Home() {
 
           loadedCount++;
           // If we've loaded enough images to show a decent UI, remove loading state
-          if (loadedCount > totalImages * 0.5 && isLoading) {
+          if (loadedCount > totalImages * 0.5) {
             setIsLoading(false);
           }
         } catch (error) {
-          console.warn(`Using default dimensions for ${project.id}`);
           loadedCount++;
           // Keep using the initial dimensions set above
         }
@@ -570,6 +555,7 @@ export default function Home() {
       // Wait for all images to load in parallel
       await Promise.all(loadPromises);
 
+      if (cancelled) return;
       setImageDimensions(dimensions);
       setIsLoading(false);
     };
@@ -577,7 +563,14 @@ export default function Home() {
     if (contentLoaded) {
       loadImageDimensions();
     }
-  }, [projects, contentLoaded, isLoading]);
+
+    return () => {
+      cancelled = true;
+    };
+    // `projects` is module-scope static data, so it is intentionally not a dep.
+    // `isLoading` must not be a dep either: this effect sets it, and depending on
+    // it would re-run the effect on every change.
+  }, [contentLoaded]);
 
   const getGridSpan = (project: Project) => {
     const imageRatio =

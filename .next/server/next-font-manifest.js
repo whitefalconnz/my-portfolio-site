@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/jakobbackhouse/Documents/Career/PortfolioWebsite/my-portfolio-site/app/layout\":[\"static/media/4473ecc91f70f139-s.p.woff\",\"static/media/7eebe795355ea993-s.p.otf\",\"static/media/d9396795aa5ec363-s.p.woff2\",\"static/media/7c85d340480eabe7-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

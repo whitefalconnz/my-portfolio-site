@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useMemo,
   ReactNode,
   Suspense,
 } from "react";
@@ -58,14 +59,14 @@ function LoadingProviderInner({ children }: { children: ReactNode }) {
     }
   }, [pathname, searchParams]);
 
+  // Memoised so consumers only re-render when a value actually changes.
+  const value = useMemo(
+    () => ({ isLoading, setIsLoading, transitionState }),
+    [isLoading, transitionState]
+  );
+
   return (
-    <LoadingContext.Provider
-      value={{
-        isLoading,
-        setIsLoading,
-        transitionState,
-      }}
-    >
+    <LoadingContext.Provider value={value}>
       {children}
     </LoadingContext.Provider>
   );

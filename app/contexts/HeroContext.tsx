@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 
 interface HeroContextType {
@@ -71,14 +71,15 @@ export function HeroProvider({ children }: { children: ReactNode }) {
       return () => window.removeEventListener('scroll', handleScroll)
   }, [pathname, heroHeight, showHero, isFirstLoad])
 
+  // Memoised so consumers only re-render when a value actually changes, rather
+  // than on every render of this provider (which wraps the whole app).
+  const value = useMemo(
+    () => ({ showHero, setShowHero, isFirstLoad, heroHeight, setHeroHeight }),
+    [showHero, isFirstLoad, heroHeight]
+  )
+
   return (
-    <HeroContext.Provider value={{ 
-      showHero, 
-      setShowHero, 
-      isFirstLoad, 
-      heroHeight, 
-      setHeroHeight 
-    }}>
+    <HeroContext.Provider value={value}>
       {children}
     </HeroContext.Provider>
   )

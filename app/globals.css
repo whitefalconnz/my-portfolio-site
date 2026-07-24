@@ -229,34 +229,6 @@ html, body, * {
   outline-offset: 2px;
 }
 
-/* Add these new retro spark styles */
-.retro-spark {
-  pointer-events: none;
-  position: fixed;
-  background-color: var(--spark-color);
-  border: 1px solid currentColor;
-  z-index: 9999;
-  animation: retro-spark-shoot 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}
-
-@keyframes retro-spark-shoot {
-  0% {
-    transform: 
-      rotate(var(--angle)) 
-      translateX(0) 
-      scale(1);
-    opacity: 1;
-  }
-  
-  100% {
-    transform: 
-      rotate(var(--angle)) 
-      translateX(var(--distance)) 
-      scale(0.2);
-    opacity: 0;
-  }
-}
-
 /* Scroll Reveal Animations */
 @keyframes fadeInUp {
   from {

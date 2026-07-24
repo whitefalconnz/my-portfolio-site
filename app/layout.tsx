@@ -5,7 +5,6 @@ import { ThemeProvider } from "./components/common/theme-provider";
 import LoadingProvider from "./components/common/LoadingProvider";
 import ScrollProgressBar from "./components/common/ScrollProgressBar";
 import HeroSection from "./components/common/HeroSection";
-import SparkEffect from "./components/animations/SparkEffect";
 import Header from "./components/layout/Header";
 import { HeroProvider } from "./contexts/HeroContext";
 import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
@@ -110,7 +109,6 @@ export default function RootLayout({
             <HeroProvider>
               <Header />
               <HeroSection />
-              <SparkEffect />
               <ScrollProgressBar />
               <Suspense fallback={null}>
                 <LoadingProvider>{children}</LoadingProvider>

@@ -9,7 +9,6 @@ import {
   ReactNode,
   Suspense,
 } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 
 interface LoadingContextType {
   isLoading: boolean;
@@ -24,40 +23,25 @@ function LoadingProviderInner({ children }: { children: ReactNode }) {
   const [transitionState, setTransitionState] = useState<
     "entering" | "visible" | "exiting"
   >("entering");
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
+  // Runs once, on the initial load of the site. This provider lives in the root
+  // layout, so it mounts a single time per full page load and survives every
+  // client-side navigation -- which means route changes no longer replay the
+  // loading screen. Timings are unchanged: 100ms in, visible until 1500ms,
+  // then a 600ms exit.
   useEffect(() => {
-    // Initial page load
-    setTimeout(() => setTransitionState("visible"), 100);
-    const timer = setTimeout(() => {
-      setTransitionState("exiting");
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    timers.push(setTimeout(() => setTransitionState("visible"), 100));
+    timers.push(
       setTimeout(() => {
-        setIsLoading(false);
-      }, 600);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading && (pathname || searchParams)) {
-      // Immediately hide content and show loading
-      setIsLoading(true);
-      setTransitionState("entering");
-
-      // Show loading animation
-      setTimeout(() => setTransitionState("visible"), 100);
-      const timer = setTimeout(() => {
         setTransitionState("exiting");
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 600);
-      }, 1000);
+        timers.push(setTimeout(() => setIsLoading(false), 600));
+      }, 1500)
+    );
 
-      return () => clearTimeout(timer);
-    }
-  }, [pathname, searchParams]);
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   // Memoised so consumers only re-render when a value actually changes.
   const value = useMemo(

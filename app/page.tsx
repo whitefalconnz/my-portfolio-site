@@ -21,7 +21,6 @@ import "./styles/grid.css";
 import { getImageDimensions } from "./utils/imageUtils";
 import ScrollReveal from "./components/animations/ScrollReveal";
 import BackgroundSprites from "./components/animations/BackgroundSprites";
-import AnimatedText from "./utils/AnimatedText";
 import Masonry from "react-masonry-css";
 import { getCDNUrl, getOptimizedImageUrl } from "./utils/cdn";
 import {
@@ -762,10 +761,18 @@ export default function Home() {
           }}
         >
           <div className="container mx-auto px-4">
-            {/* Hero Section - Showreel and Intro side by side on desktop */}
-            <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-[25vh]">
-              {/* Showreel Section - Left side on desktop, hidden on mobile */}
-              {!isMobile && (
+            {/* Page heading. Kept for SEO and screen readers -- the visible
+                intro copy lives on /about, not here. */}
+            <h1 className="sr-only">
+              Jakob Backhouse — animator and designer, Wellington NZ
+            </h1>
+
+            {/* Showreel and illustration, side by side. Both are desktop-only,
+                so the whole row is skipped on mobile rather than leaving an
+                empty 25vh gap above the work. */}
+            {!isMobile && (
+              <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-[25vh]">
+                {/* Showreel Section - Left side on desktop, hidden on mobile */}
                 <div className="relative z-10 showreel-container lg:flex-1">
                   <ScrollReveal direction="up" delay={100} duration={800}>
                     <div className="mb-8 lg:mb-0">
@@ -803,91 +810,40 @@ export default function Home() {
                     </div>
                   </ScrollReveal>
                 </div>
-              )}
 
-              {/* Introduction Section - Right side on desktop, bottom on mobile */}
-              <div className="relative z-10 lg:flex-1 lg:max-w-lg">
-                <ScrollReveal direction="up" duration={800}>
-                  <Link
-                    href="/about"
-                    className="block cursor-pointer group"
-                    onMouseEnter={(e) => {
-                      setShowTooltip(true);
-                      setTooltipPosition({ x: e.clientX, y: e.clientY });
-                    }}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    onMouseMove={(e) => {
-                      if (showTooltip) {
+                {/* Illustration - Right side on desktop, links through to /about */}
+                <div className="relative z-10 lg:flex-1 lg:max-w-lg">
+                  <ScrollReveal direction="up" duration={800} delay={200}>
+                    <Link
+                      href="/about"
+                      className="block border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300 cursor-pointer group"
+                      onMouseEnter={(e) => {
+                        setShowTooltip(true);
                         setTooltipPosition({ x: e.clientX, y: e.clientY });
-                      }
-                    }}
-                  >
-                    <div className="max-w-2xl mx-auto lg:max-w-none text-center lg:text-left border-2 border-black dark:border-white p-6 md:p-8 bg-[#F3F1E9] dark:bg-[#1A1818] relative group-hover:border-orange-500 transition-all duration-300">
-                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-mplus break-words overflow-wrap-anywhere">
-                        <AnimatedText
-                          text="Hi, I'm Jakob Backhouse"
-                          delay={50}
-                          variant={contentLoaded ? "title" : "instant"}
-                          disablePixels={!contentLoaded}
-                        />
-                      </h1>
-                      <div className="w-full h-[1px] bg-black/50 dark:bg-white/50 mx-auto lg:mx-0 mb-6"></div>
-                      <p className="text-base md:text-lg text-black dark:text-white mb-6 whitespace-normal break-normal hyphens-none">
-                        I am a design generalist with a focus on 2D frame by
-                        frame animation, instructional design and 3D
-                        environments. I have 3+ years professional experience
-                        creating 2D animated vector videos explainer videos. I
-                        have also worked on creating websites for clients and
-                        designing online learning assessments.
-                        <br />
-                        <br />
-                        Currently on the side I am working on TAG a solo 2D
-                        animated frame by frame short film animation that I hope
-                        to get into film festivals.
-                        <br />
-                        <br />
-                        Always open to collaboration so feel free to send any
-                        ideas my way.
-                      </p>
-                    </div>
-                  </Link>
-
-                  {/* Illustration - Only show on desktop */}
-                  {!isMobile && (
-                    <div className="mt-8">
-                      <ScrollReveal direction="up" duration={800} delay={200}>
-                        <Link
-                          href="/about"
-                          className="block border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300 cursor-pointer group"
-                          onMouseEnter={(e) => {
-                            setShowTooltip(true);
-                            setTooltipPosition({ x: e.clientX, y: e.clientY });
-                          }}
-                          onMouseLeave={() => setShowTooltip(false)}
-                          onMouseMove={(e) => {
-                            if (showTooltip) {
-                              setTooltipPosition({
-                                x: e.clientX,
-                                y: e.clientY,
-                              });
-                            }
-                          }}
-                        >
-                          <FadeInImage
-                            src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
-                            alt="Decorative illustration - Click to visit about page"
-                            width={720}
-                            height={540}
-                            priority={false}
-                            className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </Link>
-                      </ScrollReveal>
-                    </div>
-                  )}
-                </ScrollReveal>
+                      }}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      onMouseMove={(e) => {
+                        if (showTooltip) {
+                          setTooltipPosition({
+                            x: e.clientX,
+                            y: e.clientY,
+                          });
+                        }
+                      }}
+                    >
+                      <FadeInImage
+                        src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
+                        alt="Decorative illustration - Click to visit about page"
+                        width={720}
+                        height={540}
+                        priority={false}
+                        className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </Link>
+                  </ScrollReveal>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Projects Section */}
             <div className="relative">

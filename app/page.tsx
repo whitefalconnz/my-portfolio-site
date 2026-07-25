@@ -757,7 +757,7 @@ export default function Home() {
             {!isMobile && (
               <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
                 <div className="relative z-10 showreel-container lg:flex-1">
-                  <ScrollReveal direction="up" delay={100} duration={800}>
+                  <div>
                     <div className="mb-8 lg:mb-0">
                       <div className="max-w-3xl mx-auto lg:max-w-none">
                         {/* The Tag trailer player, moved down from the old
@@ -773,12 +773,12 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                  </ScrollReveal>
+                  </div>
                 </div>
 
                 {/* Illustration - Right side on desktop, links through to /about */}
                 <div className="relative z-10 lg:flex-1 lg:max-w-lg">
-                  <ScrollReveal direction="up" duration={800} delay={200}>
+                  <div>
                     <Link
                       href="/about"
                       className="block border border-line overflow-hidden hover:border-accent transition-all duration-300 cursor-pointer group"
@@ -805,7 +805,7 @@ export default function Home() {
                         className="block w-full h-auto transition-transform duration-300"
                       />
                     </Link>
-                  </ScrollReveal>
+                  </div>
                 </div>
               </div>
             )}
@@ -813,17 +813,17 @@ export default function Home() {
             {/* Projects Section */}
             <div className="relative">
               {/* Explore All Projects Heading */}
-              <ScrollReveal direction="up" delay={100} duration={800}>
+              <div>
                 <div className="text-center mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
                     EXPLORE ALL PROJECTS
                   </p>
                 </div>
-              </ScrollReveal>
+              </div>
 
               {/* Categories Section - Always visible */}
               <div ref={categoriesRef} className="relative z-10 mb-8">
-                <ScrollReveal direction="up" delay={150} duration={800}>
+                <div>
                   <div className="text-center py-4">
                     <div className="flex flex-wrap gap-3 justify-center">
                       {categories.map((category) => (
@@ -846,7 +846,7 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-                </ScrollReveal>
+                </div>
               </div>
             </div>
           </div>

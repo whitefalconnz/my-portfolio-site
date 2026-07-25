@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { getCDNUrl } from "../../utils/cdn";
 import { useLoading } from "../../contexts/LoadingContext";
 
@@ -233,74 +233,36 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu Overlay */}
-        <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.div
-              className="lg:hidden absolute inset-x-0 top-full bg-primary dark:bg-primary z-[999] min-h-[calc(100vh-100px)] border-t border-line"
-              initial={{ opacity: 0, y: -20, backdropFilter: "blur(0px)" }}
-              animate={{ opacity: 1, y: 0, backdropFilter: "blur(20px)" }}
-              exit={{ opacity: 0, y: -20, backdropFilter: "blur(0px)" }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
+            <div className="lg:hidden absolute inset-x-0 top-full bg-primary dark:bg-primary z-[999] min-h-[calc(100vh-100px)] border-t border-line">
               <div className="flex flex-col items-center pt-8 space-y-6">
-                {/* Navigation Links */}
-                <motion.nav
-                  className="flex flex-col items-center space-y-8 text-xl font-satoshi"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 0.1,
-                    staggerChildren: 0.1,
-                  }}
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                {/* Navigation Links. No entry transition -- the menu appears. */}
+                <nav className="flex flex-col items-center space-y-8 text-xl font-satoshi">
+                  <Link
+                    href="/"
+                    className="text-ground hover:bg-primary-hover transition-colors duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Link
-                      href="/"
-                      className="text-ground hover:bg-primary-hover transition-colors duration-200"
-                      onClick={(e) => {
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      WORK
-                    </Link>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
+                    WORK
+                  </Link>
+                  <Link
+                    href="/about"
+                    className="text-ground hover:bg-primary-hover transition-colors duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Link
-                      href="/about"
-                      className="text-ground hover:bg-primary-hover transition-colors duration-200"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      ABOUT
-                    </Link>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
+                    ABOUT
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="text-ground hover:bg-primary-hover transition-colors duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Link
-                      href="/contact"
-                      className="text-ground hover:bg-primary-hover transition-colors duration-200"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      CONTACT
-                    </Link>
-                  </motion.div>
-                </motion.nav>
-
+                    CONTACT
+                  </Link>
+                </nav>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </div>
     </motion.header>
   );

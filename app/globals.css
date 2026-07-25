@@ -410,10 +410,10 @@ html, body, * {
   justify-content: center;
   z-index: 9999;
   opacity: 1;
-  transition: opacity 0.3s;
   flex-direction: column;
   transform: translateY(0);
-  transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+  /* Halved to match the 300ms exit window in LoadingContext. */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .loading-screen.fade-out {

@@ -7,106 +7,36 @@ import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCDNUrl } from "../../utils/cdn";
-import { useHero } from "../../contexts/HeroContext";
 import { useLoading } from "../../contexts/LoadingContext";
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [bounceStyle, setBounceStyle] = useState({});
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
-  const { showHero, heroHeight } = useHero();
   const { isLoading } = useLoading();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollDelta = lastScrollY - currentScrollY;
-
-          if (scrollDelta > 15) {
-            // Increased threshold for more intentional triggers
-            // Simpler transform that moves the header slightly up and adds a subtle scale
-            setBounceStyle({
-              transform: "translateY(-2px) scaleY(1.02)",
-              transition: "transform 0.15s ease-out",
-              borderBottomWidth: "3px", // Slightly thicker border during effect
-            });
-
-            // Reset with a smoother transition
-            setTimeout(() => {
-              setBounceStyle({
-                transform: "translateY(0) scaleY(1)",
-                transition: "transform 0.2s ease-in-out",
-                borderBottomWidth: "2px",
-              });
-            }, 150);
-          }
-
-          setIsScrolled(currentScrollY > 0);
-          lastScrollY = currentScrollY;
-          ticking = false;
-        });
-
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Function to scroll to main content when on home page with hero visible
-  const scrollToContent = (e: React.MouseEvent) => {
-    // Only scroll if we're already on home page and hero is visible
-    if (window.location.pathname === "/" && showHero && heroHeight > 0) {
-      e.preventDefault();
-      window.scrollTo({
-        top: heroHeight,
-        behavior: "smooth",
-      });
-    }
-  };
-
+  // Fully opaque, no blur and no bottom rule -- the header reads as solid
+  // ground rather than a translucent pane floating over the work.
   const headerClasses = `
-    sticky top-0 left-0 right-0 
-    backdrop-blur z-[200] 
-    border-b border-line
-    transition-all duration-300 ease-out
-    ${isScrolled ? "bg-ground/90 dark:bg-ground/90" : "bg-ground/75 dark:bg-ground/75"}
+    sticky top-0 left-0 right-0
+    z-[200] bg-ground
     ${isLoading ? "pointer-events-none" : "pointer-events-auto"}
   `.trim();
 
   return (
     <motion.header
       className={headerClasses}
-      style={bounceStyle}
-      initial={{
-        opacity: 0,
-        y: -20,
-        backdropFilter: "blur(0px)",
-      }}
-      animate={{
-        opacity: isLoading ? 0 : 1,
-        y: 0,
-        backdropFilter: "blur(10px)",
-      }}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: isLoading ? 0 : 1, y: 0 }}
       transition={{
         duration: isLoading ? 0.2 : 0.4,
         delay: isLoading ? 0 : 0.1,
         ease: isLoading ? "easeIn" : "easeOut",
-        backdropFilter: { duration: 0.3 },
       }}
     >
       <div className="container mx-auto px-4 py-6 relative">
@@ -126,7 +56,6 @@ export default function Header() {
             <Link
               href="/"
               className="retro-box px-5 py-3 font-satoshi text-lg text-dark dark:text-light hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-300"
-              onClick={scrollToContent}
             >
               WORK
             </Link>
@@ -357,7 +286,6 @@ export default function Header() {
                       className="text-ground hover:bg-primary-hover transition-colors duration-200"
                       onClick={(e) => {
                         setIsMobileMenuOpen(false);
-                        scrollToContent(e);
                       }}
                     >
                       WORK

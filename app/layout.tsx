@@ -4,9 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/common/theme-provider";
 import LoadingProvider from "./components/common/LoadingProvider";
 import ScrollProgressBar from "./components/common/ScrollProgressBar";
-import HeroSection from "./components/common/HeroSection";
 import Header from "./components/layout/Header";
-import { HeroProvider } from "./contexts/HeroContext";
 import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
 import ScrollbarManager from "./components/common/ScrollbarManager";
 
@@ -103,14 +101,11 @@ export default function RootLayout({
         >
           <LoadingContextProvider>
             <ScrollbarManager />
-            <HeroProvider>
-              <Header />
-              <HeroSection />
-              <ScrollProgressBar />
-              <Suspense fallback={null}>
-                <LoadingProvider>{children}</LoadingProvider>
-              </Suspense>
-            </HeroProvider>
+            <Header />
+            <ScrollProgressBar />
+            <Suspense fallback={null}>
+              <LoadingProvider>{children}</LoadingProvider>
+            </Suspense>
           </LoadingContextProvider>
         </ThemeProvider>
       </body>

@@ -244,7 +244,7 @@ export default function AboutPage() {
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
                   <motion.a
                     href="mailto:JakobBackhouse@gmail.com"
-                    className="inline-flex items-center gap-2 bg-ink px-3 py-1.5 text-black
+                    className="inline-flex items-center gap-2 bg-ink px-3 py-1.5 text-ground
                         hover:border-accent transition-all text-sm border"
                     initial={{ borderColor: "var(--line)" }}
                     style={{ borderColor: "var(--line)" }}

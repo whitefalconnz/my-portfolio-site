@@ -2062,22 +2062,17 @@ export default function ProjectModal({
     }
   };
 
+  // The overlay is fully opaque. It used to be bg-white/95 with a backdrop blur,
+  // which let the project grid show through and flash into view whenever the page
+  // behind it repainted (media being cleared/restored on open).
   const modal = (
     <div
       ref={overlayRef}
-      className={`fixed inset-0 z-[100] overflow-hidden ${
-        isTouchDevice
-          ? "bg-ink"
-          : "bg-white/95 dark:bg-black/95 backdrop-blur-md"
-      }`}
+      className="fixed inset-0 z-[100] overflow-hidden bg-ground"
       onClick={handleOverlayClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       style={{
-        backdropFilter: isTouchDevice ? "none" : "blur(8px) saturate(180%)",
-        WebkitBackdropFilter: isTouchDevice
-          ? "none"
-          : "blur(8px) saturate(180%)",
         width: "100vw",
         height: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
         maxHeight: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
@@ -2093,18 +2088,18 @@ export default function ProjectModal({
       }}
     >
       {!enlargedImage && (
-        <div className="absolute top-0 left-0 right-0 z-[110] bg-white/30 dark:bg-black/30 backdrop-blur-sm">
+        <div className="absolute top-0 left-0 right-0 z-[110] bg-ground">
           <div className="relative flex items-center px-3 md:px-4 py-2 md:py-3">
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/about"
-                className="p-2 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 text-ink/80 hover:text-black dark:hover:text-white text-sm font-medium min-h-[44px] flex items-center"
+                className="p-2 rounded-full bg-surface hover:bg-surface transition-all duration-200 text-ink/80 hover:text-ink text-sm font-medium min-h-[44px] flex items-center"
               >
                 ABOUT
               </Link>
               <Link
                 href="/contact"
-                className="p-2 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 text-ink/80 hover:text-black dark:hover:text-white text-sm font-medium min-h-[44px] flex items-center"
+                className="p-2 rounded-full bg-surface hover:bg-surface transition-all duration-200 text-ink/80 hover:text-ink text-sm font-medium min-h-[44px] flex items-center"
               >
                 CONTACT
               </Link>
@@ -2119,7 +2114,7 @@ export default function ProjectModal({
             <div className="ml-auto">
               <button
                 onClick={handleClose}
-                className="p-2 md:p-3 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="p-2 md:p-3 rounded-full bg-surface hover:bg-surface transition-all duration-200 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5 text-ink" />
@@ -2129,9 +2124,9 @@ export default function ProjectModal({
         </div>
       )}
 
-      <div className="absolute top-[50px] md:top-[58px] left-0 right-0 h-[1px] bg-black/10 dark:bg-white/15 backdrop-blur-sm z-[106]">
+      <div className="absolute top-[50px] md:top-[58px] left-0 right-0 h-[1px] bg-line z-[106]">
         <div
-          className="h-full bg-black/70 dark:bg-white/80 transition-all duration-500 ease-out blur-[0.5px]"
+          className="h-full bg-accent transition-all duration-500 ease-out"
           style={{
             width: `${scrollProgress}%`,
             filter: "blur(0.5px)",
@@ -2147,7 +2142,7 @@ export default function ProjectModal({
         <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none md:flex z-[110]">
           <button
             onClick={onPrevious}
-            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasPrevious ? "opacity-80 hover:opacity-100" : "opacity-40 cursor-not-allowed"}`}
+            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-surface hover:bg-surface ${hasPrevious ? "opacity-80 hover:opacity-100" : "opacity-40 cursor-not-allowed"}`}
             disabled={!hasPrevious}
             aria-label="Previous project"
             style={{ zIndex: 111 }}
@@ -2157,7 +2152,7 @@ export default function ProjectModal({
 
           <button
             onClick={onNext}
-            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasNext ? "opacity-80 hover:opacity-100" : "opacity-40 cursor-not-allowed"}`}
+            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-surface hover:bg-surface ${hasNext ? "opacity-80 hover:opacity-100" : "opacity-40 cursor-not-allowed"}`}
             disabled={!hasNext}
             aria-label="Next project"
             style={{ zIndex: 111 }}

@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";
 import {
   Instagram,
   Linkedin,
@@ -27,8 +26,8 @@ import {
   restoreHomePageMedia,
   logMemoryUsage,
 } from "./utils/memoryManager";
-import { useHero } from "./contexts/HeroContext";
 import FadeInImage from "./components/common/FadeInImage";
+import FeatureVideo from "./components/common/FeatureVideo";
 import { motion } from "framer-motion";
 import { useAutoImageTracking } from "./hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "./components/common/MemoryStatsDebugger";
@@ -157,7 +156,6 @@ export default function Home() {
   const [isSafari, setIsSafari] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
-  const showreelLoaded = useRef(false);
   const pageContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto memory management for images on this page
@@ -219,9 +217,6 @@ export default function Home() {
   // Add state for filter button visibility based on scroll
   const [showFilterButton, setShowFilterButton] = useState(false);
   const categoriesRef = useRef<HTMLDivElement>(null);
-
-  // Hero context
-  const { showHero, heroHeight } = useHero();
 
   // Tooltip state for illustration
   const [showTooltip, setShowTooltip] = useState(false);
@@ -764,51 +759,32 @@ export default function Home() {
               Jakob Backhouse — animator and designer, Wellington NZ
             </h1>
 
-            {/* Showreel and illustration, side by side. Both are desktop-only,
-                so the whole row is skipped on mobile rather than leaving an
-                empty 25vh gap above the work. */}
-            {!isMobile && (
-              <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-[25vh]">
-                {/* Showreel Section - Left side on desktop, hidden on mobile */}
-                <div className="relative z-10 showreel-container lg:flex-1">
-                  <ScrollReveal direction="up" delay={100} duration={800}>
-                    <div className="mb-8 lg:mb-0">
-                      <div className="max-w-3xl mx-auto lg:max-w-none">
-                        <div
-                          style={{
-                            padding: "56.25% 0 0 0",
-                            position: "relative",
-                          }}
-                        >
-                          <iframe
-                            src="https://player.vimeo.com/video/1093033927?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-                            frameBorder="0"
-                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                            data-exclude-memory-management="true"
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                              cursor: "default",
-                              pointerEvents: "auto",
-                            }}
-                            title="ShowReel25.06.2025"
-                            className={`border border-line hover:border-accent transition-all duration-300`}
-                            loading="lazy"
-                            onLoad={() => {
-                              showreelLoaded.current = true;
-                            }}
-                          />
-                        </div>
-                        {/* Vimeo API is loaded globally in layout */}
+            {/* Trailer and illustration, side by side on desktop. The trailer
+                shows at every width -- it is the centrepiece, and a 16:9 box
+                works fine on a phone. The illustration stays desktop-only. */}
+            <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
+              <div className="relative z-10 showreel-container lg:flex-1">
+                <ScrollReveal direction="up" delay={100} duration={800}>
+                  <div className="mb-8 lg:mb-0">
+                    <div className="max-w-3xl mx-auto lg:max-w-none">
+                      {/* The Tag trailer player, moved down from the old
+                          full-screen hero. Same 16:9 box the Vimeo showreel
+                          embed used to occupy. */}
+                      <div
+                        style={{
+                          padding: "56.25% 0 0 0",
+                          position: "relative",
+                        }}
+                      >
+                        <FeatureVideo />
                       </div>
                     </div>
-                  </ScrollReveal>
-                </div>
+                  </div>
+                </ScrollReveal>
+              </div>
 
-                {/* Illustration - Right side on desktop, links through to /about */}
+              {!isMobile && (
+                /* Illustration - Right side on desktop, links through to /about */
                 <div className="relative z-10 lg:flex-1 lg:max-w-lg">
                   <ScrollReveal direction="up" duration={800} delay={200}>
                     <Link
@@ -839,8 +815,8 @@ export default function Home() {
                     </Link>
                   </ScrollReveal>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Projects Section */}
             <div className="relative">
@@ -1107,14 +1083,13 @@ export default function Home() {
                                         <span
                                           key={catIndex}
                                           className={`
-                                          text-xs px-2 py-1 transition-all duration-300
-                                          border border-line bg-ground/90 dark:bg-ground/90
+                                          text-xs px-2 py-1 border
                                           ${
                                             selectedCategories.includes(
                                               category
                                             )
-                                              ? "text-ink bg-ink border-ink"
-                                              : "text-ink hover:border-accent"
+                                              ? "bg-accent border-accent text-accent-contrast"
+                                              : "bg-ground border-line text-ink"
                                           }
                                         `}
                                         >

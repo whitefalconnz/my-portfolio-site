@@ -3,15 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Instagram,
-  Linkedin,
-  Twitter,
-  RotateCcw,
-  Palette,
-  Film,
-  Megaphone,
-} from "lucide-react";
+import { Instagram, Linkedin } from "lucide-react";
 import ProjectModal from "./components/project/ProjectModal";
 import "./grid.css";
 import Header from "./components/layout/Header";
@@ -759,32 +751,32 @@ export default function Home() {
               Jakob Backhouse — animator and designer, Wellington NZ
             </h1>
 
-            {/* Trailer and illustration, side by side on desktop. The trailer
-                shows at every width -- it is the centrepiece, and a 16:9 box
-                works fine on a phone. The illustration stays desktop-only. */}
-            <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
-              <div className="relative z-10 showreel-container lg:flex-1">
-                <ScrollReveal direction="up" delay={100} duration={800}>
-                  <div className="mb-8 lg:mb-0">
-                    <div className="max-w-3xl mx-auto lg:max-w-none">
-                      {/* The Tag trailer player, moved down from the old
-                          full-screen hero. Same 16:9 box the Vimeo showreel
-                          embed used to occupy. */}
-                      <div
-                        style={{
-                          padding: "56.25% 0 0 0",
-                          position: "relative",
-                        }}
-                      >
-                        <FeatureVideo />
+            {/* Trailer and illustration, side by side. Desktop only -- on mobile
+                the whole row is skipped so a phone lands straight on the work
+                rather than on a video plus an empty gap. */}
+            {!isMobile && (
+              <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
+                <div className="relative z-10 showreel-container lg:flex-1">
+                  <ScrollReveal direction="up" delay={100} duration={800}>
+                    <div className="mb-8 lg:mb-0">
+                      <div className="max-w-3xl mx-auto lg:max-w-none">
+                        {/* The Tag trailer player, moved down from the old
+                            full-screen hero. Same 16:9 box the Vimeo showreel
+                            embed used to occupy. */}
+                        <div
+                          style={{
+                            padding: "56.25% 0 0 0",
+                            position: "relative",
+                          }}
+                        >
+                          <FeatureVideo />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ScrollReveal>
-              </div>
+                  </ScrollReveal>
+                </div>
 
-              {!isMobile && (
-                /* Illustration - Right side on desktop, links through to /about */
+                {/* Illustration - Right side on desktop, links through to /about */}
                 <div className="relative z-10 lg:flex-1 lg:max-w-lg">
                   <ScrollReveal direction="up" duration={800} delay={200}>
                     <Link
@@ -815,8 +807,8 @@ export default function Home() {
                     </Link>
                   </ScrollReveal>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Projects Section */}
             <div className="relative">
@@ -849,15 +841,6 @@ export default function Home() {
                            `}
                           aria-pressed={selectedCategories.includes(category)}
                         >
-                          {category === "Illustration" && (
-                            <Palette className="w-3 h-3 inline mr-1 align-[-2px]" />
-                          )}
-                          {category === "Animation" && (
-                            <Film className="w-3 h-3 inline mr-1 align-[-2px]" />
-                          )}
-                          {category === "Creative Advertising" && (
-                            <Megaphone className="w-3 h-3 inline mr-1 align-[-2px]" />
-                          )}
                           {category}
                         </motion.button>
                       ))}
@@ -896,13 +879,9 @@ export default function Home() {
                       : 1;
 
                     return (
-                      <ScrollReveal
+                      /* No entry animation -- thumbnails just appear. */
+                      <div
                         key={project.id}
-                        direction="up"
-                        delay={100 * (index % 3)} // Reduced delay for faster appearance
-                        duration={600} // Faster animation
-                        distance="30px" // Less distance to travel
-                        easing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                         className="project-masonry-item"
                         style={
                           {
@@ -1070,50 +1049,18 @@ export default function Home() {
                                     : "opacity-0 group-hover:opacity-100" // Hover effect on desktop
                                 }`}
                               >
+                                {/* Title only -- description and category
+                                    chips are in the project view. */}
                                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                  <h3 className="text-lg font-display font-medium mb-2">
+                                  <h3 className="text-lg font-display font-medium">
                                     {project.title}
                                   </h3>
-                                  <p className="text-sm opacity-90 line-clamp-3 mb-3 hyphens-none break-normal">
-                                    {project.description}
-                                  </p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {project.categories?.map(
-                                      (category, catIndex) => (
-                                        <span
-                                          key={catIndex}
-                                          className={`
-                                          text-xs px-2 py-1 border
-                                          ${
-                                            selectedCategories.includes(
-                                              category
-                                            )
-                                              ? "bg-accent border-accent text-accent-contrast"
-                                              : "bg-ground border-line text-ink"
-                                          }
-                                        `}
-                                        >
-                                          {category === "Illustration" && (
-                                            <Palette className="w-3 h-3 inline mr-1" />
-                                          )}
-                                          {category === "Animation" && (
-                                            <Film className="w-3 h-3 inline mr-1" />
-                                          )}
-                                          {category ===
-                                            "Creative Advertising" && (
-                                            <Megaphone className="w-3 h-3 inline mr-1" />
-                                          )}
-                                          {category}
-                                        </span>
-                                      )
-                                    )}
-                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </ScrollReveal>
+                      </div>
                     );
                   })}
                 </Masonry>
@@ -1124,16 +1071,7 @@ export default function Home() {
           <footer className="container mx-auto px-4 py-6 mt-12 relative z-10">
             <ScrollReveal direction="up" delay={400} duration={800}>
               <div className="text-center mb-3">
-                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-satoshi">
-                  Designed and built entirely by{" "}
-                  <Link
-                    href="/about"
-                    className="underline decoration-transparent hover:decoration-inherit hover:text-accent transition-colors"
-                  >
-                    Jakob Backhouse
-                  </Link>{" "}
-                </p>
-                <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-satoshi mt-1">
+                <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-satoshi">
                   © {new Date().getFullYear()} Jakob Backhouse. All rights
                   reserved.
                 </p>

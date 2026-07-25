@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
-import { Mail, Briefcase, Palette } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { motion } from "framer-motion";
 import FadeInImage from "../components/common/FadeInImage";
@@ -148,7 +147,6 @@ export default function AboutPage() {
                     transition: { delay: 0.6, duration: 0.5 },
                   }}
                 >
-                  <Palette className="h-4 w-4 text-primary/70 dark:text-primary-light/70" />
                   <h2 className="font-display font-medium text-lg text-accent">
                     Core Skills
                   </h2>
@@ -253,7 +251,6 @@ export default function AboutPage() {
                       transition: { delay: 0.5, duration: 0.5 },
                     }}
                   >
-                    <Mail className="h-4 w-4" />
                     JakobBackhouse@gmail.com
                   </motion.a>
                 </div>
@@ -287,7 +284,6 @@ export default function AboutPage() {
                   transition: { delay: 0.5, duration: 0.5 },
                 }}
               >
-                <Briefcase className="h-4 w-4 text-primary/70 dark:text-primary-light/70" />
                 <h2 className="font-display font-medium text-lg text-accent">
                   Experience
                 </h2>

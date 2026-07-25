@@ -612,54 +612,16 @@ html, body, * {
   border-color: var(--line);
 }
 
+/* Flat fill: ink on ground, so it reads black-on-white in day mode and
+   white-on-black at night. No gradient, no shimmer, no glow. */
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+  background: var(--ink);
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.progress-bar-fill::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.4) 50%, 
-    transparent 100%
-  );
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
 }
 
 .progress-bar-glow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%) translateX(-50%);
-  width: 4px;
-  height: 16px;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  border-radius: 2px;
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.8;
-}
-
-.dark .progress-bar-glow {
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
+  display: none;
 }
 
 .progress-percentage {

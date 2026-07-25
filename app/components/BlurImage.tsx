@@ -84,7 +84,7 @@ export default function BlurImage({
           {/* Simple loading indicator overlay */}
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-500">
-              <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin opacity-50"></div>
+              <div className="w-6 h-6 border border-gray-300 border-t-gray-600 rounded-full animate-spin opacity-50"></div>
             </div>
           )}
         </div>

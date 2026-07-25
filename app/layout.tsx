@@ -13,9 +13,13 @@ import ScrollbarManager from "./components/common/ScrollbarManager";
 // Re-export route metadata so Next.js can pick it up from a dedicated file
 export { metadata } from "./metadata";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+// Two families only. Satoshi covers display and body (variable 300-900, so the
+// heavy display weight comes free); Geist Mono covers labels and data. The old
+// setup also loaded Geist Sans -- which had zero usages -- and Recoleta, which
+// was a trial-licensed file, and declared Space Mono, which was never loaded.
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
   weight: "100 900",
   display: "swap",
 });
@@ -34,13 +38,6 @@ const satoshi = localFont({
     },
   ],
   variable: "--font-satoshi",
-  display: "swap",
-});
-
-const recoleta = localFont({
-  src: "./fonts/recoleta/Recoleta-RegularDEMO.otf",
-  variable: "--font-recoleta",
-  weight: "400",
   display: "swap",
 });
 
@@ -84,19 +81,19 @@ export default function RootLayout({
         {/* Theme colors for light/dark */}
         <meta
           name="theme-color"
-          content="#F3F1E9"
+          content="#FFFFFF"
           media="(prefers-color-scheme: light)"
         />
         <meta
           name="theme-color"
-          content="#1A1818"
+          content="#0E0E10"
           media="(prefers-color-scheme: dark)"
         />
         {/* Defer Vimeo API load; Next will dedupe where also loaded */}
         <script src="https://player.vimeo.com/api/player.js" defer></script>
       </head>
       <body
-        className={`${geistSans.variable} ${satoshi.variable} ${recoleta.variable} antialiased bg-white text-black dark:bg-[#1A1818] dark:text-white`}
+        className={`${satoshi.variable} ${geistMono.variable} antialiased bg-ground text-ink`}
       >
         <ThemeProvider
           attribute="class"

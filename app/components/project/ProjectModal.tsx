@@ -874,7 +874,7 @@ const LazyVideo = ({
       aria-label="Loading video"
     >
       <div className="flex flex-col items-center space-y-3">
-        <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin will-change-transform"></div>
+        <div className="w-8 h-8 rounded-full border border-white/20 border-t-white animate-spin will-change-transform"></div>
         <div className="text-white/70 text-xs font-light tracking-wide">
           Loading video...
         </div>
@@ -885,7 +885,7 @@ const LazyVideo = ({
   const ErrorFallback = () => (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="flex flex-col items-center space-y-3 text-center px-4">
-        <div className="w-8 h-8 border-2 border-red-400/50 rounded-full flex items-center justify-center">
+        <div className="w-8 h-8 border border-red-400/50 rounded-full flex items-center justify-center">
           <div className="w-4 h-4 bg-red-400/70 rounded-full"></div>
         </div>
         <div className="text-white/70 text-xs font-light">
@@ -1061,7 +1061,7 @@ const LazyVimeoEmbed = ({
       aria-label="Loading video"
     >
       <div className="flex flex-col items-center space-y-3">
-        <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin will-change-transform"></div>
+        <div className="w-8 h-8 rounded-full border border-white/20 border-t-white animate-spin will-change-transform"></div>
         <div className="text-white/70 text-xs font-light tracking-wide">
           Loading video...
         </div>
@@ -1072,7 +1072,7 @@ const LazyVimeoEmbed = ({
   const ErrorFallback = () => (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="flex flex-col items-center space-y-3 text-center px-4">
-        <div className="w-8 h-8 border-2 border-red-400/50 rounded-full flex items-center justify-center">
+        <div className="w-8 h-8 border border-red-400/50 rounded-full flex items-center justify-center">
           <div className="w-4 h-4 bg-red-400/70 rounded-full"></div>
         </div>
         <div className="text-white/70 text-xs font-light">
@@ -1205,7 +1205,7 @@ const AnimatedPDF = ({ pdfUrl, title }: { pdfUrl: string; title: string }) => {
       </style>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-3">
-          <div className="pdf-spinner w-8 h-8 border-2 border-white/20 border-t-white rounded-full"></div>
+          <div className="pdf-spinner w-8 h-8 border border-white/20 border-t-white rounded-full"></div>
           <div className="text-white/70 text-xs font-light tracking-wide">
             Loading PDF...
           </div>
@@ -1217,7 +1217,7 @@ const AnimatedPDF = ({ pdfUrl, title }: { pdfUrl: string; title: string }) => {
   const ErrorFallback = () => (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="flex flex-col items-center space-y-3 text-center px-4">
-        <div className="w-8 h-8 border-2 border-red-400/50 rounded-full flex items-center justify-center">
+        <div className="w-8 h-8 border border-red-400/50 rounded-full flex items-center justify-center">
           <div className="w-4 h-4 bg-red-400/70 rounded-full"></div>
         </div>
         <div className="text-white/70 text-xs font-light">
@@ -2067,7 +2067,7 @@ export default function ProjectModal({
       ref={overlayRef}
       className={`fixed inset-0 z-[100] overflow-hidden ${
         isTouchDevice
-          ? "bg-white dark:bg-black"
+          ? "bg-ink"
           : "bg-white/95 dark:bg-black/95 backdrop-blur-md"
       }`}
       onClick={handleOverlayClick}
@@ -2098,13 +2098,13 @@ export default function ProjectModal({
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/about"
-                className="p-2 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 text-black/80 dark:text-white/80 hover:text-black dark:hover:text-white text-sm font-medium min-h-[44px] flex items-center"
+                className="p-2 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 text-ink/80 hover:text-black dark:hover:text-white text-sm font-medium min-h-[44px] flex items-center"
               >
                 ABOUT
               </Link>
               <Link
                 href="/contact"
-                className="p-2 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 text-black/80 dark:text-white/80 hover:text-black dark:hover:text-white text-sm font-medium min-h-[44px] flex items-center"
+                className="p-2 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 text-ink/80 hover:text-black dark:hover:text-white text-sm font-medium min-h-[44px] flex items-center"
               >
                 CONTACT
               </Link>
@@ -2112,17 +2112,17 @@ export default function ProjectModal({
 
             <div className="md:hidden w-0"></div>
 
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-black/90 dark:text-white/90 text-sm md:text-base lg:text-lg font-recoleta font-bold">
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-ink/90 text-sm md:text-base lg:text-lg font-display font-bold">
               Jakob's Portfolio
             </div>
 
             <div className="ml-auto">
               <button
                 onClick={handleClose}
-                className="p-2 md:p-3 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 hover:scale-110 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="p-2 md:p-3 rounded-full bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-200 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close modal"
               >
-                <X className="h-5 w-5 text-black dark:text-white" />
+                <X className="h-5 w-5 text-ink" />
               </button>
             </div>
           </div>
@@ -2147,22 +2147,22 @@ export default function ProjectModal({
         <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none md:flex z-[110]">
           <button
             onClick={onPrevious}
-            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasPrevious ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
+            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasPrevious ? "opacity-80 hover:opacity-100" : "opacity-40 cursor-not-allowed"}`}
             disabled={!hasPrevious}
             aria-label="Previous project"
             style={{ zIndex: 111 }}
           >
-            <ChevronLeft className="h-8 w-8 text-black dark:text-white" />
+            <ChevronLeft className="h-8 w-8 text-ink" />
           </button>
 
           <button
             onClick={onNext}
-            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasNext ? "opacity-80 hover:opacity-100 hover:scale-110" : "opacity-40 cursor-not-allowed"}`}
+            className={`pointer-events-auto p-4 md:p-5 rounded-full transform transition-all bg-white/20 dark:bg-black/20 hover:bg-white/40 dark:hover:bg-black/40 ${hasNext ? "opacity-80 hover:opacity-100" : "opacity-40 cursor-not-allowed"}`}
             disabled={!hasNext}
             aria-label="Next project"
             style={{ zIndex: 111 }}
           >
-            <ChevronRight className="h-8 w-8 text-black dark:text-white" />
+            <ChevronRight className="h-8 w-8 text-ink" />
           </button>
         </div>
       )}
@@ -2213,23 +2213,23 @@ export default function ProjectModal({
 
         <div className="hidden md:block md:w-[35%] lg:w-[32%] xl:w-[30%] md:pl-6 lg:pl-8 xl:pl-10 md:pr-14 lg:pr-20 xl:pr-24 flex-none flex flex-col overflow-y-auto mt-4 lg:mt-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-4 max-w-full max-h-full">
           <div className="text-left">
-            <h2 className="text-2xl lg:text-3xl font-bold text-orange-500 mb-3 leading-tight">
+            <h2 className="text-2xl lg:text-3xl font-bold text-accent mb-3 leading-tight">
               {title}
             </h2>
-            <p className="text-base text-black/90 dark:text-white/90 mb-6 leading-relaxed">
+            <p className="text-base text-ink/90 mb-6 leading-relaxed">
               {description}
             </p>
 
-            <div className="mt-4 border-t border-black/10 dark:border-white/10 pt-4 min-h-[100px] relative">
+            <div className="mt-4 border-t border-black/10 dark:border-line/10 pt-4 min-h-[100px] relative">
               {activeItem &&
                 activeItem.title &&
                 activeItem.title !== selectedProject && (
                   <div className="transition-all duration-200 ease-out">
-                    <h3 className="font-mono text-lg font-bold text-orange-500 mb-1 leading-tight">
+                    <h3 className="font-mono text-lg font-bold text-accent mb-1 leading-tight">
                       {activeItem.title}
                     </h3>
                     {activeItem.description && (
-                      <p className="text-sm text-black/80 dark:text-white/80 leading-normal">
+                      <p className="text-sm text-ink/80 leading-normal">
                         {activeItem.description}
                       </p>
                     )}
@@ -2247,18 +2247,18 @@ export default function ProjectModal({
         }}
       >
         <div className="text-left">
-          <h2 className="text-lg font-bold text-orange-500 mb-2">{title}</h2>
+          <h2 className="text-lg font-bold text-accent mb-2">{title}</h2>
           <div className="relative">
             <p
               ref={overviewTextRef}
-              className={`text-sm text-black/90 dark:text-white/90 leading-relaxed transition-all duration-300 ${isOverviewExpanded ? "" : "line-clamp-2"}`}
+              className={`text-sm text-ink/90 leading-relaxed transition-all duration-300 ${isOverviewExpanded ? "" : "line-clamp-2"}`}
             >
               {description}
             </p>
             {showOverviewMore && (
               <button
                 onClick={() => setIsOverviewExpanded(!isOverviewExpanded)}
-                className="text-xs text-black/70 dark:text-white/70 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
+                className="text-xs text-ink/70 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
               >
                 {isOverviewExpanded ? "View less" : "View more"}
               </button>
@@ -2268,22 +2268,22 @@ export default function ProjectModal({
           {activeItem &&
             activeItem.title &&
             activeItem.title !== selectedProject && (
-              <div className="mt-3 pt-3 border-t border-black/20 dark:border-white/20 transition-all duration-200 ease-out">
-                <h3 className="font-mono text-sm font-bold text-orange-500 mb-1 leading-tight">
+              <div className="mt-3 pt-3 border-t border-black/20 dark:border-line/20 transition-all duration-200 ease-out">
+                <h3 className="font-mono text-sm font-bold text-accent mb-1 leading-tight">
                   {activeItem.title}
                 </h3>
                 {activeItem.description && (
                   <div className="relative">
                     <p
                       ref={detailsTextRef}
-                      className={`text-xs text-black/80 dark:text-white/80 leading-normal ${isDetailsExpanded ? "" : "line-clamp-2"}`}
+                      className={`text-xs text-ink/80 leading-normal ${isDetailsExpanded ? "" : "line-clamp-2"}`}
                     >
                       {activeItem.description}
                     </p>
                     {showDetailsMore && (
                       <button
                         onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-                        className="text-xs text-black/60 dark:text-white/60 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
+                        className="text-xs text-ink/60 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
                       >
                         {isDetailsExpanded ? "View less" : "View more"}
                       </button>

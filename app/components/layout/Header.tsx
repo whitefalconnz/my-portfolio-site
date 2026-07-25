@@ -82,9 +82,9 @@ export default function Header() {
   const headerClasses = `
     sticky top-0 left-0 right-0 
     backdrop-blur z-[200] 
-    border-b-2 border-black dark:border-white
+    border-b border-line
     transition-all duration-300 ease-out
-    ${isScrolled ? "bg-[#F3F1E9]/90 dark:bg-[#1A1818]/90" : "bg-[#F3F1E9]/75 dark:bg-[#1A1818]/75"}
+    ${isScrolled ? "bg-ground/90 dark:bg-ground/90" : "bg-ground/75 dark:bg-ground/75"}
     ${isLoading ? "pointer-events-none" : "pointer-events-auto"}
   `.trim();
 
@@ -163,7 +163,7 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="font-recoleta text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap hover:text-orange-500 transition-colors"
+              className="font-display text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap hover:text-accent transition-colors"
             >
               Jakob's Portfolio
             </Link>
@@ -181,7 +181,7 @@ export default function Header() {
             }}
           >
             <motion.div
-              className="w-20 h-20 rounded-full overflow-hidden relative border-2 border-black dark:border-white"
+              className="w-20 h-20 rounded-full overflow-hidden relative border border-line"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
               transition={{
@@ -199,7 +199,7 @@ export default function Header() {
                   alt="Profile"
                   width={400}
                   height={400}
-                  className={`w-full h-full object-cover transition-all duration-300 hover:scale-110 relative z-20 ${
+                  className={`w-full h-full object-cover transition-all duration-300 relative z-20 ${
                     profileLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   onLoadingComplete={() => setProfileLoaded(true)}
@@ -211,7 +211,7 @@ export default function Header() {
               href="https://www.instagram.com/jakobbackhouse_/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform hover:scale-110"
+              className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
@@ -221,7 +221,7 @@ export default function Header() {
               href="https://www.linkedin.com/in/jakob-backhouse/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform hover:scale-110"
+              className="text-[#332A2A] dark:text-[#F5F5F5] hover:text-[#B14038] dark:hover:text-[#FF6B61] transition-all duration-300 transform"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
@@ -237,8 +237,6 @@ export default function Header() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: isLoading ? 0 : 0.35 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
               >
                 {theme === "dark" ? (
                   <Sun className="w-6 h-6 text-[#F5F5F5] hover:text-[#FF6B61]" />
@@ -260,8 +258,6 @@ export default function Header() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
             transition={{ duration: 0.4, delay: isLoading ? 0 : 0.2 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
           >
             {isMobileMenuOpen ? (
               <X className="w-8 h-8" />
@@ -279,14 +275,14 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="font-recoleta text-3xl md:text-4xl text-primary dark:text-primary-light hover:text-primary-hover dark:hover:text-primary-light/80 transition-colors"
+              className="font-display text-3xl md:text-4xl text-primary dark:text-primary-light hover:text-primary-hover dark:hover:text-primary-light/80 transition-colors"
             >
               <span className="font-medium tracking-tight">
                 Jakob's Portfolio
               </span>
             </Link>
             <motion.div
-              className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden relative border-2 border-black dark:border-white"
+              className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden relative border border-line"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
               transition={{ duration: 0.4, delay: isLoading ? 0 : 0.25 }}
@@ -300,7 +296,7 @@ export default function Header() {
                   alt="Profile"
                   width={400}
                   height={400}
-                  className={`w-full h-full object-cover transition-all duration-300 hover:scale-110 relative z-20 ${
+                  className={`w-full h-full object-cover transition-all duration-300 relative z-20 ${
                     profileLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   onLoadingComplete={() => setProfileLoaded(true)}
@@ -319,8 +315,6 @@ export default function Header() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
               transition={{ duration: 0.4, delay: isLoading ? 0 : 0.3 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
             >
               {theme === "dark" ? (
                 <Sun className="w-6 h-6 text-[#F5F5F5] hover:text-[#FF6B61]" />
@@ -335,7 +329,7 @@ export default function Header() {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              className="lg:hidden absolute inset-x-0 top-full bg-primary dark:bg-primary z-[999] min-h-[calc(100vh-100px)] border-t-2 border-black dark:border-white"
+              className="lg:hidden absolute inset-x-0 top-full bg-primary dark:bg-primary z-[999] min-h-[calc(100vh-100px)] border-t border-line"
               initial={{ opacity: 0, y: -20, backdropFilter: "blur(0px)" }}
               animate={{ opacity: 1, y: 0, backdropFilter: "blur(20px)" }}
               exit={{ opacity: 0, y: -20, backdropFilter: "blur(0px)" }}
@@ -360,7 +354,7 @@ export default function Header() {
                   >
                     <Link
                       href="/"
-                      className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
+                      className="text-ground hover:bg-primary-hover transition-colors duration-200"
                       onClick={(e) => {
                         setIsMobileMenuOpen(false);
                         scrollToContent(e);
@@ -376,7 +370,7 @@ export default function Header() {
                   >
                     <Link
                       href="/about"
-                      className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
+                      className="text-ground hover:bg-primary-hover transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       ABOUT
@@ -389,7 +383,7 @@ export default function Header() {
                   >
                     <Link
                       href="/contact"
-                      className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
+                      className="text-ground hover:bg-primary-hover transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       CONTACT
@@ -408,7 +402,7 @@ export default function Header() {
                     href="https://instagram.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
+                    className="text-ground hover:bg-primary-hover transition-colors duration-200"
                   >
                     <svg
                       className="w-6 h-6"
@@ -422,7 +416,7 @@ export default function Header() {
                     href="https://linkedin.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white dark:text-black hover:bg-primary-hover transition-colors duration-200"
+                    className="text-ground hover:bg-primary-hover transition-colors duration-200"
                   >
                     <svg
                       className="w-6 h-6"

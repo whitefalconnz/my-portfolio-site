@@ -59,9 +59,9 @@ function LoadingProviderInner({ children }: { children: ReactNode }) {
 // Simple Suspense fallback without the orange cube
 function SuspenseFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#1A1818]">
+    <div className="min-h-screen flex items-center justify-center bg-ground">
       <div className="text-center">
-        <div className="loading-text text-black dark:text-white">
+        <div className="loading-text text-ink">
           Loading
           <span className="dots">
             <span>.</span>

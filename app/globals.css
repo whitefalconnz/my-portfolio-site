@@ -2,32 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom retro Japanese theme colors and styles */
+/* ---------------------------------------------------------------------------
+   Two committed palettes.
+
+   Light  — "Risograph Zine": white stock, hard black ink, two fluorescent
+            spot colours (pink + blue) the way a riso press lays them down.
+   Dark   — "Gallery Night": near-black ground with deliberately low-contrast
+            chrome, so nothing on the page is brighter than the artwork.
+
+   Everything downstream reads these tokens. Avoid hardcoding hexes in
+   components -- that is what made the old palette drift out of sync.
+   --------------------------------------------------------------------------- */
 :root {
-  --spark-color: #FF4D00;
-  --bg-pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
-  --background: #ffffff;
-  --foreground: #000000;
-  --muted: #f5f5f5;
-  --muted-foreground: #737373;
-  --primary: #18181b;
-  --primary-foreground: #ffffff;
+  --ground: #FFFFFF;
+  --surface: #F0F0F0;
+  --ink: #0A0A0A;
+  --muted-ink: #5E5E5E;
+  --accent: #FF2D6F;        /* riso fluorescent pink */
+  --accent-alt: #1B4CE8;    /* riso blue */
+  --accent-contrast: #FFFFFF;
+
+  /* Hairlines. Deliberately faint -- the old design used 2px solid black. */
+  --line: rgba(10, 10, 10, 0.12);
+  --line-strong: rgba(10, 10, 10, 0.24);
+  /* Page-wide graph texture. Fainter than a real border, since it tiles across
+     the whole viewport and would otherwise read as noise. */
+  --grid: rgba(10, 10, 10, 0.045);
+
+  /* Legacy aliases, kept so existing utility classes resolve. */
+  --background: var(--ground);
+  --foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--ground);
+  --muted: var(--surface);
+  --muted-foreground: var(--muted-ink);
+  --spark-color: var(--accent);
 }
 
 .dark {
-  --spark-color: #FF6B61;
-  --background: #1A1818;
-  --foreground: #ffffff;
-  --muted: #262626;
-  --muted-foreground: #a3a3a3;
-  --primary: #ffffff;
-  --primary-foreground: #18181b;
+  --ground: #0E0E10;
+  --surface: #17171B;
+  --ink: #F2F1EE;
+  --muted-ink: #85848C;
+  --accent: #6E7DD6;        /* desaturated periwinkle */
+  --accent-alt: #8E9BE0;
+  --accent-contrast: #0E0E10;
+
+  --line: rgba(242, 241, 238, 0.10);
+  --line-strong: rgba(242, 241, 238, 0.20);
+  --grid: rgba(242, 241, 238, 0.04);
 }
 
 @layer base {
   body {
-    @apply bg-white dark:bg-[#1A1818] text-black dark:text-white transition-colors duration-300 font-satoshi;
-    background-image: var(--bg-pattern);
+    @apply bg-ground text-ink font-satoshi;
+  }
+
+  /* Display face: Satoshi at heavy weight with tight tracking. Replaces the
+     old Recoleta (a trial-licensed file) and the never-defined font-mplus.
+     Sits in `base` so an explicit font-bold/font-medium utility still wins. */
+  .font-display {
+    font-family: var(--font-satoshi), ui-sans-serif, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   /* Fix webkit-appearance vendor prefix warnings */
@@ -123,7 +160,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-recoleta;
+    @apply font-display;
   }
 
   .mono {
@@ -158,62 +195,32 @@
 
 /* Retro box styling */
 .retro-box {
-  @apply border-2 border-black dark:border-white;
-  box-shadow: 4px 4px 0 theme('colors.black');
-}
-
-.dark .retro-box {
-  box-shadow: 4px 4px 0 theme('colors.white');
+  @apply border border-line;
 }
 
 /* Japanese-style grid pattern */
 .grid-pattern {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-/* Add smooth transitions for all color changes */
-* {
+/* Colour-only transition so theme toggling isn't jarring. Deliberately short. */
+*, *::before, *::after {
   transition-property: color, background-color, border-color;
-  transition-duration: 300ms;
+  transition-duration: 140ms;
 }
 
-/* Ensure hover effects work in dark mode - only for elements that should have orange hover */
-/* Target elements that explicitly have hover:border-orange-500 class */
-.hover\:border-orange-500:hover,
-*[class*="hover:border-orange-500"]:hover {
-  border-color: #f97316 !important;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Group hover effects for orange borders */
-.group:hover .group-hover\:border-orange-500 {
-  border-color: #f97316 !important;
-}
-
-/* Dark mode overrides for explicit orange hover classes */
-.dark .hover\:border-orange-500:hover,
-.dark *[class*="hover:border-orange-500"]:hover {
-  border-color: #f97316 !important;
-}
-
-.dark .group:hover .group-hover\:border-orange-500 {
-  border-color: #f97316 !important;
-}
-
-/* Override Framer Motion inline styles only for elements with orange hover classes */
-*[class*="hover:border-orange-500"]:hover {
-  border-color: #f97316 !important;
-}
-
-/* Specific targeting for common interactive patterns that should have orange hover */
-button[class*="hover:border-orange-500"]:hover,
-a[class*="hover:border-orange-500"]:hover,
-.cursor-pointer[class*="hover:border-orange-500"]:hover,
-input[class*="hover:border-orange-500"]:hover,
-textarea[class*="hover:border-orange-500"]:hover {
-  border-color: #f97316 !important;
-}
+/* Hover affordance is a token-driven border colour change; see --accent. */
 
 /* Improve accessibility: allow text selection globally */
 html, body, * {
@@ -225,7 +232,7 @@ html, body, * {
 
 /* Focus-visible outline for keyboard users */
 :focus-visible {
-  outline: 2px solid #f97316;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -397,7 +404,7 @@ html, body, * {
 .loading-screen {
   position: fixed;
   inset: 0;
-  background: #F3F1E9;
+  background: var(--ground);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -424,7 +431,7 @@ html, body, * {
 }
 
 .dark .loading-screen {
-  background: #1A1818;
+  background: var(--ground);
 }
 
 .loading-content {
@@ -474,7 +481,7 @@ html, body, * {
 .loading-text {
   font-family: 'Space Mono', monospace;
   font-size: 1.5rem;
-  color: #000;
+  color: var(--ink);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   margin-top: 1rem; /* Spacing from progress bar */
@@ -485,7 +492,7 @@ html, body, * {
 }
 
 .dark .loading-text {
-  color: #fff;
+  color: var(--ink);
 }
 
 .loading-text .dots {
@@ -595,21 +602,19 @@ html, body, * {
   width: 100%;
   height: 8px;
   background: rgba(0, 0, 0, 0.2);
-  border: 2px solid #000000;
-  box-shadow: 4px 4px 0 #000000;
+  border: 1px solid var(--line);
   overflow: hidden;
   border-radius: 0;
 }
 
 .dark .progress-bar-background {
   background: rgba(255, 255, 255, 0.1);
-  border-color: #ffffff;
-  box-shadow: 4px 4px 0 #ffffff;
+  border-color: var(--line);
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #FF4D00, #FF6B61);
+  background: linear-gradient(90deg, var(--accent), var(--accent-alt));
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -645,28 +650,22 @@ html, body, * {
   transform: translateY(-50%) translateX(-50%);
   width: 4px;
   height: 16px;
-  background: #FF4D00;
-  box-shadow: 
-    0 0 8px #FF4D00,
-    0 0 16px #FF4D00,
-    0 0 24px #FF4D00;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
   border-radius: 2px;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.8;
 }
 
 .dark .progress-bar-glow {
-  background: #FF6B61;
-  box-shadow: 
-    0 0 8px #FF6B61,
-    0 0 16px #FF6B61,
-    0 0 24px #FF6B61;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
 }
 
 .progress-percentage {
   font-size: 14px;
   font-weight: 600;
-  color: #000000;
+  color: var(--ink);
   letter-spacing: 0.5px;
   font-variant-numeric: tabular-nums;
   min-width: 40px;
@@ -674,7 +673,7 @@ html, body, * {
 }
 
 .dark .progress-percentage {
-  color: #ffffff;
+  color: var(--ink);
 }
 
 /* Retro scanning line effect for the progress bar */
@@ -722,12 +721,12 @@ html, body, * {
   position: absolute;
   width: 60px; /* Reduced from 80px */
   height: 60px; /* Reduced from 80px */
-  border: 2px solid #000;
+  border: 1px solid var(--line);
   background: rgba(255, 77, 0, 0.9);
 }
 
 .dark .cube.fixed-position .face {
-  border: 2px solid #fff;
+  border: 1px solid var(--line);
   background: rgba(255, 107, 97, 0.9);
 }
 
@@ -767,9 +766,9 @@ html, body, * {
   position: absolute;
   width: 50px;
   height: 50px;
-  background: #FF5F1F;
+  background: var(--accent);
   opacity: 0.8;
-  border: 2px solid #fff;
+  border: 1px solid var(--line);
 }
 
 .cube-wrapper .front  { transform: translateZ(25px); }
@@ -1019,7 +1018,7 @@ html.modal-open body {
 .image-placeholder {
   position: relative;
   background: rgba(0, 0, 0, 0.05);
-  border: 2px solid #000000;
+  border: 1px solid var(--line);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -1030,7 +1029,7 @@ html.modal-open body {
 
 .dark .image-placeholder {
   background: rgba(255, 255, 255, 0.05);
-  border-color: #ffffff;
+  border-color: var(--line);
 }
 
 /* Remove the shimmer overlay - no more orange gradient */
@@ -1122,14 +1121,14 @@ html.modal-open body {
 .project-skeleton-item {
   position: relative;
   background: rgba(0, 0, 0, 0.05);
-  border: 2px solid #000000;
+  border: 1px solid var(--line);
   overflow: hidden;
   animation: simple-pulse 2s infinite;
 }
 
 .dark .project-skeleton-item {
   background: rgba(255, 255, 255, 0.05);
-  border-color: #ffffff;
+  border-color: var(--line);
 }
 
 /* Remove skeleton shimmer effect */
@@ -1220,7 +1219,7 @@ html.modal-open body {
 .masonry-skeleton-image {
   aspect-ratio: 4/3;
   background: rgba(0, 0, 0, 0.05);
-  border: 2px solid #000000;
+  border: 1px solid var(--line);
   overflow: hidden;
   position: relative;
   animation: simple-pulse 2s infinite;
@@ -1228,7 +1227,7 @@ html.modal-open body {
 
 .dark .masonry-skeleton-image {
   background: rgba(255, 255, 255, 0.05);
-  border-color: #ffffff;
+  border-color: var(--line);
 }
 
 /* Randomized skeleton heights for realistic masonry look */
@@ -1276,7 +1275,7 @@ html.modal-open body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.05);
-  border: 2px solid #000000;
+  border: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1287,7 +1286,7 @@ html.modal-open body {
 
 .dark .avatar-placeholder {
   background: rgba(255, 255, 255, 0.05);
-  border-color: #ffffff;
+  border-color: var(--line);
 }
 
 .avatar-placeholder::after {

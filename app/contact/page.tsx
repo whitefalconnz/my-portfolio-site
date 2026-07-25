@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 import { sendEmail } from "./actions";
-import BackgroundSprites from "../components/animations/BackgroundSprites";
 import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "../components/common/MemoryStatsDebugger";
 
@@ -101,44 +100,34 @@ export default function ContactPage() {
   return (
     <div
       ref={contactPageRef}
-      className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern relative"
+      className="min-h-screen bg-ground grid-pattern relative"
     >
-      {/* Background Sprites */}
-      <BackgroundSprites />
 
       <main className="pt-32 md:pt-40 pb-20 max-w-6xl mx-auto px-6 md:flex md:gap-8 relative">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{
             opacity: 1,
-            borderColor: isDarkMode
-              ? "rgba(255, 255, 255, 1)"
-              : "rgba(0, 0, 0, 1)",
+            borderColor: "var(--line)",
             transition: { delay: 0.2, duration: 0.5 },
           }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="p-8 mb-12 md:mb-0 md:w-[400px] md:flex-shrink-0 border-2 relative z-10 transition-all duration-300"
+          className="p-8 mb-12 md:mb-0 md:w-[400px] md:flex-shrink-0 border relative z-10 transition-all duration-300"
           style={{
-            backgroundColor: isDarkMode ? "#1A1818" : "#F3F1E9",
-            borderColor: "rgba(0, 0, 0, 0)",
-          }}
-          whileHover={{
-            borderColor: "#f97316",
-            transition: { duration: 0.3 },
+            backgroundColor: "var(--surface)",
+            borderColor: "var(--line)",
           }}
         >
           <div className="flex flex-col h-full">
             <motion.div
-              className="border-b-2 mb-8 pb-4"
-              style={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
+              className="border-b mb-8 pb-4"
+              style={{ borderBottomColor: "var(--line)" }}
               animate={{
-                borderBottomColor: isDarkMode
-                  ? "rgba(255, 255, 255, 1)"
-                  : "rgba(0, 0, 0, 1)",
+                borderBottomColor: "var(--line)",
                 transition: { delay: 0.3, duration: 0.5 },
               }}
             >
-              <h1 className="font-mplus text-4xl md:text-5xl text-orange-500">
+              <h1 className="font-display text-4xl md:text-5xl text-accent">
                 Get in Touch
               </h1>
             </motion.div>
@@ -152,14 +141,12 @@ export default function ContactPage() {
 
             <motion.a
               href="mailto:jakobbackhouse@gmail.com"
-              className="block w-full px-6 py-3 bg-[#FFFFFF] text-black font-medium text-center
-                hover:border-orange-500
-                transition-all border-2 font-satoshi"
-              style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+              className="block w-full px-6 py-3 bg-ink text-ground font-medium text-center
+                hover:border-accent
+                transition-all border font-satoshi"
+              style={{ borderColor: "var(--line)" }}
               animate={{
-                borderColor: isDarkMode
-                  ? "rgba(255, 255, 255, 1)"
-                  : "rgba(0, 0, 0, 1)",
+                borderColor: "var(--line)",
                 transition: { delay: 0.4, duration: 0.5 },
               }}
             >
@@ -178,15 +165,13 @@ export default function ContactPage() {
         >
           {!formSubmitted ? (
             <motion.div
-              className="p-8 border-2 relative z-10 hover:border-orange-500 transition-all duration-300"
+              className="p-8 border relative z-10 hover:border-accent transition-all duration-300"
               style={{
-                backgroundColor: isDarkMode ? "#1A1818" : "#F3F1E9",
-                borderColor: "rgba(0, 0, 0, 0)",
+                backgroundColor: "var(--surface)",
+                borderColor: "var(--line)",
               }}
               animate={{
-                borderColor: isDarkMode
-                  ? "rgba(255, 255, 255, 1)"
-                  : "rgba(0, 0, 0, 1)",
+                borderColor: "var(--line)",
                 transition: { delay: 0.3, duration: 0.5 },
               }}
             >
@@ -202,20 +187,18 @@ export default function ContactPage() {
                     type="text"
                     id="name"
                     required
-                    className="w-full px-4 py-2 bg-[#F3F1E9] dark:bg-[#1A1818] 
+                    className="w-full px-4 py-2 bg-ground 
                       text-dark dark:text-light focus:outline-none focus:ring-0
-                      hover:border-orange-500
-                      transition-all border-2"
+                      hover:border-accent
+                      transition-all border"
                     placeholder="Your Name..."
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                    style={{ borderColor: "var(--line)" }}
                     animate={{
-                      borderColor: isDarkMode
-                        ? "rgba(255, 255, 255, 1)"
-                        : "rgba(0, 0, 0, 1)",
+                      borderColor: "var(--line)",
                       transition: { delay: 0.4, duration: 0.5 },
                     }}
                   />
@@ -232,20 +215,18 @@ export default function ContactPage() {
                     type="email"
                     id="email"
                     required
-                    className="w-full px-4 py-2 bg-[#F3F1E9] dark:bg-[#1A1818] 
+                    className="w-full px-4 py-2 bg-ground 
                       text-dark dark:text-light focus:outline-none focus:ring-0
-                      hover:border-orange-500
-                      transition-all border-2"
+                      hover:border-accent
+                      transition-all border"
                     placeholder="Your Email Address..."
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                    style={{ borderColor: "var(--line)" }}
                     animate={{
-                      borderColor: isDarkMode
-                        ? "rgba(255, 255, 255, 1)"
-                        : "rgba(0, 0, 0, 1)",
+                      borderColor: "var(--line)",
                       transition: { delay: 0.5, duration: 0.5 },
                     }}
                   />
@@ -262,20 +243,18 @@ export default function ContactPage() {
                     id="message"
                     required
                     rows={6}
-                    className="w-full px-4 py-2 bg-[#F3F1E9] dark:bg-[#1A1818] 
+                    className="w-full px-4 py-2 bg-ground 
                       text-dark dark:text-light focus:outline-none focus:ring-0
-                      hover:border-orange-500
-                      transition-all border-2"
+                      hover:border-accent
+                      transition-all border"
                     placeholder="Your Message..."
                     value={formData.message}
                     onChange={(e) =>
                       setFormData({ ...formData, message: e.target.value })
                     }
-                    style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                    style={{ borderColor: "var(--line)" }}
                     animate={{
-                      borderColor: isDarkMode
-                        ? "rgba(255, 255, 255, 1)"
-                        : "rgba(0, 0, 0, 1)",
+                      borderColor: "var(--line)",
                       transition: { delay: 0.6, duration: 0.5 },
                     }}
                   />
@@ -288,14 +267,12 @@ export default function ContactPage() {
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full px-6 py-3 bg-[#FFFFFF] text-black font-medium 
-                    hover:border-orange-500
-                    transition-all border-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                  style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                  className="w-full px-6 py-3 bg-ink text-ground font-medium 
+                    hover:border-accent
+                    transition-all border disabled:opacity-70 disabled:cursor-not-allowed"
+                  style={{ borderColor: "var(--line)" }}
                   animate={{
-                    borderColor: isDarkMode
-                      ? "rgba(255, 255, 255, 1)"
-                      : "rgba(0, 0, 0, 1)",
+                    borderColor: "var(--line)",
                     transition: { delay: 0.7, duration: 0.5 },
                   }}
                 >
@@ -305,26 +282,22 @@ export default function ContactPage() {
             </motion.div>
           ) : (
             <motion.div
-              className="p-8 border-2 relative z-10 hover:border-orange-500 transition-all duration-300"
+              className="p-8 border relative z-10 hover:border-accent transition-all duration-300"
               style={{
-                backgroundColor: isDarkMode ? "#1A1818" : "#F3F1E9",
-                borderColor: "rgba(0, 0, 0, 0)",
+                backgroundColor: "var(--surface)",
+                borderColor: "var(--line)",
               }}
               animate={{
-                borderColor: isDarkMode
-                  ? "rgba(255, 255, 255, 1)"
-                  : "rgba(0, 0, 0, 1)",
+                borderColor: "var(--line)",
                 transition: { delay: 0.3, duration: 0.5 },
               }}
             >
               <div className="text-center space-y-4">
                 <motion.div
-                  className="inline-block bg-green-500 text-white p-4 mb-4 border-2"
-                  style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                  className="inline-block bg-green-500 text-white p-4 mb-4 border"
+                  style={{ borderColor: "var(--line)" }}
                   animate={{
-                    borderColor: isDarkMode
-                      ? "rgba(255, 255, 255, 1)"
-                      : "rgba(0, 0, 0, 1)",
+                    borderColor: "var(--line)",
                     transition: { delay: 0.4, duration: 0.5 },
                   }}
                 >
@@ -342,7 +315,7 @@ export default function ContactPage() {
                     />
                   </svg>
                 </motion.div>
-                <h3 className="font-mplus text-2xl text-orange-500">
+                <h3 className="font-display text-2xl text-accent">
                   Message Sent Successfully!
                 </h3>
                 <p className="font-satoshi text-secondary dark:text-secondary-light">

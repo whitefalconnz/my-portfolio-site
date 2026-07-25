@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
 import { Mail, Briefcase, Palette } from "lucide-react";
 import { Badge } from "../components/ui/badge";
-import BackgroundSprites from "../components/animations/BackgroundSprites";
 import { motion } from "framer-motion";
 import FadeInImage from "../components/common/FadeInImage";
 import React from "react";
@@ -14,7 +13,6 @@ import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "../components/common/MemoryStatsDebugger";
 
 export default function AboutPage() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Auto memory management for images on this page
@@ -29,21 +27,8 @@ export default function AboutPage() {
     });
 
   useEffect(() => {
-    // Check if dark mode is active
-    const checkDarkMode = () => {
-      const isDark = document.documentElement.classList.contains("dark");
-      setIsDarkMode(isDark);
-    };
-
-    // Initial check
-    checkDarkMode();
-
-    // Set up observer for theme changes
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
+    // Theme-dependent colours now come from CSS variables, so this component no
+    // longer needs to observe the class attribute to recolour itself in JS.
 
     // Set loaded state after a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
@@ -51,7 +36,6 @@ export default function AboutPage() {
     }, 100);
 
     return () => {
-      observer.disconnect();
       clearTimeout(timer);
     };
   }, []);
@@ -102,10 +86,8 @@ export default function AboutPage() {
   return (
     <div
       ref={aboutPageRef}
-      className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern relative"
+      className="min-h-screen bg-ground grid-pattern relative"
     >
-      {/* Background Sprites */}
-      <BackgroundSprites />
 
       <main className="container mx-auto px-6 md:px-8 lg:px-12 mb-12 max-w-[1920px]">
         <div className="grid lg:grid-cols-12 gap-2 lg:gap-4 pt-4 lg:items-start">
@@ -129,13 +111,9 @@ export default function AboutPage() {
                 }}
               >
                 <div
-                  className="relative border-2 hover:border-orange-500 transition-all duration-300"
+                  className="relative border hover:border-accent transition-all duration-300"
                   style={{
-                    borderColor: isLoaded
-                      ? isDarkMode
-                        ? "rgba(255, 255, 255, 1)"
-                        : "rgba(0, 0, 0, 1)"
-                      : "rgba(0, 0, 0, 0)",
+                    borderColor: "var(--line)",
                   }}
                 >
                   <FadeInImage
@@ -154,36 +132,24 @@ export default function AboutPage() {
             <div className="flex justify-center">
               <motion.div
                 variants={item}
-                className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-6 md:p-8 relative z-10 w-full max-w-[720px] transition-all duration-300"
-                initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                className="border bg-ground p-6 md:p-8 relative z-10 w-full max-w-[720px] transition-all duration-300"
+                initial={{ borderColor: "var(--line)" }}
                 animate={{
-                  borderColor: isLoaded
-                    ? isDarkMode
-                      ? "rgba(255, 255, 255, 1)"
-                      : "rgba(0, 0, 0, 1)"
-                    : "rgba(0, 0, 0, 0)",
+                  borderColor: "var(--line)",
                   transition: { delay: 0.5, duration: 0.5 },
-                }}
-                whileHover={{
-                  borderColor: "#f97316",
-                  transition: { duration: 0.3 },
                 }}
               >
                 <motion.div
                   className="flex items-center gap-2 mb-3 border-b pb-2"
-                  initial={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
-                  style={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
+                  initial={{ borderBottomColor: "var(--line)" }}
+                  style={{ borderBottomColor: "var(--line)" }}
                   animate={{
-                    borderBottomColor: isLoaded
-                      ? isDarkMode
-                        ? "rgba(255, 255, 255, 0.1)"
-                        : "rgba(0, 0, 0, 0.1)"
-                      : "rgba(0, 0, 0, 0)",
+                    borderBottomColor: "var(--line)",
                     transition: { delay: 0.6, duration: 0.5 },
                   }}
                 >
                   <Palette className="h-4 w-4 text-primary/70 dark:text-primary-light/70" />
-                  <h2 className="font-recoleta font-medium text-lg text-orange-500">
+                  <h2 className="font-display font-medium text-lg text-accent">
                     Core Skills
                   </h2>
                 </motion.div>
@@ -198,20 +164,12 @@ export default function AboutPage() {
                   ].map((skill, index) => (
                     <motion.div
                       key={skill}
-                      className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-2 transition-all duration-300"
-                      initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
-                      style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                      className="border bg-ground p-2 transition-all duration-300"
+                      initial={{ borderColor: "var(--line)" }}
+                      style={{ borderColor: "var(--line)" }}
                       animate={{
-                        borderColor: isLoaded
-                          ? isDarkMode
-                            ? "rgba(255, 255, 255, 1)"
-                            : "rgba(0, 0, 0, 1)"
-                          : "rgba(0, 0, 0, 0)",
+                        borderColor: "var(--line)",
                         transition: { delay: 0.7 + index * 0.1, duration: 0.5 },
-                      }}
-                      whileHover={{
-                        borderColor: "#f97316",
-                        transition: { duration: 0.3 },
                       }}
                     >
                       <span className="font-satoshi text-sm text-dark dark:text-light block text-center">
@@ -227,41 +185,29 @@ export default function AboutPage() {
           {/* Right side - Bio and Experience */}
           <div className="lg:col-span-4 space-y-4">
             <motion.div
-              className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-6 md:p-8 relative z-10 transition-all duration-300"
+              className="border bg-ground p-6 md:p-8 relative z-10 transition-all duration-300"
               initial={{
                 opacity: 0,
                 y: 0,
-                borderColor: "rgba(0, 0, 0, 0)",
+                borderColor: "var(--line)",
               }}
               animate={{
                 opacity: 1,
                 y: 0,
-                borderColor: isLoaded
-                  ? isDarkMode
-                    ? "rgba(255, 255, 255, 1)"
-                    : "rgba(0, 0, 0, 1)"
-                  : "rgba(0, 0, 0, 0)",
+                borderColor: "var(--line)",
                 transition: {
                   duration: 0.3,
                   ease: [0.25, 0.1, 0.25, 1],
                 },
               }}
-              whileHover={{
-                borderColor: "#f97316",
-                transition: { duration: 0.3 },
-              }}
             >
               <motion.h1
-                className="font-recoleta text-3xl text-orange-500 mb-4 
+                className="font-display text-3xl text-accent mb-4 
                     border-b pb-2"
-                initial={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
-                style={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
+                initial={{ borderBottomColor: "var(--line)" }}
+                style={{ borderBottomColor: "var(--line)" }}
                 animate={{
-                  borderBottomColor: isLoaded
-                    ? isDarkMode
-                      ? "rgba(255, 255, 255, 0.1)"
-                      : "rgba(0, 0, 0, 0.1)"
-                    : "rgba(0, 0, 0, 0)",
+                  borderBottomColor: "var(--line)",
                   transition: { delay: 0.4, duration: 0.5 },
                 }}
               >
@@ -298,16 +244,12 @@ export default function AboutPage() {
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
                   <motion.a
                     href="mailto:JakobBackhouse@gmail.com"
-                    className="inline-flex items-center gap-2 bg-[#FFFFFF] px-3 py-1.5 text-black
-                        hover:border-orange-500 transition-all text-sm border-2"
-                    initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
-                    style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                    className="inline-flex items-center gap-2 bg-ink px-3 py-1.5 text-black
+                        hover:border-accent transition-all text-sm border"
+                    initial={{ borderColor: "var(--line)" }}
+                    style={{ borderColor: "var(--line)" }}
                     animate={{
-                      borderColor: isLoaded
-                        ? isDarkMode
-                          ? "rgba(255, 255, 255, 1)"
-                          : "rgba(0, 0, 0, 1)"
-                        : "rgba(0, 0, 0, 0)",
+                      borderColor: "var(--line)",
                       transition: { delay: 0.5, duration: 0.5 },
                     }}
                   >
@@ -319,69 +261,49 @@ export default function AboutPage() {
             </motion.div>
 
             <motion.div
-              className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-6 md:p-8 relative z-10 transition-all duration-300"
+              className="border bg-ground p-6 md:p-8 relative z-10 transition-all duration-300"
               initial={{
                 opacity: 0,
                 y: 0,
-                borderColor: "rgba(0, 0, 0, 0)",
+                borderColor: "var(--line)",
               }}
               animate={{
                 opacity: 1,
                 y: 0,
-                borderColor: isLoaded
-                  ? isDarkMode
-                    ? "rgba(255, 255, 255, 1)"
-                    : "rgba(0, 0, 0, 1)"
-                  : "rgba(0, 0, 0, 0)",
+                borderColor: "var(--line)",
                 transition: {
                   duration: 0.3,
                   ease: [0.25, 0.1, 0.25, 1],
                   delay: 0.2,
                 },
               }}
-              whileHover={{
-                borderColor: "#f97316",
-                transition: { duration: 0.3 },
-              }}
             >
               <motion.div
                 className="flex items-center gap-2 mb-3 border-b pb-2"
-                initial={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
-                style={{ borderBottomColor: "rgba(0, 0, 0, 0)" }}
+                initial={{ borderBottomColor: "var(--line)" }}
+                style={{ borderBottomColor: "var(--line)" }}
                 animate={{
-                  borderBottomColor: isLoaded
-                    ? isDarkMode
-                      ? "rgba(255, 255, 255, 0.1)"
-                      : "rgba(0, 0, 0, 0.1)"
-                    : "rgba(0, 0, 0, 0)",
+                  borderBottomColor: "var(--line)",
                   transition: { delay: 0.5, duration: 0.5 },
                 }}
               >
                 <Briefcase className="h-4 w-4 text-primary/70 dark:text-primary-light/70" />
-                <h2 className="font-recoleta font-medium text-lg text-orange-500">
+                <h2 className="font-display font-medium text-lg text-accent">
                   Experience
                 </h2>
               </motion.div>
               <div className="space-y-3 font-satoshi">
                 <motion.div
-                  className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-2 transition-all duration-300"
-                  initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
-                  style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                  className="border bg-ground p-2 transition-all duration-300"
+                  initial={{ borderColor: "var(--line)" }}
+                  style={{ borderColor: "var(--line)" }}
                   animate={{
-                    borderColor: isLoaded
-                      ? isDarkMode
-                        ? "rgba(255, 255, 255, 1)"
-                        : "rgba(0, 0, 0, 1)"
-                      : "rgba(0, 0, 0, 0)",
+                    borderColor: "var(--line)",
                     transition: { delay: 0.6, duration: 0.5 },
-                  }}
-                  whileHover={{
-                    borderColor: "#f97316",
-                    transition: { duration: 0.3 },
                   }}
                 >
                   <div className="flex items-center gap-2 text-sm">
-                    <Badge className="bg-[#FFFFFF] text-black px-2 py-0.5 border-2">
+                    <Badge className="bg-ink text-ground px-2 py-0.5 border">
                       2021-2023
                     </Badge>
                     <span className="font-bold text-dark dark:text-light">
@@ -393,24 +315,16 @@ export default function AboutPage() {
                   </div>
                 </motion.div>
                 <motion.div
-                  className="border-2 bg-[#F3F1E9] dark:bg-[#1A1818] p-2 transition-all duration-300"
-                  initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
-                  style={{ borderColor: "rgba(0, 0, 0, 0)" }}
+                  className="border bg-ground p-2 transition-all duration-300"
+                  initial={{ borderColor: "var(--line)" }}
+                  style={{ borderColor: "var(--line)" }}
                   animate={{
-                    borderColor: isLoaded
-                      ? isDarkMode
-                        ? "rgba(255, 255, 255, 1)"
-                        : "rgba(0, 0, 0, 1)"
-                      : "rgba(0, 0, 0, 0)",
+                    borderColor: "var(--line)",
                     transition: { delay: 0.7, duration: 0.5 },
-                  }}
-                  whileHover={{
-                    borderColor: "#f97316",
-                    transition: { duration: 0.3 },
                   }}
                 >
                   <div className="flex items-center gap-2 text-sm">
-                    <Badge className="bg-[#FFFFFF] text-black px-2 py-0.5 border-2">
+                    <Badge className="bg-ink text-ground px-2 py-0.5 border">
                       2023-Now
                     </Badge>
                     <span className="font-bold text-dark dark:text-light">

@@ -20,7 +20,6 @@ import { AspectRatio, type Project } from "./types/project";
 import "./styles/grid.css";
 import { getImageDimensions } from "./utils/imageUtils";
 import ScrollReveal from "./components/animations/ScrollReveal";
-import BackgroundSprites from "./components/animations/BackgroundSprites";
 import Masonry from "react-masonry-css";
 import { getCDNUrl, getOptimizedImageUrl } from "./utils/cdn";
 import {
@@ -741,7 +740,7 @@ export default function Home() {
 
       <div
         ref={pageContainerRef}
-        className="min-h-screen bg-[#F3F1E9] dark:bg-[#1A1818] grid-pattern overflow-x-hidden relative no-zoom"
+        className="min-h-screen bg-ground grid-pattern overflow-x-hidden relative no-zoom"
         suppressHydrationWarning
         style={{
           visibility: "visible",
@@ -750,8 +749,6 @@ export default function Home() {
           pointerEvents: "auto",
         }}
       >
-        {/* Background Sprites */}
-        <BackgroundSprites />
         <main
           className={`${isMobile ? "pt-20" : "pt-32 md:pt-40"} transition-all duration-500 ease-in-out`}
           style={{
@@ -798,7 +795,7 @@ export default function Home() {
                               pointerEvents: "auto",
                             }}
                             title="ShowReel25.06.2025"
-                            className={`border-2 border-black dark:border-white hover:border-orange-500 transition-all duration-300`}
+                            className={`border border-line hover:border-accent transition-all duration-300`}
                             loading="lazy"
                             onLoad={() => {
                               showreelLoaded.current = true;
@@ -816,7 +813,7 @@ export default function Home() {
                   <ScrollReveal direction="up" duration={800} delay={200}>
                     <Link
                       href="/about"
-                      className="block border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300 cursor-pointer group"
+                      className="block border border-line overflow-hidden hover:border-accent transition-all duration-300 cursor-pointer group"
                       onMouseEnter={(e) => {
                         setShowTooltip(true);
                         setTooltipPosition({ x: e.clientX, y: e.clientY });
@@ -837,7 +834,7 @@ export default function Home() {
                         width={720}
                         height={540}
                         priority={false}
-                        className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                        className="block w-full h-auto transition-transform duration-300"
                       />
                     </Link>
                   </ScrollReveal>
@@ -866,14 +863,12 @@ export default function Home() {
                           key={category}
                           onClick={() => toggleCategory(category)}
                           className={`
-                             px-4 py-2 font-satoshi text-sm transition-all duration-300
-                             border-2 border-black dark:border-white
-                             bg-[#F3F1E9] dark:bg-[#1A1818]
-                             mobile-touch-target
+                             px-4 py-2 font-satoshi text-sm transition-colors duration-150
+                             border mobile-touch-target
                              ${
                                selectedCategories.includes(category)
-                                 ? "text-white dark:text-black bg-black dark:bg-white scale-105"
-                                 : "text-black dark:text-white hover:border-orange-500 hover:scale-102"
+                                 ? "bg-accent border-accent text-accent-contrast"
+                                 : "bg-ground border-line text-ink hover:border-accent"
                              }
                            `}
                           aria-pressed={selectedCategories.includes(category)}
@@ -902,7 +897,7 @@ export default function Home() {
             {isLoading && !contentLoaded ? (
               <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white mx-auto"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b border-line mx-auto"></div>
                   <p className="mt-4 text-gray-600 dark:text-gray-400">
                     Loading projects...
                   </p>
@@ -953,7 +948,7 @@ export default function Home() {
                             touchAction: "manipulation",
                           }}
                         >
-                          <div className="relative border-2 border-black dark:border-white overflow-hidden hover:border-orange-500 transition-all duration-300">
+                          <div className="relative border border-line overflow-hidden hover:border-accent transition-all duration-300">
                             <div
                               className="project-item-inner"
                               style={{
@@ -972,7 +967,7 @@ export default function Home() {
                                   webkit-playsinline="true"
                                   controls={false}
                                   disablePictureInPicture
-                                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
+                                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
                                     loadingItems[project.id]
                                       ? "opacity-0"
                                       : "opacity-100"
@@ -1026,7 +1021,7 @@ export default function Home() {
                                   quality={50}
                                   priority={index < 3}
                                   loading={index < 6 ? "eager" : "lazy"}
-                                  className={`object-cover w-full h-full transition-all duration-500 group-hover:scale-105 ${
+                                  className={`object-cover w-full h-full transition-all duration-500 ${
                                     loadingItems[project.id]
                                       ? "opacity-0"
                                       : "opacity-100"
@@ -1061,7 +1056,7 @@ export default function Home() {
                                   quality={index < 6 ? 50 : 35} // Reduced quality for better memory usage
                                   priority={index < 3}
                                   loading={index < 6 ? "eager" : "lazy"}
-                                  className={`object-cover w-full h-full transition-all duration-500 group-hover:scale-105 ${
+                                  className={`object-cover w-full h-full transition-all duration-500 ${
                                     loadingItems[project.id]
                                       ? "opacity-0"
                                       : "opacity-100"
@@ -1087,7 +1082,7 @@ export default function Home() {
                               {loadingItems[project.id] && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-10">
                                   <div className="loading-spinner">
-                                    <div className="w-8 h-8 border-2 border-white/30 border-t-white/80 rounded-full animate-spin"></div>
+                                    <div className="w-8 h-8 border border-white/30 border-t-white/80 rounded-full animate-spin"></div>
                                   </div>
                                 </div>
                               )}
@@ -1100,7 +1095,7 @@ export default function Home() {
                                 }`}
                               >
                                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                  <h3 className="text-lg font-recoleta font-medium mb-2">
+                                  <h3 className="text-lg font-display font-medium mb-2">
                                     {project.title}
                                   </h3>
                                   <p className="text-sm opacity-90 line-clamp-3 mb-3 hyphens-none break-normal">
@@ -1113,13 +1108,13 @@ export default function Home() {
                                           key={catIndex}
                                           className={`
                                           text-xs px-2 py-1 transition-all duration-300
-                                          border-2 border-white/50 bg-[#F3F1E9]/90 dark:bg-[#1A1818]/90
+                                          border border-line bg-ground/90 dark:bg-ground/90
                                           ${
                                             selectedCategories.includes(
                                               category
                                             )
-                                              ? "text-black dark:text-white bg-white dark:bg-black border-white dark:border-black"
-                                              : "text-black dark:text-white hover:border-orange-500"
+                                              ? "text-ink bg-ink border-ink"
+                                              : "text-ink hover:border-accent"
                                           }
                                         `}
                                         >
@@ -1158,7 +1153,7 @@ export default function Home() {
                   Designed and built entirely by{" "}
                   <Link
                     href="/about"
-                    className="underline decoration-transparent hover:decoration-inherit hover:text-orange-500 transition-colors"
+                    className="underline decoration-transparent hover:decoration-inherit hover:text-accent transition-colors"
                   >
                     Jakob Backhouse
                   </Link>{" "}
@@ -1172,7 +1167,7 @@ export default function Home() {
                 <div className="p-3 md:p-4 transition-all duration-300">
                   <Link
                     href="https://www.instagram.com/jakobbackhouse_/"
-                    className="text-black dark:text-white hover:text-orange-500 transition-colors"
+                    className="text-ink hover:text-accent transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -1183,7 +1178,7 @@ export default function Home() {
                 <div className="p-3 md:p-4 transition-all duration-300">
                   <Link
                     href="https://www.linkedin.com/in/jakob-backhouse/"
-                    className="text-black dark:text-white hover:text-orange-500 transition-colors"
+                    className="text-ink hover:text-accent transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -1259,7 +1254,7 @@ export default function Home() {
           {/* Custom tooltip for illustration */}
           {showTooltip && (
             <div
-              className="fixed z-50 pointer-events-none bg-black dark:bg-white text-white dark:text-black px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-white dark:border-black"
+              className="fixed z-50 pointer-events-none bg-ink text-ground px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-ink"
               style={{
                 left: tooltipPosition.x + 10,
                 top: tooltipPosition.y - 40,

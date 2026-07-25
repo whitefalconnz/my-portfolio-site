@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#1A1818]">
+    <div className="min-h-screen flex items-center justify-center bg-ground">
       <div className="text-center">
         <div className="cube-wrapper">
           <div className="cube">
@@ -12,7 +12,7 @@ export default function Loading() {
             <div className="face bottom"></div>
           </div>
         </div>
-        <p className="font-satoshi text-black dark:text-white mt-4">
+        <p className="font-satoshi text-ink mt-4">
           Loading...
         </p>
       </div>

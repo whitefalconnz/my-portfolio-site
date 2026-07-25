@@ -203,21 +203,17 @@ export default function HeroSection() {
         <div className="relative w-full max-w-none mx-auto px-4 md:px-6 lg:px-8">
           {/* Video Container */}
           <motion.div
-            className="relative border-2 cursor-pointer"
+            className="relative border cursor-pointer"
             onClick={handleHeroClick}
             initial={{
               opacity: 0,
               scale: 0.95,
-              borderColor: "rgba(0, 0, 0, 0)",
+              borderColor: "var(--line)",
             }}
             animate={{
               opacity: 1,
               scale: 1,
-              borderColor: contentLoaded
-                ? isDarkMode
-                  ? "rgba(255, 255, 255, 1)"
-                  : "rgba(0, 0, 0, 1)"
-                : "rgba(0, 0, 0, 0)",
+              borderColor: "var(--line)",
               transition: {
                 duration: 0.8,
                 ease: [0.25, 0.1, 0.25, 1],
@@ -267,7 +263,7 @@ export default function HeroSection() {
             {/* Sound Toggle Button */}
             <motion.button
               onClick={handleSoundToggle}
-              className="absolute top-4 right-4 z-20 p-2 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-2 border-black dark:border-white hover:border-orange-500 hover:bg-white/90 dark:hover:bg-black/90 transition-all duration-300"
+              className="absolute top-4 right-4 z-20 p-2 bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-line hover:border-accent hover:bg-white/90 dark:hover:bg-black/90 transition-all duration-300"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 opacity: 1,
@@ -277,14 +273,12 @@ export default function HeroSection() {
                   delay: 2.0, // Appear after other elements
                 },
               }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               aria-label={isSoundOn ? "Turn sound off" : "Turn sound on"}
             >
               {isSoundOn ? (
-                <Volume2 className="w-4 h-4 text-black dark:text-white" />
+                <Volume2 className="w-4 h-4 text-ink" />
               ) : (
-                <VolumeX className="w-4 h-4 text-black dark:text-white" />
+                <VolumeX className="w-4 h-4 text-ink" />
               )}
             </motion.button>
 
@@ -310,20 +304,16 @@ export default function HeroSection() {
                   }}
                 >
                   <motion.div
-                    className="text-center p-6 bg-white/90 dark:bg-black/90 backdrop-blur-sm border-2"
+                    className="text-center p-6 bg-white/90 dark:bg-black/90 backdrop-blur-sm border"
                     initial={{
                       y: isInitialLoad ? 20 : 0,
                       opacity: 0,
-                      borderColor: "rgba(0, 0, 0, 0)",
+                      borderColor: "var(--line)",
                     }}
                     animate={{
                       y: 0,
                       opacity: 1,
-                      borderColor: contentLoaded
-                        ? isDarkMode
-                          ? "rgba(255, 255, 255, 1)"
-                          : "rgba(0, 0, 0, 1)"
-                        : "rgba(0, 0, 0, 0)",
+                      borderColor: "var(--line)",
                       transition: {
                         duration: isInitialLoad ? 0.6 : 0.2,
                         ease: [0.25, 0.1, 0.25, 1],
@@ -340,12 +330,12 @@ export default function HeroSection() {
                       },
                     }}
                   >
-                    <h1 className="font-recoleta text-2xl md:text-4xl lg:text-5xl text-primary dark:text-primary-light mb-2">
+                    <h1 className="font-display text-2xl md:text-4xl lg:text-5xl text-primary dark:text-primary-light mb-2">
                       Welcome to my portfolio
                     </h1>
                     {isVideoLoading && isSafari ? (
                       <div className="flex items-center justify-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-primary dark:border-primary-light border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border border-primary dark:border-primary-light border-t-transparent rounded-full animate-spin"></div>
                         <p className="font-satoshi text-sm md:text-base text-secondary dark:text-secondary-light">
                           Loading video...
                         </p>
@@ -381,8 +371,8 @@ export default function HeroSection() {
             exit={{ opacity: 0, y: 10, transition: { duration: 0.3 } }}
           >
             <motion.div
-              className="w-6 h-10 border-2 rounded-full flex justify-center"
-              initial={{ borderColor: "rgba(0, 0, 0, 0)" }}
+              className="w-6 h-10 border rounded-full flex justify-center"
+              initial={{ borderColor: "var(--line)" }}
               animate={{
                 borderColor: contentLoaded
                   ? isDarkMode
@@ -393,7 +383,7 @@ export default function HeroSection() {
               }}
             >
               <motion.div
-                className="w-1 h-3 bg-black dark:bg-white rounded-full mt-2"
+                className="w-1 h-3 bg-ink rounded-full mt-2"
                 animate={{
                   y: [0, 12, 0],
                   transition: {

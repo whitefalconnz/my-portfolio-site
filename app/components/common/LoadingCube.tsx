@@ -159,7 +159,7 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
 
   return (
     <div
-      className={`loading-screen ${transitionState} bg-white dark:bg-[#1A1818] text-black dark:text-white`}
+      className={`loading-screen ${transitionState} bg-ground text-ink`}
     >
       <div className="scanlines" />
       <div className="loading-content">
@@ -238,7 +238,7 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
           </div>
         </div>
 
-        <div className="loading-text text-black dark:text-white">
+        <div className="loading-text text-ink">
           Now Loading
           <span className="dots">
             <span>.</span>

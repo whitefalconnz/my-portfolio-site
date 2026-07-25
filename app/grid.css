@@ -95,16 +95,8 @@
   opacity: 1;
 }
 
-.grid-pattern {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
+/* .grid-pattern lives in globals.css -- it was defined in both files. */
 
-:is(.dark .grid-pattern) {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-}
 
 /* Utility class for line clamping text */
 .line-clamp {

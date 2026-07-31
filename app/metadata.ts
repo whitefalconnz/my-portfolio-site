@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Jakob's Portfolio",
+  title: "Jakob Backhouse",
   description:
     "Personal portfolio website showcasing animations, illustrations, and creative projects",
   metadataBase: new URL("https://jakobbackhouse.com"),

@@ -92,7 +92,7 @@ export default function Header() {
               href="/"
               className="font-display text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap hover:text-accent transition-colors"
             >
-              Jakob's Portfolio
+              Jakob Backhouse
             </Link>
           </motion.div>
 
@@ -185,7 +185,7 @@ export default function Header() {
               className="font-display text-3xl md:text-4xl text-primary dark:text-primary-light hover:text-primary-hover dark:hover:text-primary-light/80 transition-colors"
             >
               <span className="font-medium tracking-tight">
-                Jakob's Portfolio
+                Jakob Backhouse
               </span>
             </Link>
             <motion.div

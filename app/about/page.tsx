@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
 import { Badge } from "../components/ui/badge";
-import FadeInImage from "../components/common/FadeInImage";
+import Image from "next/image";
 import React from "react";
 import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "../components/common/MemoryStatsDebugger";
@@ -75,12 +75,15 @@ export default function AboutPage() {
                     borderColor: "var(--line)",
                   }}
                 >
-                  <FadeInImage
+                  {/* Plain next/image, not FadeInImage -- the illustration is
+                      the first thing on the page and the 700ms opacity ramp
+                      read as a load-in animation. */}
+                  <Image
                     src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
                     alt="Decorative illustration"
                     width={720}
                     height={540}
-                    priority={false}
+                    priority
                     className="block max-w-full h-auto"
                   />
                 </div>
@@ -221,8 +224,11 @@ export default function AboutPage() {
                     </span>
                   </div>
                 </div>
-                <div
-                  className="border bg-ground p-2 transition-all duration-300"
+                <a
+                  href="https://locales.co.nz/index"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block border bg-ground p-2 transition-all duration-300 hover:border-accent"
                   style={{ borderColor: "var(--line)" }}
                 >
                   <div className="flex items-center gap-2 text-sm">
@@ -236,7 +242,7 @@ export default function AboutPage() {
                       Locales
                     </span>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>

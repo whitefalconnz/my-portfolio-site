@@ -755,7 +755,16 @@ export default function Home() {
                 the whole row is skipped so a phone lands straight on the work
                 rather than on a video plus an empty gap. */}
             {!isMobile && (
-              <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
+              <>
+                {/* Same treatment as the "Explore the rest of my stuff below"
+                    line further down, so the two read as a pair. */}
+                <div className="text-center mb-8">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
+                    G'day check out some recent highlights below
+                  </p>
+                </div>
+
+                <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
                 <div className="relative z-10 showreel-container lg:flex-1">
                   <div>
                     <div className="mb-8 lg:mb-0">
@@ -807,7 +816,8 @@ export default function Home() {
                     </Link>
                   </div>
                 </div>
-              </div>
+                </div>
+              </>
             )}
 
             {/* Projects Section */}
@@ -816,7 +826,7 @@ export default function Home() {
               <div>
                 <div className="text-center mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
-                    EXPLORE ALL PROJECTS
+                    Explore the rest of my stuff below
                   </p>
                 </div>
               </div>

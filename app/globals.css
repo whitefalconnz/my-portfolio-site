@@ -836,70 +836,52 @@ body {
   min-height: calc(100vh + 1px);
 }
 
-/* Keep scrollbar space but make it invisible during loading */
-.loading-state::-webkit-scrollbar {
+/* Root scrollbar: styled once, statically.
+ *
+ * This block used to fade the scrollbar in after load -- an `opacity: 0` plus
+ * `animation: fadeInScrollbar 0.8s forwards` on ::-webkit-scrollbar/-thumb
+ * /-track, a `scrollbar-width: thin` that fought the 12px webkit width, and a
+ * `transition: scrollbar-color 0.8s` on the root. Animating the root
+ * scrollbar's own presentation makes Chrome re-lay-out the scrollbar, and the
+ * viewport width flips by the scrollbar's ~11px for the length of the
+ * animation. Everything sized off the viewport -- most visibly the project
+ * modal, which is `position: fixed` at `100vw` -- slides sideways and back on
+ * every replay. Nothing here animates or changes width now, so the viewport
+ * stays put.
+ */
+html::-webkit-scrollbar {
   width: 12px;
-  opacity: 0;
 }
 
-.loading-state::-webkit-scrollbar-thumb {
-  background: transparent;
-  opacity: 0;
-}
-
-.loading-state::-webkit-scrollbar-track {
-  background: transparent;
-  opacity: 0;
-}
-
-/* Firefox scrollbar invisible during loading but keeping space */
-.loading-state {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-}
-
-/* Show scrollbar thumb after loading with smooth transition */
-html:not(.loading-state)::-webkit-scrollbar {
-  width: 12px;
-  opacity: 0;
-  animation: fadeInScrollbar 0.8s ease-out 0.2s forwards;
-}
-
-html:not(.loading-state)::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.8);
   border-radius: 6px;
   border: 2px solid transparent;
   background-clip: padding-box;
-  transition: background-color 0.3s ease;
-  opacity: 0;
-  animation: fadeInScrollbar 0.8s ease-out 0.2s forwards;
 }
 
-html:not(.loading-state)::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 1);
+  background-clip: padding-box;
 }
 
-html:not(.loading-state)::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  animation: fadeInScrollbar 0.8s ease-out 0.2s forwards;
 }
 
-/* Keyframe for scrollbar fade in */
-@keyframes fadeInScrollbar {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* Project modal overlay height. `dvh` tracks the viewport as the mobile URL
+   bar collapses and expands, which is what the old JS-measured --doc-height
+   variable was approximating a frame late. */
+.modal-viewport-height {
+  height: 100vh;
+  max-height: 100vh;
 }
 
-/* Firefox scrollbar styling after loading */
-html:not(.loading-state) {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.8) rgba(0, 0, 0, 0.1);
-  transition: scrollbar-color 0.8s ease-out 0.2s;
+@supports (height: 100dvh) {
+  .modal-viewport-height {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
 }
 
 /* Page transition styles */

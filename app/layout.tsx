@@ -6,7 +6,6 @@ import LoadingProvider from "./components/common/LoadingProvider";
 import ScrollProgressBar from "./components/common/ScrollProgressBar";
 import Header from "./components/layout/Header";
 import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
-import ScrollbarManager from "./components/common/ScrollbarManager";
 
 // Re-export route metadata so Next.js can pick it up from a dedicated file
 export { metadata } from "./metadata";
@@ -100,7 +99,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LoadingContextProvider>
-            <ScrollbarManager />
             <Header />
             <ScrollProgressBar />
             <Suspense fallback={null}>

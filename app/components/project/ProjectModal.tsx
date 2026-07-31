@@ -1456,37 +1456,31 @@ export default function ProjectModal({
     }
   }, [isOpen, selectedProject, trackAllElements, getModalTrackingStats]);
 
-  if (!isOpen) {
-    return null;
-  }
-
-  console.log("ProjectModal render:", { isOpen, selectedProject, title });
-
+  // Scroll lock.
+  //
+  // This deliberately does NOT use the `body { position: fixed; top: -scrollY }`
+  // trick. That hack moves the body out from under the viewport, and the modal
+  // is portalled into the body -- so on mobile the overlay was being dragged up
+  // with it and the header, close button included, ended up above the top of
+  // the screen. It ran only when `isTouchDevice`, which is exactly why the bug
+  // was mobile-only. `overflow: hidden` plus `overscroll-behavior: none` locks
+  // the page without moving it, and the overlay's own `touch-action: none` and
+  // touchmove handlers stop what little gets through.
   useEffect(() => {
     if (isOpen) {
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
-      const originalBodyPosition = document.body.style.position;
-      const originalBodyTop = document.body.style.top;
-      const originalBodyWidth = document.body.style.width;
-      const originalBodyHeight = document.body.style.height;
-      const originalDocumentHeight = document.documentElement.style.height;
+      const originalBodyOverscroll = document.body.style.overscrollBehavior;
+      const originalHtmlOverscroll =
+        document.documentElement.style.overscrollBehavior;
       const originalBodyTouchAction = document.body.style.touchAction;
-      const scrollY = window.scrollY;
-
-      if (process.env.NODE_ENV === "development") {
-        console.log("Setting up scroll prevention - scrollY:", scrollY);
-      }
 
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
+      document.body.style.overscrollBehavior = "none";
+      document.documentElement.style.overscrollBehavior = "none";
 
       if (isTouchDevice) {
-        document.body.style.position = "fixed";
-        document.body.style.top = `-${scrollY}px`;
-        document.body.style.width = "100%";
-        document.body.style.height = "100%";
-        document.documentElement.style.height = "100%";
         document.body.style.touchAction = "none";
       }
 
@@ -1516,28 +1510,15 @@ export default function ProjectModal({
       });
 
       return () => {
-        if (process.env.NODE_ENV === "development") {
-          console.log("Restoring scroll - scrollY:", scrollY);
-        }
-
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.overscrollBehavior = originalBodyOverscroll;
+        document.documentElement.style.overscrollBehavior =
+          originalHtmlOverscroll;
 
         if (isTouchDevice) {
-          document.body.style.position = originalBodyPosition;
-          document.body.style.top = originalBodyTop;
-          document.body.style.width = originalBodyWidth;
-          document.body.style.height = originalBodyHeight;
-          document.documentElement.style.height = originalDocumentHeight;
           document.body.style.touchAction = originalBodyTouchAction;
-
-          window.scrollTo(0, scrollY);
           document.body.style.pointerEvents = "auto";
-
-          setTimeout(() => {
-            window.dispatchEvent(new Event("resize"));
-          }, 100);
-
         }
 
         document.removeEventListener("touchstart", preventTouchScroll);
@@ -1757,26 +1738,6 @@ export default function ProjectModal({
     },
     [hasScrolled]
   );
-
-  useEffect(() => {
-    const setDocHeight = () => {
-      document.documentElement.style.setProperty(
-        "--doc-height",
-        `${window.innerHeight}px`
-      );
-    };
-
-    if (isTouchDevice) {
-      window.addEventListener("resize", setDocHeight);
-      setDocHeight();
-    }
-
-    return () => {
-      if (isTouchDevice) {
-        window.removeEventListener("resize", setDocHeight);
-      }
-    };
-  }, [isTouchDevice]);
 
   const renderContentSection = (section: ContentSection) => {
     return (
@@ -2034,20 +1995,18 @@ export default function ProjectModal({
   const modal = (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] overflow-hidden bg-ground"
+      className="fixed inset-0 z-[100] overflow-hidden bg-ground modal-viewport-height"
       onClick={handleOverlayClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       style={{
-        // Pinned to the viewport, full stop. This used to be `top: scrollY`
-        // paired with `translateY(-scrollY)` -- which nets to zero for a fixed
-        // element, so it bought nothing, but the two halves came from different
-        // renders. On the frame before the scroll offset was known the pair was
-        // out of sync and the whole modal, header and close button included,
-        // sat off-screen. --doc-height still covers iOS's shrinking URL bar.
-        width: "100vw",
-        height: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
-        maxHeight: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
+        // Pinned to the viewport, full stop -- no scroll offset in the sizing,
+        // in either direction. Height comes from `dvh` (the viewport as it
+        // actually is right now, so iOS's collapsing URL bar is handled by the
+        // browser) with a `vh` fallback for anything that predates it; the JS
+        // `--doc-height` variable this replaced was measured once per resize
+        // and lagged. Width is left to `left: 0` / `right: 0` rather than a
+        // `100vw` that a root scrollbar can push past the viewport edge.
         top: 0,
         left: 0,
         right: 0,
@@ -2079,7 +2038,7 @@ export default function ProjectModal({
             <div className="md:hidden w-0"></div>
 
             <div className="absolute left-1/2 transform -translate-x-1/2 text-ink/90 text-sm md:text-base lg:text-lg font-display font-bold">
-              Jakob's Portfolio
+              Jakob Backhouse
             </div>
 
             <div className="ml-auto">

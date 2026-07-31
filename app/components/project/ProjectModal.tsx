@@ -1992,10 +1992,16 @@ export default function ProjectModal({
   // The overlay is fully opaque. It used to be bg-white/95 with a backdrop blur,
   // which let the project grid show through and flash into view whenever the page
   // behind it repainted (media being cleared/restored on open).
+  //
+  // Its z-index has to clear the site header's z-[200]. At z-[100] the header
+  // painted straight over the modal whenever it happened to be on screen --
+  // which is why opening a project near the top of the grid showed the
+  // full-size site header with no close button, while opening one further down
+  // (header scrolled out of view) showed the modal's own compact header.
   const modal = (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] overflow-hidden bg-ground modal-viewport-height"
+      className="fixed inset-0 z-[300] overflow-hidden bg-ground modal-viewport-height"
       onClick={handleOverlayClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}

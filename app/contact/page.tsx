@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 
 import { sendEmail } from "./actions";
 import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
@@ -104,14 +103,7 @@ export default function ContactPage() {
     >
 
       <main className="pt-32 md:pt-40 pb-20 max-w-6xl mx-auto px-6 md:flex md:gap-8 relative">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: 1,
-            borderColor: "var(--line)",
-            transition: { delay: 0.2, duration: 0.5 },
-          }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+        <div
           className="p-8 mb-12 md:mb-0 md:w-[400px] md:flex-shrink-0 border relative z-10 transition-all duration-300"
           style={{
             backgroundColor: "var(--surface)",
@@ -119,18 +111,14 @@ export default function ContactPage() {
           }}
         >
           <div className="flex flex-col h-full">
-            <motion.div
+            <div
               className="border-b mb-8 pb-4"
               style={{ borderBottomColor: "var(--line)" }}
-              animate={{
-                borderBottomColor: "var(--line)",
-                transition: { delay: 0.3, duration: 0.5 },
-              }}
             >
               <h1 className="font-display text-4xl md:text-5xl text-accent">
                 Get in Touch
               </h1>
-            </motion.div>
+            </div>
 
             <div className="flex-grow font-satoshi mb-8">
               <p className="text-lg text-dark dark:text-light">
@@ -139,40 +127,27 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <motion.a
+            <a
               href="mailto:jakobbackhouse@gmail.com"
               className="block w-full px-6 py-3 bg-ink text-ground font-medium text-center
                 hover:border-accent
                 transition-all border font-satoshi"
               style={{ borderColor: "var(--line)" }}
-              animate={{
-                borderColor: "var(--line)",
-                transition: { delay: 0.4, duration: 0.5 },
-              }}
             >
               jakobbackhouse@gmail.com
-            </motion.a>
+            </a>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: 1,
-          }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+        <div
           className="md:flex-1 relative"
         >
           {!formSubmitted ? (
-            <motion.div
+            <div
               className="p-8 border relative z-10 hover:border-accent transition-all duration-300"
               style={{
                 backgroundColor: "var(--surface)",
                 borderColor: "var(--line)",
-              }}
-              animate={{
-                borderColor: "var(--line)",
-                transition: { delay: 0.3, duration: 0.5 },
               }}
             >
               <form onSubmit={handleSubmit} className="space-y-6 font-satoshi">
@@ -183,7 +158,7 @@ export default function ContactPage() {
                   >
                     Name *
                   </label>
-                  <motion.input
+                  <input
                     type="text"
                     id="name"
                     required
@@ -197,10 +172,6 @@ export default function ContactPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     style={{ borderColor: "var(--line)" }}
-                    animate={{
-                      borderColor: "var(--line)",
-                      transition: { delay: 0.4, duration: 0.5 },
-                    }}
                   />
                 </div>
 
@@ -211,7 +182,7 @@ export default function ContactPage() {
                   >
                     Email Address *
                   </label>
-                  <motion.input
+                  <input
                     type="email"
                     id="email"
                     required
@@ -225,10 +196,6 @@ export default function ContactPage() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     style={{ borderColor: "var(--line)" }}
-                    animate={{
-                      borderColor: "var(--line)",
-                      transition: { delay: 0.5, duration: 0.5 },
-                    }}
                   />
                 </div>
 
@@ -239,7 +206,7 @@ export default function ContactPage() {
                   >
                     Message *
                   </label>
-                  <motion.textarea
+                  <textarea
                     id="message"
                     required
                     rows={6}
@@ -253,10 +220,6 @@ export default function ContactPage() {
                       setFormData({ ...formData, message: e.target.value })
                     }
                     style={{ borderColor: "var(--line)" }}
-                    animate={{
-                      borderColor: "var(--line)",
-                      transition: { delay: 0.6, duration: 0.5 },
-                    }}
                   />
                 </div>
 
@@ -264,42 +227,30 @@ export default function ContactPage() {
                   <div className="text-red-500 text-sm py-2">{submitError}</div>
                 )}
 
-                <motion.button
+                <button
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full px-6 py-3 bg-ink text-ground font-medium 
                     hover:border-accent
                     transition-all border disabled:opacity-70 disabled:cursor-not-allowed"
                   style={{ borderColor: "var(--line)" }}
-                  animate={{
-                    borderColor: "var(--line)",
-                    transition: { delay: 0.7, duration: 0.5 },
-                  }}
                 >
                   {isSubmitting ? "Sending..." : "Send Message →"}
-                </motion.button>
+                </button>
               </form>
-            </motion.div>
+            </div>
           ) : (
-            <motion.div
+            <div
               className="p-8 border relative z-10 hover:border-accent transition-all duration-300"
               style={{
                 backgroundColor: "var(--surface)",
                 borderColor: "var(--line)",
               }}
-              animate={{
-                borderColor: "var(--line)",
-                transition: { delay: 0.3, duration: 0.5 },
-              }}
             >
               <div className="text-center space-y-4">
-                <motion.div
+                <div
                   className="inline-block bg-green-500 text-white p-4 mb-4 border"
                   style={{ borderColor: "var(--line)" }}
-                  animate={{
-                    borderColor: "var(--line)",
-                    transition: { delay: 0.4, duration: 0.5 },
-                  }}
                 >
                   <svg
                     className="w-8 h-8 mx-auto"
@@ -314,7 +265,7 @@ export default function ContactPage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                </motion.div>
+                </div>
                 <h3 className="font-display text-2xl text-accent">
                   Message Sent Successfully!
                 </h3>
@@ -323,9 +274,9 @@ export default function ContactPage() {
                   possible.
                 </p>
               </div>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
       </main>
 
       {/* Memory stats debugger - development only */}

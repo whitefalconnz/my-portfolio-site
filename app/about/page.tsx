@@ -3,11 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
 import { Badge } from "../components/ui/badge";
-import { motion } from "framer-motion";
 import FadeInImage from "../components/common/FadeInImage";
 import React from "react";
-import ScrollReveal from "../components/animations/ScrollReveal";
-import IntroSection from "../components/common/IntroSection";
 import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "../components/common/MemoryStatsDebugger";
 
@@ -57,31 +54,6 @@ export default function AboutPage() {
     }
   }, [isLoaded, trackAllElements, getAboutTrackingStats]);
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        duration: 0.6,
-        ease: [0.25, 0.1, 0.25, 1], // cubicBezier easing
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 10 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: [0.25, 0.1, 0.25, 1],
-      },
-    },
-  };
-
   return (
     <div
       ref={aboutPageRef}
@@ -94,20 +66,8 @@ export default function AboutPage() {
           <div className="lg:col-span-6 lg:col-start-2 space-y-6">
             {/* Image */}
             <div className="flex justify-center">
-              <motion.div
+              <div
                 className="relative z-10 bg-transparent p-0 inline-block"
-                initial={{
-                  opacity: 0,
-                  y: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    duration: 0.3,
-                    ease: [0.25, 0.1, 0.25, 1],
-                  },
-                }}
               >
                 <div
                   className="relative border hover:border-accent transition-all duration-300"
@@ -124,33 +84,22 @@ export default function AboutPage() {
                     className="block max-w-full h-auto"
                   />
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Skills section moved under the image */}
             <div className="flex justify-center">
-              <motion.div
-                variants={item}
+              <div
                 className="border bg-ground p-6 md:p-8 relative z-10 w-full max-w-[720px] transition-all duration-300"
-                initial={{ borderColor: "var(--line)" }}
-                animate={{
-                  borderColor: "var(--line)",
-                  transition: { delay: 0.5, duration: 0.5 },
-                }}
               >
-                <motion.div
+                <div
                   className="flex items-center gap-2 mb-3 border-b pb-2"
-                  initial={{ borderBottomColor: "var(--line)" }}
                   style={{ borderBottomColor: "var(--line)" }}
-                  animate={{
-                    borderBottomColor: "var(--line)",
-                    transition: { delay: 0.6, duration: 0.5 },
-                  }}
                 >
                   <h2 className="font-display font-medium text-lg text-accent">
                     Core Skills
                   </h2>
-                </motion.div>
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     "Digital Illustration",
@@ -160,57 +109,33 @@ export default function AboutPage() {
                     "3D Environment Design",
                     "After Effects Vector Animation or Toon Boom Frame by Frame Animation",
                   ].map((skill, index) => (
-                    <motion.div
+                    <div
                       key={skill}
                       className="border bg-ground p-2 transition-all duration-300"
-                      initial={{ borderColor: "var(--line)" }}
                       style={{ borderColor: "var(--line)" }}
-                      animate={{
-                        borderColor: "var(--line)",
-                        transition: { delay: 0.7 + index * 0.1, duration: 0.5 },
-                      }}
                     >
                       <span className="font-satoshi text-sm text-dark dark:text-light block text-center">
                         {skill}
                       </span>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
 
           {/* Right side - Bio and Experience */}
           <div className="lg:col-span-4 space-y-4">
-            <motion.div
+            <div
               className="border bg-ground p-6 md:p-8 relative z-10 transition-all duration-300"
-              initial={{
-                opacity: 0,
-                y: 0,
-                borderColor: "var(--line)",
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                borderColor: "var(--line)",
-                transition: {
-                  duration: 0.3,
-                  ease: [0.25, 0.1, 0.25, 1],
-                },
-              }}
             >
-              <motion.h1
+              <h1
                 className="font-display text-3xl text-accent mb-4 
                     border-b pb-2"
-                initial={{ borderBottomColor: "var(--line)" }}
                 style={{ borderBottomColor: "var(--line)" }}
-                animate={{
-                  borderBottomColor: "var(--line)",
-                  transition: { delay: 0.4, duration: 0.5 },
-                }}
               >
                 Kia ora!
-              </motion.h1>
+              </h1>
               <div className="space-y-3 font-satoshi">
                 <p className="text-sm leading-relaxed text-dark/70 dark:text-light/70">
                   My name is Jakob
@@ -240,63 +165,33 @@ export default function AboutPage() {
                   work that's both distinctive and empathetic.
                 </p>
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                  <motion.a
+                  <a
                     href="mailto:JakobBackhouse@gmail.com"
                     className="inline-flex items-center gap-2 bg-ink px-3 py-1.5 text-ground
                         hover:border-accent transition-all text-sm border"
-                    initial={{ borderColor: "var(--line)" }}
                     style={{ borderColor: "var(--line)" }}
-                    animate={{
-                      borderColor: "var(--line)",
-                      transition: { delay: 0.5, duration: 0.5 },
-                    }}
                   >
                     JakobBackhouse@gmail.com
-                  </motion.a>
+                  </a>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
+            <div
               className="border bg-ground p-6 md:p-8 relative z-10 transition-all duration-300"
-              initial={{
-                opacity: 0,
-                y: 0,
-                borderColor: "var(--line)",
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                borderColor: "var(--line)",
-                transition: {
-                  duration: 0.3,
-                  ease: [0.25, 0.1, 0.25, 1],
-                  delay: 0.2,
-                },
-              }}
             >
-              <motion.div
+              <div
                 className="flex items-center gap-2 mb-3 border-b pb-2"
-                initial={{ borderBottomColor: "var(--line)" }}
                 style={{ borderBottomColor: "var(--line)" }}
-                animate={{
-                  borderBottomColor: "var(--line)",
-                  transition: { delay: 0.5, duration: 0.5 },
-                }}
               >
                 <h2 className="font-display font-medium text-lg text-accent">
                   Experience
                 </h2>
-              </motion.div>
+              </div>
               <div className="space-y-3 font-satoshi">
-                <motion.div
+                <div
                   className="border bg-ground p-2 transition-all duration-300"
-                  initial={{ borderColor: "var(--line)" }}
                   style={{ borderColor: "var(--line)" }}
-                  animate={{
-                    borderColor: "var(--line)",
-                    transition: { delay: 0.6, duration: 0.5 },
-                  }}
                 >
                   <div className="flex items-center gap-2 text-sm">
                     <Badge className="bg-ink text-ground px-2 py-0.5 border">
@@ -309,15 +204,10 @@ export default function AboutPage() {
                       AXIOM Training
                     </span>
                   </div>
-                </motion.div>
-                <motion.div
+                </div>
+                <div
                   className="border bg-ground p-2 transition-all duration-300"
-                  initial={{ borderColor: "var(--line)" }}
                   style={{ borderColor: "var(--line)" }}
-                  animate={{
-                    borderColor: "var(--line)",
-                    transition: { delay: 0.7, duration: 0.5 },
-                  }}
                 >
                   <div className="flex items-center gap-2 text-sm">
                     <Badge className="bg-ink text-ground px-2 py-0.5 border">
@@ -330,9 +220,25 @@ export default function AboutPage() {
                       MySafetyTV/Sharpdrive
                     </span>
                   </div>
-                </motion.div>
+                </div>
+                <div
+                  className="border bg-ground p-2 transition-all duration-300"
+                  style={{ borderColor: "var(--line)" }}
+                >
+                  <div className="flex items-center gap-2 text-sm">
+                    <Badge className="bg-ink text-ground px-2 py-0.5 border">
+                      2025-Now
+                    </Badge>
+                    <span className="font-bold text-dark dark:text-light">
+                      Junior Designer / Technical Lead
+                    </span>
+                    <span className="text-secondary dark:text-secondary-light">
+                      Locales
+                    </span>
+                  </div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </main>

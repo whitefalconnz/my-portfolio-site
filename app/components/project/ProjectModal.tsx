@@ -1307,7 +1307,6 @@ export default function ProjectModal({
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const [showOverviewMore, setShowOverviewMore] = useState(false);
   const [showDetailsMore, setShowDetailsMore] = useState(false);
-  const [mobileScrollY, setMobileScrollY] = useState(0);
   const [isModalSettled, setIsModalSettled] = useState(false);
 
   // Refs
@@ -1316,7 +1315,6 @@ export default function ProjectModal({
   const imageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const overlayClickable = useRef(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const isFirstOpenRef = useRef(true);
   const overviewTextRef = useRef<HTMLParagraphElement>(null);
   const detailsTextRef = useRef<HTMLParagraphElement>(null);
 
@@ -1433,40 +1431,16 @@ export default function ProjectModal({
     // This is the key fix that makes the observer responsive to project changes.
   }, [isOpen, selectedProject]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const scrollY = window.scrollY;
-    const overlayEl = overlayRef.current;
-
-    if (!overlayEl) return;
-
-    if (process.env.NODE_ENV === "development") {
-      console.log(
-        "Setting modal position - scrollY:",
-        scrollY,
-        "isTouchDevice:",
-        isTouchDevice,
-        "isFirstOpen:",
-        isFirstOpenRef.current
-      );
-    }
-
-    const originalTransform = overlayEl.style.transform;
-
-    if (isTouchDevice) {
-      if (isFirstOpenRef.current) {
-        overlayEl.style.transform = `translateY(${scrollY}px)`;
-        isFirstOpenRef.current = false;
-      }
-    } else {
-      overlayEl.style.transform = `translateY(${scrollY}px)`;
-    }
-
-    return () => {
-      overlayEl.style.transform = originalTransform || "none";
-    };
-  }, [isOpen, isTouchDevice, selectedProject]);
+  // The overlay's position is owned entirely by the style prop below:
+  // The overlay is pinned to the viewport by the style prop below.
+  //
+  // There used to be an effect here that also wrote `style.transform`
+  // imperatively, with the *opposite* sign -- `translateY(+scrollY)` -- and it
+  // did so only on the first open of a touch session. Whenever that write won
+  // the race against React's own style reconciliation, the overlay was pushed
+  // down the page by roughly the scroll offset, carrying the header and its
+  // close button off-screen with no way back. Every open after the first
+  // skipped the branch, which is why only the first one broke.
 
   useEffect(() => {
     if (isOpen && selectedProject) {
@@ -1481,12 +1455,6 @@ export default function ProjectModal({
       return () => clearTimeout(timer);
     }
   }, [isOpen, selectedProject, trackAllElements, getModalTrackingStats]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      isFirstOpenRef.current = true;
-    }
-  }, [isOpen, selectedProject]);
 
   if (!isOpen) {
     return null;
@@ -1514,7 +1482,6 @@ export default function ProjectModal({
       document.documentElement.style.overflow = "hidden";
 
       if (isTouchDevice) {
-        setMobileScrollY(scrollY);
         document.body.style.position = "fixed";
         document.body.style.top = `-${scrollY}px`;
         document.body.style.width = "100%";
@@ -1571,7 +1538,6 @@ export default function ProjectModal({
             window.dispatchEvent(new Event("resize"));
           }, 100);
 
-          setMobileScrollY(0);
         }
 
         document.removeEventListener("touchstart", preventTouchScroll);
@@ -2073,16 +2039,21 @@ export default function ProjectModal({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       style={{
+        // Pinned to the viewport, full stop. This used to be `top: scrollY`
+        // paired with `translateY(-scrollY)` -- which nets to zero for a fixed
+        // element, so it bought nothing, but the two halves came from different
+        // renders. On the frame before the scroll offset was known the pair was
+        // out of sync and the whole modal, header and close button included,
+        // sat off-screen. --doc-height still covers iOS's shrinking URL bar.
         width: "100vw",
         height: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
         maxHeight: isTouchDevice ? "var(--doc-height, 100vh)" : "100vh",
-        top: isTouchDevice ? `${mobileScrollY}px` : 0,
+        top: 0,
         left: 0,
         right: 0,
         bottom: 0,
         margin: 0,
         padding: 0,
-        transform: isTouchDevice ? `translateY(-${mobileScrollY}px)` : "none",
         touchAction: "none",
         position: "fixed",
       }}

@@ -133,15 +133,16 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Anti-flicker for initial page load */
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Improve mobile performance and prevent errors */
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
+    /* No transform here. `transform: translateZ(0)` was set as a GPU-layer
+       hint, but any transform on an element makes it the containing block for
+       every `position: fixed` descendant -- so fixed elements were being
+       positioned against the document instead of the viewport. That is why the
+       project modal needed to be shoved back down by the scroll offset to be
+       visible at all. (`perspective: 1000` was unitless and therefore invalid,
+       so it never applied.) */
   }
 
   /* Prevent mobile viewport issues */

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Header from "../components/layout/Header";
 import { Badge } from "../components/ui/badge";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import React from "react";
 import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "../components/common/MemoryStatsDebugger";
@@ -148,24 +149,10 @@ export default function AboutPage() {
                   to refresh my mind).
                 </p>
                 <p className="text-sm leading-relaxed text-secondary/60 dark:text-secondary-light/60">
-                  <br></br>For the past four years, I've been immersed in the
-                  design industry, I specialise in crafting boutique frame by
-                  frame and mixed media (Blender & vector) explainer video
-                  animation. Although I have wide range of knowledge working
-                  with clients to make websites, graphic design and 3D
-                  animation.
-                  <br></br>
-                  <br></br>Recently I have been involved in a startup where I
-                  built extensive content, from our core educational animations
-                  to the website and its SEO, helping scale it from concept to
-                  our first customers. Alongside this time, I've developed a
-                  frame by frame animated short film, a passion I continue to
-                  nurture.
-                  <br></br>
-                  <br></br>Artistically, I am inspired by animation masters like
-                  Satoshi Kon and Masaaki Yuasa but in design I'm driven to
-                  blend my artistic vision with human centred design, creating
-                  work that's both distinctive and empathetic.
+                  Artistically, I am inspired by animation masters like Satoshi
+                  Kon and Masaaki Yuasa but in design I'm driven to blend my
+                  artistic vision with human centred design, creating work
+                  that's both distinctive and empathetic.
                 </p>
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
                   <a
@@ -192,12 +179,16 @@ export default function AboutPage() {
                 </h2>
               </div>
               <div className="space-y-3 font-satoshi">
+                {/* Finished role: plain ground, hairline border. The two that
+                    run to "Now" below carry the accent wash so the current work
+                    is obvious at a glance. Text colours are untouched
+                    throughout -- the wash does all the work. */}
                 <div
                   className="border bg-ground p-2 transition-all duration-300"
                   style={{ borderColor: "var(--line)" }}
                 >
                   <div className="flex items-center gap-2 text-sm">
-                    <Badge className="bg-ink text-ground px-2 py-0.5 border">
+                    <Badge className="bg-ink text-ground px-2 py-0.5 border whitespace-nowrap shrink-0">
                       2021-2023
                     </Badge>
                     <span className="font-bold text-dark dark:text-light">
@@ -209,11 +200,14 @@ export default function AboutPage() {
                   </div>
                 </div>
                 <div
-                  className="border bg-ground p-2 transition-all duration-300"
-                  style={{ borderColor: "var(--line)" }}
+                  className="border p-2 transition-all duration-300"
+                  style={{
+                    borderColor: "var(--accent)",
+                    backgroundColor: "var(--accent-wash)",
+                  }}
                 >
                   <div className="flex items-center gap-2 text-sm">
-                    <Badge className="bg-ink text-ground px-2 py-0.5 border">
+                    <Badge className="bg-ink text-ground px-2 py-0.5 border whitespace-nowrap shrink-0">
                       2023-Now
                     </Badge>
                     <span className="font-bold text-dark dark:text-light">
@@ -228,18 +222,28 @@ export default function AboutPage() {
                   href="https://locales.co.nz/index"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block border bg-ground p-2 transition-all duration-300 hover:border-accent"
-                  style={{ borderColor: "var(--line)" }}
+                  className="group block border p-2 transition-all duration-300 hover:brightness-110"
+                  style={{
+                    borderColor: "var(--accent)",
+                    backgroundColor: "var(--accent-wash)",
+                  }}
                 >
                   <div className="flex items-center gap-2 text-sm">
-                    <Badge className="bg-ink text-ground px-2 py-0.5 border">
+                    <Badge className="bg-ink text-ground px-2 py-0.5 border whitespace-nowrap shrink-0">
                       2025-Now
                     </Badge>
                     <span className="font-bold text-dark dark:text-light">
                       Junior Designer / Technical Lead
                     </span>
-                    <span className="text-secondary dark:text-secondary-light">
+                    {/* The only row that goes anywhere, so it gets the only
+                        link affordance: a dotted underline that firms up on
+                        hover, plus the usual out-of-site arrow. */}
+                    <span className="text-secondary dark:text-secondary-light inline-flex items-center gap-1 whitespace-nowrap underline decoration-dotted underline-offset-4 group-hover:decoration-solid">
                       Locales
+                      <ArrowUpRight
+                        className="h-3 w-3 shrink-0 opacity-70 transition-transform duration-200 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]"
+                        aria-hidden="true"
+                      />
                     </span>
                   </div>
                 </a>

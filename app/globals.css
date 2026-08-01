@@ -21,6 +21,9 @@
   --accent: #FF2D6F;        /* riso fluorescent pink */
   --accent-alt: #1B4CE8;    /* riso blue */
   --accent-contrast: #FFFFFF;
+  /* A wash of the accent, for highlighting a row without recolouring its text.
+     Solid --accent would drop the muted secondary text to about 1.6:1. */
+  --accent-wash: rgba(255, 45, 111, 0.14);
 
   /* Hairlines. Deliberately faint -- the old design used 2px solid black. */
   --line: rgba(10, 10, 10, 0.12);
@@ -47,6 +50,9 @@
   --accent: #6E7DD6;        /* desaturated periwinkle */
   --accent-alt: #8E9BE0;
   --accent-contrast: #0E0E10;
+  /* Carries more alpha than the light-mode wash: it sits on near-black, where
+     the same 14% barely registers. */
+  --accent-wash: rgba(110, 125, 214, 0.22);
 
   --line: rgba(242, 241, 238, 0.10);
   --line-strong: rgba(242, 241, 238, 0.20);

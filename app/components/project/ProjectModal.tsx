@@ -1040,9 +1040,13 @@ const LazyVimeoEmbed = ({
     }
   }, [shouldLoad, isLoaded]);
 
-  // Clean the video ID to ensure it's numeric
+  // Clean the video ID to ensure it's numeric.
+  // `autoplay=0`: the player waits for the viewer to hit play. Scrolling the
+  // modal used to start whichever clip came into view, so several could be
+  // running at once and audio would arrive unannounced. `loop` goes with it --
+  // looping only made sense for something that started on its own.
   const cleanVideoId = videoId.replace(/[^0-9]/g, "");
-  const vimeoUrl = `https://player.vimeo.com/video/${cleanVideoId}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1`;
+  const vimeoUrl = `https://player.vimeo.com/video/${cleanVideoId}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=0`;
 
   // Debug logging for development
   if (process.env.NODE_ENV === "development") {

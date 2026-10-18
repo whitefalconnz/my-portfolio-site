@@ -81,7 +81,7 @@ export default function AboutPage() {
                       read as a load-in animation. */}
                   <Image
                     src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
-                    alt="Decorative illustration"
+                    alt="Illustration by Jakob Backhouse of an artist drawing on a tablet at a desk by a window, surrounded by plants, books and an easel"
                     width={720}
                     height={540}
                     priority

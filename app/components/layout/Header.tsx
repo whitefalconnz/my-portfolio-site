@@ -123,9 +123,9 @@ export default function Header() {
               <Link href="/about" className="block w-full h-full">
                 <Image
                   src="https://media.jakobbackhouse.com/Img_and_Vid/SmokeProfile.webp"
-                  alt="Profile"
-                  width={400}
-                  height={400}
+                  alt="Jakob Backhouse"
+                  width={80}
+                  height={80}
                   className={`w-full h-full object-cover transition-all duration-300 relative z-20 ${
                     profileLoaded ? "opacity-100" : "opacity-0"
                   }`}
@@ -200,9 +200,9 @@ export default function Header() {
               <Link href="/about" className="block w-full h-full">
                 <Image
                   src="https://media.jakobbackhouse.com/Img_and_Vid/SmokeProfile.webp"
-                  alt="Profile"
-                  width={400}
-                  height={400}
+                  alt="Jakob Backhouse"
+                  width={80}
+                  height={80}
                   className={`w-full h-full object-cover transition-all duration-300 relative z-20 ${
                     profileLoaded ? "opacity-100" : "opacity-0"
                   }`}

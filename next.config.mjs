@@ -27,31 +27,17 @@ const nextConfig = {
     // optimizeCss: true,
     optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
-  // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
-      // Optimize bundle splitting. framer-motion gets a higher priority so it
-      // lands in its own cacheable chunk rather than the catch-all vendor one.
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          framer: {
-            test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
-            name: 'framer-motion',
-            chunks: 'all',
-            priority: 10,
-          },
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            priority: 1,
-          },
-        },
-      };
-    }
-    return config;
+  // No custom splitChunks. An override here used to force every node_modules
+  // package into one `vendors` chunk, so /about and /contact downloaded the
+  // home page's grid and modal libraries too. Next's own chunking is
+  // per-route and is the better default.
+
+  // /home was a "coming soon" placeholder that search engines could index as
+  // a thin duplicate of the home page. Send it, and any old links, to /.
+  async redirects() {
+    return [{ source: '/home', destination: '/', permanent: true }];
   },
+
 };
 
 export default nextConfig;

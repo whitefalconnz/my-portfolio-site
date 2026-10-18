@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getImageProps } from "next/image";
 import { Volume2, VolumeX } from "lucide-react";
 
-const POSTER =
-  "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagThumbnailHeroSection.webp";
+// The poster is the first thing painted in this block, but the original is
+// 3198px wide and 160 KB, while the player never displays wider than ~960 CSS
+// px. A <video poster> takes one URL, so ask next/image for it: with a fixed
+// width it returns the 2x candidate (1920px), sharp on retina, served as
+// AVIF/WebP. That's ~49 KB as AVIF.
+const POSTER = getImageProps({
+  src: "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagThumbnailHeroSection.webp",
+  width: 960,
+  height: 540,
+  alt: "",
+}).props.src;
 const SOURCE =
   "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagFullInitial.webm";
 

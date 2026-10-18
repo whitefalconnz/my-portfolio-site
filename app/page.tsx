@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Linkedin } from "lucide-react";
@@ -9,7 +9,6 @@ import "./grid.css";
 import Header from "./components/layout/Header";
 import { AspectRatio, type Project } from "./types/project";
 import "./styles/grid.css";
-import { getImageDimensions } from "./utils/imageUtils";
 import ScrollReveal from "./components/animations/ScrollReveal";
 import Masonry from "react-masonry-css";
 import { getCDNUrl, getOptimizedImageUrl } from "./utils/cdn";
@@ -19,6 +18,7 @@ import {
   logMemoryUsage,
 } from "./utils/memoryManager";
 import FadeInImage from "./components/common/FadeInImage";
+import { useLoading } from "./contexts/LoadingContext";
 import FeatureVideo from "./components/common/FeatureVideo";
 import { motion } from "framer-motion";
 import { useAutoImageTracking } from "./hooks/useAutoMemoryManagement";
@@ -133,13 +133,70 @@ const projects: Project[] = [
   },
 ];
 
+// Intrinsic size of each project's grid media, used only for its aspect ratio.
+// These used to be measured at runtime by downloading every original -- about
+// 7.7 MB of print-resolution images plus video metadata on each home visit --
+// and the grid waited for that to finish. Values match what that measurement
+// produced. If a project's image or video changes, update its entry here.
+const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  Tag: { width: 3543, height: 4961 },
+  Illustrations: { width: 2160, height: 2700 },
+  "Creative Advertising": { width: 9094, height: 5429 },
+  BumbleGanttWithTheWind: { width: 5295, height: 8113 },
+  SmokeAnimation: { width: 1920, height: 1080 },
+  MySafetyTV: { width: 1280, height: 720 },
+  "3D Animation": { width: 3264, height: 1896 },
+  CreativeCoding: { width: 1920, height: 640 },
+  Truckmate: { width: 1920, height: 1080 },
+};
+
+// Structured data for the work on this page. Projects open in a modal rather
+// than at their own URLs, so this is how their titles, descriptions and images
+// reach search engines. Built once from the same data the grid renders.
+const PROJECTS_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "https://jakobbackhouse.com/#work",
+  url: "https://jakobbackhouse.com/",
+  name: "Work — Jakob Backhouse",
+  about: { "@id": "https://jakobbackhouse.com/#person" },
+  isPartOf: { "@id": "https://jakobbackhouse.com/#website" },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: projects.length,
+    itemListElement: projects.map((project, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "CreativeWork",
+        name: project.title,
+        description: project.description,
+        // Video thumbnails aren't images; omit rather than mislabel them.
+        ...(/\.(webm|mp4)$/.test(project.image) ? {} : { image: project.image }),
+        genre: project.categories,
+        creator: { "@id": "https://jakobbackhouse.com/#person" },
+      },
+    })),
+  },
+});
+
+// useLayoutEffect runs before the browser paints; it's a no-op (with a warning)
+// during server rendering, so fall back to useEffect there.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export default function Home() {
+  // True only while the first-load screen is showing. The page renders behind
+  // it (hidden) so its text reaches search engines, but the trailer row and the
+  // grid wait for it to lift, exactly as before: on a phone the server HTML
+  // would otherwise carry the desktop-only trailer, whose poster gets fetched
+  // before React can remove it, and the grid's autoplaying videos would compete
+  // with the loading animation for bandwidth.
+  const { isLoading: firstLoadGate } = useLoading();
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [imageDimensions, setImageDimensions] = useState<
-    Record<string, { width: number; height: number }>
-  >({});
+  const [imageDimensions] = useState(PROJECT_DIMENSIONS);
   const [isLoading, setIsLoading] = useState(true);
   const [contentLoaded, setContentLoaded] = useState(false);
   const [randomizedProjects, setRandomizedProjects] = useState<Project[]>([]);
@@ -147,6 +204,10 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  // Whether isMobile reflects the real viewport yet. The desktop-only trailer
+  // row waits for this, so a phone never inserts it (and never fetches its
+  // poster) on the way to finding out it's a phone.
+  const [viewportKnown, setViewportKnown] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const pageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -214,7 +275,10 @@ export default function Home() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
+  // Runs before paint so the first frame already has the right layout for the
+  // device: previously a phone painted desktop padding and the desktop-only
+  // trailer row first, then animated to the mobile layout a frame later.
+  useIsomorphicLayoutEffect(() => {
     // Detect Safari browser
     const detectSafari = () => {
       const userAgent = navigator.userAgent;
@@ -251,6 +315,7 @@ export default function Home() {
     // Initial checks
     detectSafari();
     detectMobile();
+    setViewportKnown(true);
     checkDarkMode();
 
     // Set up observer for theme changes
@@ -499,62 +564,10 @@ export default function Home() {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
+  // Dimensions are static (PROJECT_DIMENSIONS), so the grid is ready as soon
+  // as the project order is known -- nothing to download first.
   useEffect(() => {
-    let cancelled = false;
-
-    const loadImageDimensions = async () => {
-      let loadedCount = 0;
-      const totalImages = projects.length;
-      const dimensions: Record<string, { width: number; height: number }> = {};
-
-      // Create an array of promises to load all images in parallel
-      const loadPromises = projects.map(async (project) => {
-        try {
-          if (!project.image) {
-            dimensions[project.id] = { width: 400, height: 300 };
-            loadedCount++;
-            return;
-          }
-
-          // Set initial dimensions based on type
-          dimensions[project.id] =
-            project.image.endsWith(".webm") || project.image.endsWith(".mp4")
-              ? { width: 1920, height: 1080 } // Default video dimensions
-              : { width: 400, height: 300 }; // Default image dimensions
-
-          // Try to get actual dimensions
-          const actualDimensions = await getImageDimensions(project.image);
-          dimensions[project.id] = actualDimensions;
-
-          loadedCount++;
-          // If we've loaded enough images to show a decent UI, remove loading state
-          if (loadedCount > totalImages * 0.5) {
-            setIsLoading(false);
-          }
-        } catch (error) {
-          loadedCount++;
-          // Keep using the initial dimensions set above
-        }
-      });
-
-      // Wait for all images to load in parallel
-      await Promise.all(loadPromises);
-
-      if (cancelled) return;
-      setImageDimensions(dimensions);
-      setIsLoading(false);
-    };
-
-    if (contentLoaded) {
-      loadImageDimensions();
-    }
-
-    return () => {
-      cancelled = true;
-    };
-    // `projects` is module-scope static data, so it is intentionally not a dep.
-    // `isLoading` must not be a dep either: this effect sets it, and depending on
-    // it would re-run the effect on every change.
+    if (contentLoaded) setIsLoading(false);
   }, [contentLoaded]);
 
   const getGridSpan = (project: Project) => {
@@ -750,11 +763,15 @@ export default function Home() {
             <h1 className="sr-only">
               Jakob Backhouse — animator and designer, Wellington NZ
             </h1>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: PROJECTS_JSON_LD }}
+            />
 
             {/* Trailer and illustration, side by side. Desktop only -- on mobile
                 the whole row is skipped so a phone lands straight on the work
                 rather than on a video plus an empty gap. */}
-            {!isMobile && (
+            {!firstLoadGate && viewportKnown && !isMobile && (
               <>
                 {/* Same treatment as the "Explore the rest of my stuff below"
                     line further down, so the two read as a pair. */}
@@ -807,7 +824,7 @@ export default function Home() {
                     >
                       <FadeInImage
                         src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
-                        alt="Decorative illustration - Click to visit about page"
+                        alt="About Jakob Backhouse — illustration of an artist drawing at a desk by a window"
                         width={720}
                         height={540}
                         priority={false}
@@ -863,7 +880,7 @@ export default function Home() {
 
           <main className="container mx-auto px-4 py-0 relative z-10">
             {/* Show skeleton during loading, but only if we haven't loaded content yet */}
-            {isLoading && !contentLoaded ? (
+            {firstLoadGate ? null : isLoading && !contentLoaded ? (
               <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b border-line mx-auto"></div>
@@ -954,27 +971,22 @@ export default function Home() {
                                     video.play().catch(() => {});
                                   }}
                                 >
-                                  {/* Prefer MP4 for Safari compatibility */}
-                                  {project.image.endsWith(".mp4") ? (
-                                    <source
-                                      src={project.image}
-                                      type="video/mp4"
-                                    />
-                                  ) : (
-                                    <>
-                                      <source
-                                        src={project.image.replace(
-                                          ".webm",
-                                          ".mp4"
-                                        )}
-                                        type="video/mp4"
-                                      />
-                                      <source
-                                        src={project.image}
-                                        type="video/webm"
-                                      />
-                                    </>
-                                  )}
+                                  {/* One source, the file that exists. A derived
+                                      .mp4 used to be listed first "for Safari", but
+                                      no .mp4 versions were ever uploaded (all 404),
+                                      and Safari gets the poster-image branch above
+                                      instead -- so every other browser paid a
+                                      failed request before falling back to WebM.
+                                      If MP4 encodes are uploaded later, list them
+                                      ahead of the WebM again. */}
+                                  <source
+                                    src={project.image}
+                                    type={
+                                      project.image.endsWith(".mp4")
+                                        ? "video/mp4"
+                                        : "video/webm"
+                                    }
+                                  />
                                 </video>
                               ) : (project.image.endsWith(".webm") ||
                                   project.image.endsWith(".mp4")) &&

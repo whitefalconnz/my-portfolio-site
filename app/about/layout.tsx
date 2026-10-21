@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     url: "/about",
     siteName: "Jakob Backhouse",
     locale: "en_NZ",
-    title: "About — Jakob Backhouse",
+    title: "About | Jakob Backhouse",
     description: DESCRIPTION,
     firstName: "Jakob",
     lastName: "Backhouse",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About — Jakob Backhouse",
+    title: "About | Jakob Backhouse",
     description: DESCRIPTION,
     images: [SOCIAL_IMAGE.url],
   },

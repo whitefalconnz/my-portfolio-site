@@ -18,10 +18,10 @@ export const SOCIAL_IMAGE = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Jakob Backhouse — Designer & Animator, Wellington NZ",
+    default: "Jakob Backhouse | Designer & Animator, Wellington NZ",
     // Pages set a short title; this frames it so every tab and search result
     // is distinct but still carries the name.
-    template: "%s — Jakob Backhouse",
+    template: "%s | Jakob Backhouse",
   },
   description: DESCRIPTION,
   applicationName: "Jakob Backhouse",
@@ -62,13 +62,13 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Jakob Backhouse",
     locale: "en_NZ",
-    title: "Jakob Backhouse — Designer & Animator",
+    title: "Jakob Backhouse | Designer & Animator",
     description: DESCRIPTION,
     images: [SOCIAL_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jakob Backhouse — Designer & Animator",
+    title: "Jakob Backhouse | Designer & Animator",
     description: DESCRIPTION,
     images: [SOCIAL_IMAGE.url],
   },

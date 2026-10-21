@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
@@ -11,6 +12,17 @@ import { useLoading } from "../../contexts/LoadingContext";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
+
+  // The outline marks the page you're on. It used to sit permanently on WORK,
+  // which testers read as "you are here" on every page. Now it only appears on
+  // ABOUT or CONTACT while you're on that page, and never on WORK. Every link
+  // carries the same padding and a transparent border, so nothing shifts
+  // sideways when the outline moves.
+  const navLinkClass = (href: string) =>
+    `px-5 py-3 border font-satoshi text-dark dark:text-light transition-colors duration-300 ${
+      href !== "/" && pathname === href ? "border-line" : "border-transparent"
+    }`;
   const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -44,7 +56,7 @@ export default function Header() {
         <div className="hidden lg:flex items-center justify-between">
           {/* Main Navigation */}
           <motion.nav
-            className="flex items-center space-x-8 w-1/3"
+            className="flex items-center space-x-3 w-1/3"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
             transition={{
@@ -55,25 +67,24 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="retro-box px-5 py-3 font-satoshi text-lg text-dark dark:text-light hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-300"
+              className={`${navLinkClass("/")} text-lg`}
+              aria-current={pathname === "/" ? "page" : undefined}
             >
               WORK
             </Link>
             <Link
               href="/about"
-              className="font-satoshi text-dark dark:text-light hover:text-primary dark:hover:text-primary-light transition-all duration-300 text-base relative group"
+              className={`${navLinkClass("/about")} text-base`}
+              aria-current={pathname === "/about" ? "page" : undefined}
             >
-              <span className="relative">
-                ABOUT
-              </span>
+              ABOUT
             </Link>
             <Link
               href="/contact"
-              className="font-satoshi text-dark dark:text-light hover:text-primary dark:hover:text-primary-light transition-all duration-300 text-base relative group"
+              className={`${navLinkClass("/contact")} text-base`}
+              aria-current={pathname === "/contact" ? "page" : undefined}
             >
-              <span className="relative">
-                CONTACT
-              </span>
+              CONTACT
             </Link>
           </motion.nav>
 
@@ -90,7 +101,7 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="font-display text-4xl lg:text-5xl font-bold text-primary dark:text-primary-light whitespace-nowrap hover:text-accent transition-colors"
+              className="font-display text-4xl lg:text-5xl font-bold text-ink whitespace-nowrap hover:text-accent transition-colors"
             >
               Jakob Backhouse
             </Link>
@@ -182,7 +193,7 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="font-display text-3xl md:text-4xl text-primary dark:text-primary-light hover:text-primary-hover dark:hover:text-primary-light/80 transition-colors"
+              className="font-display text-3xl md:text-4xl text-ink hover:text-accent transition-colors"
             >
               <span className="font-medium tracking-tight">
                 Jakob Backhouse

@@ -158,7 +158,7 @@ const PROJECTS_JSON_LD = JSON.stringify({
   "@type": "CollectionPage",
   "@id": "https://jakobbackhouse.com/#work",
   url: "https://jakobbackhouse.com/",
-  name: "Work — Jakob Backhouse",
+  name: "Work | Jakob Backhouse",
   about: { "@id": "https://jakobbackhouse.com/#person" },
   isPartOf: { "@id": "https://jakobbackhouse.com/#website" },
   mainEntity: {

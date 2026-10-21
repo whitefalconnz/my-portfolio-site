@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Jakob Backhouse — Designer & Animator",
+    name: "Jakob Backhouse | Designer & Animator",
     short_name: "Jakob Backhouse",
     description:
       "Portfolio of Jakob Backhouse, a Wellington-based designer and animator.",

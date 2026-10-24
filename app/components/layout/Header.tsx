@@ -15,13 +15,12 @@ export default function Header() {
   const pathname = usePathname();
 
   // The outline marks the page you're on. It used to sit permanently on WORK,
-  // which testers read as "you are here" on every page. Now it only appears on
-  // ABOUT or CONTACT while you're on that page, and never on WORK. Every link
-  // carries the same padding and a transparent border, so nothing shifts
-  // sideways when the outline moves.
+  // which testers read as "you are here" on every page; now it follows the
+  // current page. Every link carries the same padding and a transparent border,
+  // so nothing shifts sideways when the outline moves.
   const navLinkClass = (href: string) =>
     `px-5 py-3 border font-satoshi text-dark dark:text-light transition-colors duration-300 ${
-      href !== "/" && pathname === href ? "border-line" : "border-transparent"
+      pathname === href ? "border-line" : "border-transparent"
     }`;
   const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

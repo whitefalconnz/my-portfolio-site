@@ -138,6 +138,9 @@ const projects: Project[] = [
 // 7.7 MB of print-resolution images plus video metadata on each home visit --
 // and the grid waited for that to finish. Values match what that measurement
 // produced. If a project's image or video changes, update its entry here.
+// Always shown first, in this order, ahead of the shuffled projects.
+const PINNED_PROJECT_IDS = ["Tag", "CreativeCoding"];
+
 const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   Tag: { width: 3543, height: 4961 },
   Illustrations: { width: 2160, height: 2700 },
@@ -523,13 +526,24 @@ export default function Home() {
     return shuffled;
   };
 
+  // Pinned projects keep their fixed order at the front; the rest are shuffled
+  const orderProjects = (array: Project[]) => {
+    const pinned = PINNED_PROJECT_IDS.flatMap((id) =>
+      array.filter((project) => project.id === id)
+    );
+    const rest = array.filter(
+      (project) => !PINNED_PROJECT_IDS.includes(project.id)
+    );
+    return [...pinned, ...shuffleArray(rest)];
+  };
+
   useEffect(() => {
     // Immediately set randomizedProjects from localStorage if available
     // This allows the UI to render with cached project order while images load
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.0"; // Increment this when making changes to project data
+    const dataVersion = "1.1"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -541,7 +555,7 @@ export default function Home() {
       setContentLoaded(true);
     } else {
       // Clear existing data and store new version
-      const newRandomized = shuffleArray(projects);
+      const newRandomized = orderProjects(projects);
       setRandomizedProjects(newRandomized);
       localStorage.setItem("projectOrder", JSON.stringify(newRandomized));
       localStorage.setItem("projectDataVersion", dataVersion);

@@ -38,6 +38,19 @@ const nextConfig = {
     return [{ source: '/home', destination: '/', permanent: true }];
   },
 
+  // Files in public/videos carry their version in the name, so a new export
+  // gets a new URL and browsers never need to re-check the old one.
+  async headers() {
+    return [
+      {
+        source: '/videos/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+    ];
+  },
+
 };
 
 export default nextConfig;

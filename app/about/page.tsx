@@ -142,17 +142,8 @@ export default function AboutPage() {
               </h1>
               <div className="space-y-3 font-satoshi">
                 <p className="text-sm leading-relaxed text-dark/70 dark:text-light/70">
-                  My name is Jakob
-                  <span className="text-primary/90 dark:text-primary-light/90"></span>
-                  , I am a Wellington-based designer and animator based in Mount
-                  Victoria near the beach (freezing ocean dives are the best way
-                  to refresh my mind).
-                </p>
-                <p className="text-sm leading-relaxed text-secondary/60 dark:text-secondary-light/60">
-                  Artistically, I am inspired by animation masters like Satoshi
-                  Kon and Masaaki Yuasa but in design I'm driven to blend my
-                  artistic vision with human centred design, creating work
-                  that's both distinctive and empathetic.
+                  My name is Jakob, I am a Wellington-based designer and animator
+                  based in Mount Victoria.
                 </p>
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
                   <a

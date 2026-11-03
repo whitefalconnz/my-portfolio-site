@@ -41,84 +41,123 @@ interface Campaign {
 // Move campaign definitions outside component to prevent recreation on every render
 // Optimize descriptions to be shorter for better memory usage
 
-const talesFromTheSunCampaign: Campaign = {
-  id: "tales-from-sun",
-  title: "Tales from the Sun",
+const designCampaignsCampaign: Campaign = {
+  id: "DesignCampaigns",
+  title: "Design Campaigns",
   sections: [
     {
-      title: "Storyboard",
+      title: "Tales from the Sun: Storyboard",
       content: [
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/Storyboard_TalesFromTheSun.webp",
-          title: "Tales from the Sun Storyboard",
+          title: "Tales from the Sun: Storyboard",
           description:
-            "A horror-inspired video ad for sun safety targeting young males. Uses 80s 'Tales From the Crypt' and 2000s scary movie aesthetics.",
+            "A small team and I were tasked with creating a campaign to spread awareness about sun safety in New Zealand. We developed a campaign that used cheesy and grotesque horror tropes to convince people to be more sun safe. A horror-inspired video ad for sun safety targeting young males. Uses 80s 'Tales From the Crypt' and 2000s scary movie aesthetics.",
         },
       ],
     },
     {
-      title: "Campaign Strategy",
+      title: "Tales from the Sun: Campaign Strategy",
       content: [
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/TheIssueTalesFromTheSun.webp",
-          title: "The Issue",
+          title: "Tales from the Sun: The Issue",
           description:
             "Young males in NZ have a 'she'll be right' attitude about sun protection despite high UV levels.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/InsightTalesFromTheSun.webp",
-          title: "Campaign Insight",
+          title: "Tales from the Sun: Campaign Insight",
           description:
             "Young males care about being attractive to the opposite gender. The campaign links sun damage to being undesirable.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/SingleMindedMessageTalesFromTheSun.webp",
-          title: "Single Minded Message",
+          title: "Tales from the Sun: Single Minded Message",
           description: "Don't be a crayfish, wear sunblock.",
         },
       ],
     },
-  ],
-};
-
-const bumbleGanttCampaign: Campaign = {
-  id: "bumble-gantt",
-  title: "Bumble ICK Campaign",
-  sections: [
     {
-      title: "Storyboards",
+      title: "Bumble ICK: Storyboards",
       content: [
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/Storyboard_BumbleICK%20(2).webp",
-          title: "BumbleICK Storyboard",
+          title: "Bumble ICK: Storyboard",
           description:
             "A mock Bumble collaboration addressing Gen Z's use of 'ICKs' as excuses for human imperfections. Promotes Bumble as an open, safe platform for vulnerability.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/GenZDevelopsICKSSlide.webp",
-          title: "Insight",
+          title: "Bumble ICK: Insight",
           description:
             "Gen Z develops ICKs as excuses for human imperfections. The campaign promotes Bumble as a safe space for vulnerability.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/KickTheIckSlide.webp",
-          title: "ICK Billboard",
+          title: "Bumble ICK: Billboard",
           description:
             "Provocative billboard design for the BumbleGantt campaign targeting a Gen Z audience.",
         },
         {
           image:
             "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/CatchingIcksIsBadForYou.webp",
-          title: "Single Minded Message",
+          title: "Bumble ICK: Single Minded Message",
           description:
             "Catching an ICK is bad for you. Promotes a compassionate, inclusive dating culture.",
+        },
+      ],
+    },
+    {
+      title: "Truckmate: Main Explainer Video",
+      content: [
+        {
+          image: "vimeo:1105289689",
+          title: "Truckmate: Explainer Video",
+          description:
+            "Within a month, I went through a design sprint using the human-centred design process: observing and empathising with my environment, identifying a problem, and then iteratively finding a design solution. In my local area, I noticed there were truck communication and congestion issues, often with three pizza stores and many other fast food outlets in very close proximity to each other in a confusing area to access. After interviewing truck drivers and conducting market research, I found that most truck drivers used Google Maps, which does not provide the essential information they need. The final explainer video for Truckmate. Primarily shown on YouTube but also designed for other social media platforms.",
+        },
+      ],
+    },
+    {
+      title: "Truckmate: Storyboard & Animatic",
+      content: [
+        {
+          image: "vimeo:1104663506",
+          title: "Truckmate: Project Animatic",
+          description:
+            "Storyboard animatic showing the narrative flow and timing for the explainer video. During the creation of this, I focused on the key message I wanted to communicate and how to do this efficiently in 30 seconds.",
+        },
+      ],
+    },
+    {
+      title: "Truckmate: Logo Animation",
+      content: [
+        {
+          image:
+            "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
+          title: "Truckmate: Animated Logo",
+          description:
+            "Dynamic logo animation created for the Truckmate brand identity. To be shown at the end of video ads. Potentially even as a moving logo on a website.",
+        },
+      ],
+    },
+    {
+      title: "Truckmate: Promotional Materials",
+      content: [
+        {
+          image:
+            "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMD1R6_Mockup.webp",
+          title: "Truckmate: Promotional Poster",
+          description:
+            "The idea behind this poster was that it would strike a chord with truckers when they are out late at night and don't know where they are going because their app doesn't give them truck-specific information.",
         },
       ],
     },
@@ -599,59 +638,6 @@ const tagCampaign: Campaign = {
           title: "Backhouse Studios",
           description:
             "A studio logo design that I created for my own studio. I wanted it to feel authentic to myself.",
-        },
-      ],
-    },
-  ],
-};
-
-const truckmateCampaign: Campaign = {
-  id: "Truckmate",
-  title: "Truckmate",
-  sections: [
-    {
-      title: "Main Explainer Video",
-      content: [
-        {
-          image: "vimeo:1105289689",
-          title: "Truckmate Explainer Video",
-          description:
-            "The final explainer video for Truckmate. Primarily shown on YouTube but also designed for other social media platforms.",
-        },
-      ],
-    },
-    {
-      title: "Storyboard & Animatic",
-      content: [
-        {
-          image: "vimeo:1104663506",
-          title: "Project Animatic",
-          description:
-            "Storyboard animatic showing the narrative flow and timing for the explainer video. During the creation of this, I focused on the key message I wanted to communicate and how to do this efficiently in 30 seconds.",
-        },
-      ],
-    },
-    {
-      title: "Logo Animation",
-      content: [
-        {
-          image:
-            "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
-          title: "Animated Logo",
-          description:
-            "Dynamic logo animation created for the Truckmate brand identity. To be shown at the end of video ads. Potentially even as a moving logo on a website.",
-        },
-      ],
-    },
-    {
-      title: "Promotional Materials",
-      content: [
-        {
-          image:
-            "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMD1R6_Mockup.webp",
-          title: "Promotional Poster",
-          description:
-            "The idea behind this poster was that it would strike a chord with truckers when they are out late at night and don't know where they are going because their app doesn't give them truck-specific information.",
         },
       ],
     },
@@ -1825,33 +1811,17 @@ export default function ProjectModal({
   );
 
   const renderContent = () => {
-    if (selectedProject === "Creative Advertising") {
+    if (selectedProject === "DesignCampaigns") {
       return (
         <div key={selectedProject} className="space-y-0">
-          {talesFromTheSunCampaign.sections.map((section, idx) => (
+          {designCampaignsCampaign.sections.map((section, idx) => (
             <div key={idx}>
               {"content" in section
                 ? renderContentSection(section)
                 : renderPDFSection(
                     section.pdfUrl,
                     section.title,
-                    talesFromTheSunCampaign.title
-                  )}
-            </div>
-          ))}
-        </div>
-      );
-    } else if (selectedProject === "BumbleGanttWithTheWind") {
-      return (
-        <div key={selectedProject} className="space-y-0">
-          {bumbleGanttCampaign.sections.map((section, idx) => (
-            <div key={idx}>
-              {"content" in section
-                ? renderContentSection(section)
-                : renderPDFSection(
-                    section.pdfUrl,
-                    section.title,
-                    bumbleGanttCampaign.title
+                    designCampaignsCampaign.title
                   )}
             </div>
           ))}
@@ -1916,22 +1886,6 @@ export default function ProjectModal({
                     section.pdfUrl,
                     section.title,
                     tagCampaign.title
-                  )}
-            </div>
-          ))}
-        </div>
-      );
-    } else if (selectedProject === "Truckmate") {
-      return (
-        <div key={selectedProject} className="space-y-0">
-          {truckmateCampaign.sections.map((section, idx) => (
-            <div key={idx}>
-              {"content" in section
-                ? renderContentSection(section)
-                : renderPDFSection(
-                    section.pdfUrl,
-                    section.title,
-                    truckmateCampaign.title
                   )}
             </div>
           ))}

@@ -20,6 +20,7 @@ import {
 import FadeInImage from "./components/common/FadeInImage";
 import { useLoading } from "./contexts/LoadingContext";
 import FeatureVideo from "./components/common/FeatureVideo";
+import HighlightLoop from "./components/common/HighlightLoop";
 import { motion } from "framer-motion";
 import { useAutoImageTracking } from "./hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "./components/common/MemoryStatsDebugger";
@@ -54,26 +55,15 @@ const projects: Project[] = [
   },
   // Creative Advertising Projects
   {
-    id: "Creative Advertising",
-    title: "Tales from the Sun",
+    id: "DesignCampaigns",
+    title: "Design Campaigns",
     image:
       "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/Storyboard_TalesFromTheSun.webp",
     aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
-      "A small team and I were tasked with creating a campaign to spread awareness about sun safety in New Zealand. We developed a campaign that used cheesy and grotesque horror tropes to convince people to be more sun safe.",
-    categories: ["Creative Advertising"],
-  },
-  {
-    id: "BumbleGanttWithTheWind",
-    title: "Bumble ICK Campaign",
-    image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/GanttWithTheWind/Storyboard_BumbleICK%20(2).webp",
-    aspectRatio: AspectRatio.PORTRAIT,
-    bgColor: "bg-[#5C3E3C]",
-    description:
-      "A mock collaboration with Bumble addressing how Gen Z develop 'ICKs' as an excuse for human imperfections, promoting the app as a safe platform for vulnerability.",
-    categories: ["Creative Advertising"],
+      "Three campaigns in one place: Tales from the Sun, Bumble ICK and Truckmate.",
+    categories: ["Animation", "Creative Advertising"],
   },
   {
     id: "SmokeAnimation",
@@ -120,17 +110,6 @@ const projects: Project[] = [
       "How can I create an image manipulator in p5.js that can turn any photo into a painting? What type of images and style should I use to convey the feeling of going for bush walks when I was younger? To create this effect, I thought about how paintings are made and what makes them look like paintings. The primary reason is the effect of using a brush, so the focus of the project was creating the effect of brush strokes in the slightly random but logical way that a painter would create them.",
     categories: ["Illustration"],
   },
-  {
-    id: "Truckmate",
-    title: "Truckmate",
-    image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/Jakob_Backhouse_BMDR16_Animated-Logo.webm",
-    aspectRatio: AspectRatio.LANDSCAPE,
-    bgColor: "bg-[#2C4B7A]",
-    description:
-      "Within a month, I went through a design sprint using the human-centred design process: observing and empathising with my environment, identifying a problem, and then iteratively finding a design solution. In my local area, I noticed there were truck communication and congestion issues, often with three pizza stores and many other fast food outlets in very close proximity to each other in a confusing area to access. After interviewing truck drivers and conducting market research, I found that most truck drivers used Google Maps, which does not provide the essential information they need.",
-    categories: ["Animation", "Creative Advertising"],
-  },
 ];
 
 // Intrinsic size of each project's grid media, used only for its aspect ratio.
@@ -144,13 +123,11 @@ const PINNED_PROJECT_IDS = ["Tag", "CreativeCoding"];
 const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   Tag: { width: 3543, height: 4961 },
   Illustrations: { width: 2160, height: 2700 },
-  "Creative Advertising": { width: 9094, height: 5429 },
-  BumbleGanttWithTheWind: { width: 5295, height: 8113 },
+  DesignCampaigns: { width: 9094, height: 5429 },
   SmokeAnimation: { width: 1920, height: 1080 },
   MySafetyTV: { width: 1280, height: 720 },
   "3D Animation": { width: 3264, height: 1896 },
   CreativeCoding: { width: 1920, height: 640 },
-  Truckmate: { width: 1920, height: 1080 },
 };
 
 // Structured data for the work on this page. Projects open in a modal rather
@@ -543,7 +520,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.1"; // Increment this when making changes to project data
+    const dataVersion = "1.2"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -665,8 +642,6 @@ export default function Home() {
         "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp", // Use illustration as fallback
       MySafetyTV:
         "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail(Safari).webp", // Use Tag poster as fallback
-      Truckmate:
-        "https://media.jakobbackhouse.com/Img_and_Vid/TruckMate/TruckMateThumbnail(Safari).webp", // Use storyboard as fallback
     };
 
     // Return mapped poster or use a reliable default
@@ -796,7 +771,7 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
-                <div className="relative z-10 showreel-container lg:flex-1">
+                <div className="relative z-10 showreel-container lg:flex-[11] lg:min-w-0">
                   <div>
                     <div className="mb-8 lg:mb-0">
                       <div className="max-w-3xl mx-auto lg:max-w-none">
@@ -816,8 +791,10 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Illustration - Right side on desktop, links through to /about */}
-                <div className="relative z-10 lg:flex-1 lg:max-w-lg">
+                {/* Right side on desktop: the duck loop above the illustration,
+                    which links through to /about */}
+                <div className="relative z-10 lg:flex-[4] lg:min-w-0 space-y-4">
+                  <HighlightLoop paused={selectedProject !== null} />
                   <div>
                     <Link
                       href="/about"

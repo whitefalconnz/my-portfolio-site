@@ -50,11 +50,11 @@ export default function Header() {
         ease: isLoading ? "easeIn" : "easeOut",
       }}
     >
-      {/* Clipped sideways so the nav's 30px slide-in can't add a brief horizontal
-          scrollbar. The mobile menu drops below this box, so height stays open. */}
-      <div className="container mx-auto px-4 py-6 relative overflow-x-clip">
+      {/* Both rows clip sideways so their slide-in can't add a brief horizontal
+          scrollbar. Don't clip this container: the mobile menu hangs below it. */}
+      <div className="container mx-auto px-4 py-6 relative">
         {/* Desktop Layout */}
-        <div className="hidden lg:flex items-center justify-between">
+        <div className="hidden lg:flex items-center justify-between overflow-x-clip">
           {/* Main Navigation */}
           <motion.nav
             className="flex items-center space-x-3 w-1/3"
@@ -168,7 +168,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Layout */}
-        <div className="lg:hidden flex items-center justify-between">
+        <div className="lg:hidden flex items-center justify-between overflow-x-clip">
           {/* Hamburger Button */}
           <motion.button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

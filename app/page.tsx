@@ -34,8 +34,8 @@ const allProjects: Project[] = [
   {
     id: "Tag",
     title: "Tag",
-    image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagThumbnailHeroSection.webp",
+    // A frame from the trailer, so the tile doesn't repeat the player's poster.
+    image: "/videos/tag-thumbnail-v01.webp",
     aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
@@ -131,7 +131,6 @@ const projects = allProjects.filter(
 const PINNED_PROJECT_IDS = ["Tag", "CreativeCoding"];
 
 const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
-  // A 16:9 frame, not the image's own size: the 3198x1858 source is cropped to fit.
   Tag: { width: 1920, height: 1080 },
   Illustrations: { width: 2160, height: 2700 },
   DesignCampaigns: { width: 1600, height: 1062 },
@@ -142,12 +141,24 @@ const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   CreativeCoding: { width: 1920, height: 1080 },
 };
 
-// Width each image is actually drawn at, for tiles the default sizes undersell.
-// The 3:1 Creative Coding image is cropped into a 16:9 tile, so it's drawn about
-// 1.7x the tile's width. Requesting a tile-width file left it stretched and blurry.
-const PROJECT_IMAGE_SIZES: Record<string, string> = {
-  CreativeCoding: "(max-width: 768px) 150vw, (max-width: 1024px) 77vw, 51vw",
-  "3D Animation": "(max-width: 768px) 90vw, (max-width: 1024px) 46vw, 31vw",
+// Tells the browser how wide a grid image is drawn, so it requests a file that
+// matches rather than stretching a smaller one. The widths follow the grid: one
+// column up to 768px, two up to 1024px, then three, inside Tailwind's container
+// steps. Update them if the columns or gaps change.
+const gridImageSizes = (scale = 1) =>
+  [
+    `(max-width: 768px) ${Math.round(90 * scale)}vw`,
+    `(max-width: 1023px) ${Math.round(345 * scale)}px`,
+    `(max-width: 1024px) ${Math.round(465 * scale)}px`,
+    `(max-width: 1279px) ${Math.round(300 * scale)}px`,
+    `(max-width: 1535px) ${Math.round(385 * scale)}px`,
+    `${Math.round(470 * scale)}px`,
+  ].join(", ");
+
+// Images drawn wider than their tile. The 3:1 Creative Coding image is cropped
+// into a 16:9 tile, so it's drawn about 1.7x the tile's width.
+const PROJECT_IMAGE_SCALE: Record<string, number> = {
+  CreativeCoding: 1.7,
 };
 
 // Tiles that need more than the default compression. Pigboy's smooth wall and
@@ -516,10 +527,15 @@ export default function Home() {
   const toggleCategory = handleToggleCategory;
 
 
-  const getStoredProjects = () => {
-    if (typeof window === "undefined") return [];
-    const stored = localStorage.getItem("projectOrder");
-    return stored ? JSON.parse(stored) : [];
+  // Browsers remember only the shuffled order of project ids, not the projects
+  // themselves, so a changed image or description reaches everyone straight away.
+  const getStoredOrder = (): string[] => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("projectOrderIds") ?? "[]");
+      return Array.isArray(stored) ? stored : [];
+    } catch {
+      return [];
+    }
   };
 
   const shuffleArray = (array: Project[]) => {
@@ -543,27 +559,35 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Immediately set randomizedProjects from localStorage if available
-    // This allows the UI to render with cached project order while images load
-    const storedProjects = getStoredProjects();
-
-    // Add version check to force refresh when project data changes
-    const dataVersion = "1.8"; // Increment this when making changes to project data
-    const storedVersion = localStorage.getItem("projectDataVersion");
+    // Reuse the visitor's saved order while it still fits the current project
+    // list: every project present, none gone, and pinned projects still in front.
+    const storedOrder = getStoredOrder();
+    const storedProjects = storedOrder.flatMap((id) =>
+      projects.filter((project) => project.id === id)
+    );
 
     if (
-      storedProjects.length === projects.length &&
-      storedVersion === dataVersion
+      storedOrder.length === projects.length &&
+      new Set(storedProjects).size === projects.length &&
+      PINNED_PROJECT_IDS.every((id, index) => storedOrder[index] === id)
     ) {
       setRandomizedProjects(storedProjects);
       // Show content immediately if we have stored projects
       setContentLoaded(true);
     } else {
-      // Clear existing data and store new version
       const newRandomized = orderProjects(projects);
       setRandomizedProjects(newRandomized);
-      localStorage.setItem("projectOrder", JSON.stringify(newRandomized));
-      localStorage.setItem("projectDataVersion", dataVersion);
+      try {
+        localStorage.setItem(
+          "projectOrderIds",
+          JSON.stringify(newRandomized.map((project) => project.id))
+        );
+        // Older visits saved the whole project list under these keys.
+        localStorage.removeItem("projectOrder");
+        localStorage.removeItem("projectDataVersion");
+      } catch {
+        // Storage can be unavailable; the order just won't persist.
+      }
       // Show content after a short delay for first-time visitors
       setTimeout(() => setContentLoaded(true), 300);
     }
@@ -1026,10 +1050,7 @@ export default function Home() {
                                       ? "opacity-0"
                                       : "opacity-100"
                                   }`}
-                                  sizes="(max-width: 640px) 90vw, 
-                                       (max-width: 768px) 45vw, 
-                                       (max-width: 1024px) 30vw,
-                                       20vw"
+                                  sizes={gridImageSizes()}
                                   placeholder="blur"
                                   blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
                                     `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`
@@ -1064,10 +1085,9 @@ export default function Home() {
                                       ? "opacity-0"
                                       : "opacity-100"
                                   }`}
-                                  sizes={
-                                    PROJECT_IMAGE_SIZES[project.id] ??
-                                    "(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, 20vw"
-                                  }
+                                  sizes={gridImageSizes(
+                                    PROJECT_IMAGE_SCALE[project.id]
+                                  )}
                                   placeholder="blur"
                                   blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
                                     `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`

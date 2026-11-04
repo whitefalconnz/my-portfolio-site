@@ -34,7 +34,7 @@ const projects: Project[] = [
     id: "Tag",
     title: "Tag",
     image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/ColourScriptDraft1.webp",
+      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagFullInitial.webm",
     aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
@@ -121,7 +121,7 @@ const projects: Project[] = [
 const PINNED_PROJECT_IDS = ["Tag", "CreativeCoding"];
 
 const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
-  Tag: { width: 6911, height: 4745 },
+  Tag: { width: 1920, height: 1080 },
   Illustrations: { width: 2160, height: 2700 },
   DesignCampaigns: { width: 9094, height: 5429 },
   SmokeAnimation: { width: 1920, height: 1080 },
@@ -521,7 +521,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.2"; // Increment this when making changes to project data
+    const dataVersion = "1.3"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -639,6 +639,7 @@ export default function Home() {
   const getVideoPosterImage = (project: Project) => {
     // Map each project to a reliable static image
     const projectPosterMap: Record<string, string> = {
+      Tag: "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagThumbnailHeroSection.webp",
       SmokeAnimation:
         "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp", // Use illustration as fallback
       MySafetyTV:

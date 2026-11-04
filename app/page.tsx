@@ -33,8 +33,7 @@ const projects: Project[] = [
   {
     id: "Tag",
     title: "Tag",
-    image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagFullInitial.webm",
+    image: "/videos/tag-trailer-first-frame-v01.webp",
     aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
@@ -153,7 +152,9 @@ const PROJECTS_JSON_LD = JSON.stringify({
         name: project.title,
         description: project.description,
         // Video thumbnails aren't images; omit rather than mislabel them.
-        ...(/\.(webm|mp4)$/.test(project.image) ? {} : { image: project.image }),
+        ...(/\.(webm|mp4)$/.test(project.image)
+          ? {}
+          : { image: new URL(project.image, "https://jakobbackhouse.com/").href }),
         genre: project.categories,
         creator: { "@id": "https://jakobbackhouse.com/#person" },
       },
@@ -521,7 +522,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.3"; // Increment this when making changes to project data
+    const dataVersion = "1.4"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -639,7 +640,6 @@ export default function Home() {
   const getVideoPosterImage = (project: Project) => {
     // Map each project to a reliable static image
     const projectPosterMap: Record<string, string> = {
-      Tag: "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagThumbnailHeroSection.webp",
       SmokeAnimation:
         "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp", // Use illustration as fallback
       MySafetyTV:

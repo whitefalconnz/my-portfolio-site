@@ -93,8 +93,8 @@ const allProjects: Project[] = [
     id: "3D Animation",
     title: "3D Animation",
     image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/PigBoyPortfolio/SpiritzThumbnail-min.jpg",
-    aspectRatio: AspectRatio.LANDSCAPE,
+      "https://media.jakobbackhouse.com/Img_and_Vid/PigBoyPortfolio/Pigboy.webp",
+    aspectRatio: AspectRatio.SQUARE,
     bgColor: "bg-[#2C4B7A]",
     description:
       "A selection of 3D work created in Blender, Maya and Unreal Engine.",
@@ -137,16 +137,23 @@ const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   DesignCampaigns: { width: 1600, height: 1062 },
   SmokeAnimation: { width: 1920, height: 1080 },
   MySafetyTV: { width: 1280, height: 720 },
-  "3D Animation": { width: 3264, height: 1896 },
+  "3D Animation": { width: 1080, height: 1080 },
   // A 16:9 frame, not the image's own size: the 1920x640 source is cropped to fit.
   CreativeCoding: { width: 1920, height: 1080 },
 };
 
-// Width each image is actually drawn at, where that's wider than its tile. The
-// 3:1 Creative Coding image is cropped into a 16:9 tile, so it's drawn about 1.7x
-// the tile's width. Requesting a tile-width file left it stretched and blurry.
+// Width each image is actually drawn at, for tiles the default sizes undersell.
+// The 3:1 Creative Coding image is cropped into a 16:9 tile, so it's drawn about
+// 1.7x the tile's width. Requesting a tile-width file left it stretched and blurry.
 const PROJECT_IMAGE_SIZES: Record<string, string> = {
   CreativeCoding: "(max-width: 768px) 150vw, (max-width: 1024px) 77vw, 51vw",
+  "3D Animation": "(max-width: 768px) 90vw, (max-width: 1024px) 46vw, 31vw",
+};
+
+// Tiles that need more than the default compression. Pigboy's smooth wall and
+// fine render grain smear at 50, and 75 is still only about 18 KB at full size.
+const PROJECT_IMAGE_QUALITY: Record<string, number> = {
+  "3D Animation": 75,
 };
 
 // Structured data for the work on this page. Projects open in a modal rather
@@ -541,7 +548,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.7"; // Increment this when making changes to project data
+    const dataVersion = "1.8"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -1046,7 +1053,10 @@ export default function Home() {
                                   src={project.image}
                                   alt={project.title}
                                   fill
-                                  quality={index < 6 ? 50 : 35} // Reduced quality for better memory usage
+                                  quality={
+                                    PROJECT_IMAGE_QUALITY[project.id] ??
+                                    (index < 6 ? 50 : 35) // Reduced quality for better memory usage
+                                  }
                                   priority={index < 3}
                                   loading={index < 6 ? "eager" : "lazy"}
                                   className={`object-cover w-full h-full transition-all duration-500 ${

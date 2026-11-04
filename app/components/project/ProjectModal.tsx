@@ -1293,6 +1293,9 @@ export default function ProjectModal({
     if (typeof window === "undefined") return false;
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   });
+  // Design Campaigns keeps its description for search engines (see the page's
+  // structured data) but doesn't show it here.
+  const showOverview = selectedProject !== "DesignCampaigns";
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const [showOverviewMore, setShowOverviewMore] = useState(false);
@@ -2105,9 +2108,11 @@ export default function ProjectModal({
             <h2 className="text-2xl lg:text-3xl font-bold text-accent mb-3 leading-tight">
               {title}
             </h2>
-            <p className="text-base text-ink/90 mb-6 leading-relaxed">
-              {description}
-            </p>
+            {showOverview && (
+              <p className="text-base text-ink/90 mb-6 leading-relaxed">
+                {description}
+              </p>
+            )}
 
             <div className="mt-4 border-t border-black/10 dark:border-line/10 pt-4 min-h-[100px] relative">
               {activeItem &&
@@ -2137,22 +2142,24 @@ export default function ProjectModal({
       >
         <div className="text-left">
           <h2 className="text-lg font-bold text-accent mb-2">{title}</h2>
-          <div className="relative">
-            <p
-              ref={overviewTextRef}
-              className={`text-sm text-ink/90 leading-relaxed transition-all duration-300 ${isOverviewExpanded ? "" : "line-clamp-2"}`}
-            >
-              {description}
-            </p>
-            {showOverviewMore && (
-              <button
-                onClick={() => setIsOverviewExpanded(!isOverviewExpanded)}
-                className="text-xs text-ink/70 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
+          {showOverview && (
+            <div className="relative">
+              <p
+                ref={overviewTextRef}
+                className={`text-sm text-ink/90 leading-relaxed transition-all duration-300 ${isOverviewExpanded ? "" : "line-clamp-2"}`}
               >
-                {isOverviewExpanded ? "View less" : "View more"}
-              </button>
-            )}
-          </div>
+                {description}
+              </p>
+              {showOverviewMore && (
+                <button
+                  onClick={() => setIsOverviewExpanded(!isOverviewExpanded)}
+                  className="text-xs text-ink/70 underline mt-1 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  {isOverviewExpanded ? "View less" : "View more"}
+                </button>
+              )}
+            </div>
+          )}
 
           {activeItem &&
             activeItem.title &&

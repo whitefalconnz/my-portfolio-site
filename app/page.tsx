@@ -28,12 +28,13 @@ import MemoryStatsDebugger from "./components/common/MemoryStatsDebugger";
 // Static project data. Declared at module scope so it keeps a stable identity
 // across renders -- when this lived inside the component it produced a new array
 // every render, retriggering the image-dimension effect in an endless loop.
-const projects: Project[] = [
+const allProjects: Project[] = [
   // Animation Projects - Featured First
   {
     id: "Tag",
     title: "Tag",
-    image: "/videos/tag-trailer-first-frame-v01.webp",
+    image:
+      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/TagThumbnailHeroSection.webp",
     aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
@@ -111,6 +112,14 @@ const projects: Project[] = [
   },
 ];
 
+// Projects kept on file but not shown on the site. To bring one back, remove its
+// id from this list; its tile, modal and search data all return with it.
+const HIDDEN_PROJECT_IDS = ["MySafetyTV"];
+
+const projects = allProjects.filter(
+  (project) => !HIDDEN_PROJECT_IDS.includes(project.id)
+);
+
 // Intrinsic size of each project's grid media, used only for its aspect ratio.
 // These used to be measured at runtime by downloading every original -- about
 // 7.7 MB of print-resolution images plus video metadata on each home visit --
@@ -120,6 +129,7 @@ const projects: Project[] = [
 const PINNED_PROJECT_IDS = ["Tag", "CreativeCoding"];
 
 const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  // A 16:9 frame, not the image's own size: the 3198x1858 source is cropped to fit.
   Tag: { width: 1920, height: 1080 },
   Illustrations: { width: 2160, height: 2700 },
   DesignCampaigns: { width: 9094, height: 5429 },
@@ -128,6 +138,13 @@ const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   "3D Animation": { width: 3264, height: 1896 },
   // A 16:9 frame, not the image's own size: the 1920x640 source is cropped to fit.
   CreativeCoding: { width: 1920, height: 1080 },
+};
+
+// Width each image is actually drawn at, where that's wider than its tile. The
+// 3:1 Creative Coding image is cropped into a 16:9 tile, so it's drawn about 1.7x
+// the tile's width. Requesting a tile-width file left it stretched and blurry.
+const PROJECT_IMAGE_SIZES: Record<string, string> = {
+  CreativeCoding: "(max-width: 768px) 150vw, (max-width: 1024px) 77vw, 51vw",
 };
 
 // Structured data for the work on this page. Projects open in a modal rather
@@ -152,9 +169,7 @@ const PROJECTS_JSON_LD = JSON.stringify({
         name: project.title,
         description: project.description,
         // Video thumbnails aren't images; omit rather than mislabel them.
-        ...(/\.(webm|mp4)$/.test(project.image)
-          ? {}
-          : { image: new URL(project.image, "https://jakobbackhouse.com/").href }),
+        ...(/\.(webm|mp4)$/.test(project.image) ? {} : { image: project.image }),
         genre: project.categories,
         creator: { "@id": "https://jakobbackhouse.com/#person" },
       },
@@ -522,7 +537,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.4"; // Increment this when making changes to project data
+    const dataVersion = "1.6"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -1031,10 +1046,10 @@ export default function Home() {
                                       ? "opacity-0"
                                       : "opacity-100"
                                   }`}
-                                  sizes="(max-width: 640px) 90vw, 
-                                       (max-width: 768px) 45vw, 
-                                       (max-width: 1024px) 30vw,
-                                       20vw" // More efficient sizes
+                                  sizes={
+                                    PROJECT_IMAGE_SIZES[project.id] ??
+                                    "(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, 20vw"
+                                  }
                                   placeholder="blur"
                                   blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
                                     `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`

@@ -48,6 +48,10 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
   const [videoError, setVideoError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isLowPerformance, setIsLowPerformance] = useState(false);
+  // The device and theme are only known in the browser. Until then nothing is
+  // rendered, or the server's HTML would start every visitor, phones included,
+  // downloading the light video.
+  const [deviceChecked, setDeviceChecked] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Mobile and performance detection
@@ -57,6 +61,7 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
 
     setIsMobile(mobile);
     setIsLowPerformance(lowPerformance);
+    setDeviceChecked(true);
 
     // Listen for resize events to update mobile state
     const handleResize = () => {
@@ -164,18 +169,24 @@ export default function LoadingScreen({ transitionState }: LoadingScreenProps) {
       <div className="scanlines" />
       <div className="loading-content">
         <div className="running-animation">
-          {isMobile || isLowPerformance ? (
-            // Show orange spinning cube on mobile/low performance devices
-            <div className="cube-wrapper">
-              <div className="cube">
-                <div className="face front" />
-                <div className="face back" />
-                <div className="face right" />
-                <div className="face left" />
-                <div className="face top" />
-                <div className="face bottom" />
-              </div>
-            </div>
+          {!deviceChecked ? (
+            // Holds the animation's space so the progress bar doesn't jump
+            <div className="running-sprite" />
+          ) : isMobile || isLowPerformance ? (
+            // The same run cycle as an animated WebP: a fraction of the video's
+            // size, and iPhone Low Power Mode can't block it the way it blocks
+            // video autoplay.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={
+                isDarkMode
+                  ? "/videos/run-cycle-dark-v01.webp"
+                  : "/videos/run-cycle-light-v01.webp"
+              }
+              alt=""
+              className="running-sprite"
+              style={{ imageRendering: "auto" }}
+            />
           ) : // Show running character animation on desktop
           shouldShowVideo ? (
             <video

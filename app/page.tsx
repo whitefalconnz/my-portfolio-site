@@ -34,8 +34,8 @@ const projects: Project[] = [
     id: "Tag",
     title: "Tag",
     image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/TagPoster1.webp",
-    aspectRatio: AspectRatio.PORTRAIT,
+      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Storyboards/ColourScriptDraft1.webp",
+    aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
       "Inspired by a personal moment of fever-induced terror, this narrative follows a child's game of tag with monsters as it spirals into a terrifying chase, climaxing in a moment of imagined injury. The work uses frame-by-frame animation, distorted backgrounds, abstract shapes, and unsettlingly childish monsters to convey how panic overwhelms logic. A subtle 'rubber hose' aesthetic makes reality feel unstable, while environments inspired by Wellington, NZ, serve as a metaphor for panic's uncontrollable force versus the struggle for control. The film acts as a window into this state for those unfamiliar, and as a source of comfort for those who have experienced it. It depicts emotional extremes where survival instinct overrides reason. The completed trailer will be used to promote the full short film, attract collaborators for sound design, and target film festivals like NZIFF and Show Me Shorts, building an audience and network for the project.",
@@ -104,7 +104,7 @@ const projects: Project[] = [
     title: "Creative Coding",
     image:
       "https://media.jakobbackhouse.com/Img_and_Vid/CreativeCoding/output_2.webp",
-    aspectRatio: AspectRatio.SQUARE,
+    aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
       "How can I create an image manipulator in p5.js that can turn any photo into a painting? What type of images and style should I use to convey the feeling of going for bush walks when I was younger? To create this effect, I thought about how paintings are made and what makes them look like paintings. The primary reason is the effect of using a brush, so the focus of the project was creating the effect of brush strokes in the slightly random but logical way that a painter would create them.",
@@ -121,13 +121,14 @@ const projects: Project[] = [
 const PINNED_PROJECT_IDS = ["Tag", "CreativeCoding"];
 
 const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
-  Tag: { width: 3543, height: 4961 },
+  Tag: { width: 6911, height: 4745 },
   Illustrations: { width: 2160, height: 2700 },
   DesignCampaigns: { width: 9094, height: 5429 },
   SmokeAnimation: { width: 1920, height: 1080 },
   MySafetyTV: { width: 1280, height: 720 },
   "3D Animation": { width: 3264, height: 1896 },
-  CreativeCoding: { width: 1920, height: 640 },
+  // A 16:9 frame, not the image's own size: the 1920x640 source is cropped to fit.
+  CreativeCoding: { width: 1920, height: 1080 },
 };
 
 // Structured data for the work on this page. Projects open in a modal rather

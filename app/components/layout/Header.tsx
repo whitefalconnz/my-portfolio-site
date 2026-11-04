@@ -50,7 +50,9 @@ export default function Header() {
         ease: isLoading ? "easeIn" : "easeOut",
       }}
     >
-      <div className="container mx-auto px-4 py-6 relative">
+      {/* Clipped sideways so the nav's 30px slide-in can't add a brief horizontal
+          scrollbar. The mobile menu drops below this box, so height stays open. */}
+      <div className="container mx-auto px-4 py-6 relative overflow-x-clip">
         {/* Desktop Layout */}
         <div className="hidden lg:flex items-center justify-between">
           {/* Main Navigation */}
@@ -100,7 +102,7 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="font-display text-4xl lg:text-5xl font-bold text-ink whitespace-nowrap hover:text-accent transition-colors"
+              className="font-display text-4xl xl:text-5xl font-bold text-ink whitespace-nowrap hover:text-accent transition-colors"
             >
               Jakob Backhouse
             </Link>

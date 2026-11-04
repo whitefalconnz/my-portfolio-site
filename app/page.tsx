@@ -21,6 +21,7 @@ import FadeInImage from "./components/common/FadeInImage";
 import { useLoading } from "./contexts/LoadingContext";
 import FeatureVideo from "./components/common/FeatureVideo";
 import HighlightLoop from "./components/common/HighlightLoop";
+import GetInTouch from "./components/common/GetInTouch";
 import { motion } from "framer-motion";
 import { useAutoImageTracking } from "./hooks/useAutoMemoryManagement";
 import MemoryStatsDebugger from "./components/common/MemoryStatsDebugger";
@@ -57,8 +58,9 @@ const allProjects: Project[] = [
   {
     id: "DesignCampaigns",
     title: "Design Campaigns",
-    image:
-      "https://media.jakobbackhouse.com/Img_and_Vid/TalesFromTheSun/Storyboard_TalesFromTheSun.webp",
+    // A close crop of Storyboard_TalesFromTheSun.webp, which is shown in full in
+    // the project itself.
+    image: "/videos/design-campaigns-thumbnail-v01.webp",
     aspectRatio: AspectRatio.LANDSCAPE,
     bgColor: "bg-[#5C3E3C]",
     description:
@@ -132,7 +134,7 @@ const PROJECT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   // A 16:9 frame, not the image's own size: the 3198x1858 source is cropped to fit.
   Tag: { width: 1920, height: 1080 },
   Illustrations: { width: 2160, height: 2700 },
-  DesignCampaigns: { width: 9094, height: 5429 },
+  DesignCampaigns: { width: 1600, height: 1062 },
   SmokeAnimation: { width: 1920, height: 1080 },
   MySafetyTV: { width: 1280, height: 720 },
   "3D Animation": { width: 3264, height: 1896 },
@@ -169,7 +171,9 @@ const PROJECTS_JSON_LD = JSON.stringify({
         name: project.title,
         description: project.description,
         // Video thumbnails aren't images; omit rather than mislabel them.
-        ...(/\.(webm|mp4)$/.test(project.image) ? {} : { image: project.image }),
+        ...(/\.(webm|mp4)$/.test(project.image)
+          ? {}
+          : { image: new URL(project.image, "https://jakobbackhouse.com/").href }),
         genre: project.categories,
         creator: { "@id": "https://jakobbackhouse.com/#person" },
       },
@@ -537,7 +541,7 @@ export default function Home() {
     const storedProjects = getStoredProjects();
 
     // Add version check to force refresh when project data changes
-    const dataVersion = "1.6"; // Increment this when making changes to project data
+    const dataVersion = "1.7"; // Increment this when making changes to project data
     const storedVersion = localStorage.getItem("projectDataVersion");
 
     if (
@@ -851,7 +855,11 @@ export default function Home() {
               <div>
                 <div className="text-center mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
-                    Explore the rest of my stuff below
+                    {/* Phones skip the highlights row above, so there's no
+                        "rest" to speak of. */}
+                    {isMobile
+                      ? "Explore my stuff below"
+                      : "Explore the rest of my stuff below"}
                   </p>
                 </div>
               </div>
@@ -1097,6 +1105,13 @@ export default function Home() {
               </div>
             )}
           </main>
+
+          <section
+            id="contact"
+            className="container mx-auto px-4 mt-24 md:flex md:gap-8 relative z-10"
+          >
+            <GetInTouch />
+          </section>
 
           <footer className="container mx-auto px-4 py-6 mt-12 relative z-10">
             <ScrollReveal direction="up" delay={400} duration={800}>

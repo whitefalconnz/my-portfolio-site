@@ -2,11 +2,6 @@
 
 import { Resend } from 'resend';
 
-// Initialize Resend with your API key
-// Use environment variable if set, otherwise use the provided key
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_gGjouGWu_Bu1vSFEHHA85e3jdyT3hup4r';
-const resend = new Resend(RESEND_API_KEY);
-
 export async function sendEmail(formData: FormData) {
   try {
     const name = formData.get('name')?.toString() || '';
@@ -21,6 +16,19 @@ export async function sendEmail(formData: FormData) {
       };
     }
     
+    // Set RESEND_API_KEY in the hosting environment. Created here rather than at
+    // the top of the file because Resend throws without a key, which would take
+    // down the whole action instead of showing this message.
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.error('RESEND_API_KEY is not set, so the contact form cannot send');
+      return {
+        success: false,
+        error: "Couldn't send your message. Please email me directly instead.",
+      };
+    }
+    const resend = new Resend(apiKey);
+
     // Send email using Resend
     const { data, error } = await resend.emails.send({
       from: 'Portfolio Contact <onboarding@resend.dev>', // Use verified domain in production

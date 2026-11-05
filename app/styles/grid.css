@@ -174,3 +174,44 @@ iframe {
 .project-masonry-item .item-overlay {
   will-change: opacity;
 }
+
+/* Hovering a tile grows it by 5% and moves the others out of its way. Transforms
+   only, so nothing reflows, and browsers without :has() still get the growth.
+   Skipped below 769px, where the grid is one column on a narrow window. */
+@media (hover: hover) and (pointer: fine) and (min-width: 769px) and (prefers-reduced-motion: no-preference) {
+  .masonry-container {
+    overflow: visible;
+  }
+
+  .project-masonry-item {
+    /* will-change would keep the tile's first raster, so it would look soft
+       while enlarged. Browsers promote it for the transition anyway. */
+    will-change: auto;
+    transition: transform 0.3s ease-out;
+  }
+
+  .project-masonry-item:hover {
+    z-index: 10;
+    transform: scale(1.05);
+  }
+
+  /* Other columns: 2.5% of a column width is what the hovered tile gains on each
+     side, and all columns are the same width. */
+  .project-masonry-column:has(~ .project-masonry-column .project-masonry-item:hover) .project-masonry-item {
+    transform: translateX(-2.5%);
+  }
+
+  .project-masonry-column:has(.project-masonry-item:hover) ~ .project-masonry-column .project-masonry-item {
+    transform: translateX(2.5%);
+  }
+
+  /* Same column: percentages here would use the moving tile's own height, so
+     this is a fixed distance that suits the tile heights in use. */
+  .project-masonry-item:has(~ .project-masonry-item:hover) {
+    transform: translateY(-0.5rem);
+  }
+
+  .project-masonry-item:hover ~ .project-masonry-item {
+    transform: translateY(0.5rem);
+  }
+}

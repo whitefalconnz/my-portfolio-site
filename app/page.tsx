@@ -899,14 +899,17 @@ export default function Home() {
 
                 {/* Right side on desktop: the two loops above the illustration,
                     which links through to /about. A column as tall as the
-                    trailer beside it, or a row of three under it on tablets. */}
-                <div className="relative z-10 grid grid-cols-3 lg:grid-cols-1 items-start gap-3 lg:flex-[5] lg:min-w-0">
+                    trailer beside it, or a row of three under it on tablets.
+                    No z-index here, because an enlarged loop has to clear the
+                    site header. */}
+                <div className="relative grid grid-cols-3 lg:grid-cols-1 items-start gap-3 lg:flex-[5] lg:min-w-0">
                   <HighlightLoop
                     base="/videos/duck-hunting-season-wip-v01a"
                     width={1280}
                     height={722}
                     label="Duck Hunting Season, work in progress animation loop"
                     paused={selectedProject !== null}
+                    zoomOrigin="origin-top-right"
                   />
                   <HighlightLoop
                     base="/videos/flower-growing-v01"
@@ -914,6 +917,7 @@ export default function Home() {
                     height={542}
                     label="Animation loop of a rose growing and blooming"
                     paused={selectedProject !== null}
+                    zoomOrigin="origin-right"
                   />
                   <div>
                     <Link

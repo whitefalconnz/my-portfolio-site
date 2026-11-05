@@ -845,7 +845,7 @@ export default function Home() {
         }}
       >
         <main
-          className={`${isMobile ? "pt-4" : "pt-8 md:pt-10"} transition-all duration-500 ease-in-out`}
+          className={`${isMobile ? "pt-8" : "pt-8 md:pt-40"} transition-all duration-500 ease-in-out`}
           style={{
             visibility: "visible",
             opacity: 1,
@@ -870,13 +870,13 @@ export default function Home() {
               <>
                 {/* Same treatment as the "Explore the rest of my stuff below"
                     line further down, so the two read as a pair. */}
-                <div className="text-center mb-6">
+                <div className="text-center mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
                     G'day check out some recent highlights below
                   </p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-12 lg:mb-16">
+                <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
                 <div className="relative z-10 showreel-container lg:flex-[19] lg:min-w-0">
                   <div>
                     <div className="mb-8 lg:mb-0">
@@ -952,7 +952,7 @@ export default function Home() {
             <div className="relative">
               {/* Explore All Projects Heading */}
               <div>
-                <div className="text-center mb-3 md:mb-6">
+                <div className="text-center mb-3 md:mb-8">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
                     {/* Phones skip the highlights row above, so there's no
                         "rest" to speak of. */}

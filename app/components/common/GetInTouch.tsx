@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { sendEmail } from "../../contact/actions";
+import { trackEvent } from "../../lib/analytics";
 
 /**
  * The email card and contact form, shared by the contact page and the bottom of
@@ -41,6 +42,7 @@ export default function GetInTouch({
 
       if (result.success) {
         setFormSubmitted(true);
+        trackEvent("generate_lead");
       } else {
         setSubmitError(
           result.error || "Failed to send message. Please try again."

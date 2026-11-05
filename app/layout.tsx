@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/common/theme-provider";
 import LoadingProvider from "./components/common/LoadingProvider";
 import ScrollProgressBar from "./components/common/ScrollProgressBar";
+import GoogleAnalytics from "./components/common/GoogleAnalytics";
 import Header from "./components/layout/Header";
 import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
 
@@ -134,6 +135,7 @@ export default function RootLayout({
             </Suspense>
           </LoadingContextProvider>
         </ThemeProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

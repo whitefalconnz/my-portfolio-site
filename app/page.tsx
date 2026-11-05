@@ -5,6 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Linkedin } from "lucide-react";
 import ProjectModal from "./components/project/ProjectModal";
+import TileMotion, {
+  type TileMotionMedia,
+} from "./components/project/TileMotion";
 import "./grid.css";
 import Header from "./components/layout/Header";
 import { AspectRatio, type Project } from "./types/project";
@@ -165,6 +168,57 @@ const PROJECT_IMAGE_SCALE: Record<string, number> = {
 // fine render grain smear at 50, and 75 is still only about 18 KB at full size.
 const PROJECT_IMAGE_QUALITY: Record<string, number> = {
   "3D Animation": 75,
+};
+
+// What each tile does when it's hovered, or on screen on a touch device. Clips
+// were cut from the project's own footage and start close to the poster. A
+// project with no entry here keeps a still tile.
+const MEDIA_HOST = "https://media.jakobbackhouse.com/Img_and_Vid";
+const PROJECT_MOTION: Record<string, TileMotionMedia> = {
+  Tag: { kind: "clip", base: "/videos/tag-tile-v01" },
+  SmokeAnimation: { kind: "clip", base: "/videos/smoke-tile-v01" },
+  Illustrations: {
+    kind: "slides",
+    images: [
+      { src: `${MEDIA_HOST}/PersonalPaintings/BrightLights.webp`, width: 2480, height: 3508 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/HighaltitudeLandScape(compressed).webp`, width: 5752, height: 8136 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/New_Series.webp`, width: 3508, height: 2480 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/Run(compressed).webp`, width: 1906, height: 2700 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/11.webp`, width: 4961, height: 3508 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/photobash.webp`, width: 3508, height: 4961 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/RBackgroundScene3Pencil(0.4).webp`, width: 4364, height: 2454 },
+      { src: `${MEDIA_HOST}/PersonalPaintings/SaddleRoadQuickSketch.webp`, width: 2160, height: 2700 },
+    ],
+  },
+  CreativeCoding: {
+    kind: "slides",
+    images: [
+      { src: `${MEDIA_HOST}/CreativeCoding/output_3.webp`, width: 1920, height: 640 },
+      { src: `${MEDIA_HOST}/CreativeCoding/output_1.webp`, width: 1920, height: 640 },
+      { src: `${MEDIA_HOST}/CreativeCoding/output_2.webp`, width: 1920, height: 640 },
+    ],
+  },
+  // One image from each of the three campaigns.
+  DesignCampaigns: {
+    kind: "slides",
+    images: [
+      { src: `${MEDIA_HOST}/GanttWithTheWind/KickTheIckSlide.webp`, width: 1868, height: 1048 },
+      { src: `${MEDIA_HOST}/TruckMate/Jakob_Backhouse_BMD1R6_Mockup.webp`, width: 8333, height: 5188 },
+      { src: "/videos/design-campaigns-thumbnail-v01.webp", width: 1600, height: 1062 },
+    ],
+  },
+  // Stills from the films in this project. A clip can replace these when one is
+  // exported: there's no video file to cut from yet.
+  "3D Animation": {
+    kind: "slides",
+    images: [
+      { src: "/videos/3d-tile-stagefright-v01.webp", width: 720, height: 720 },
+      { src: `${MEDIA_HOST}/PigBoyPortfolio/SpiritzThumbnail-min.jpg`, width: 3264, height: 1896 },
+      { src: "/videos/3d-tile-sunchaser-v01.webp", width: 720, height: 720 },
+      { src: "/videos/3d-tile-sculpture-v01.webp", width: 720, height: 720 },
+      { src: `${MEDIA_HOST}/PigBoyPortfolio/Pigboy.webp`, width: 1080, height: 1080 },
+    ],
+  },
 };
 
 // Structured data for the work on this page. Projects open in a modal rather
@@ -791,7 +845,7 @@ export default function Home() {
         }}
       >
         <main
-          className={`${isMobile ? "pt-20" : "pt-32 md:pt-40"} transition-all duration-500 ease-in-out`}
+          className={`${isMobile ? "pt-4" : "pt-8 md:pt-10"} transition-all duration-500 ease-in-out`}
           style={{
             visibility: "visible",
             opacity: 1,
@@ -816,14 +870,14 @@ export default function Home() {
               <>
                 {/* Same treatment as the "Explore the rest of my stuff below"
                     line further down, so the two read as a pair. */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-6">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
                     G'day check out some recent highlights below
                   </p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
-                <div className="relative z-10 showreel-container lg:flex-[11] lg:min-w-0">
+                <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-12 lg:mb-16">
+                <div className="relative z-10 showreel-container lg:flex-[19] lg:min-w-0">
                   <div>
                     <div className="mb-8 lg:mb-0">
                       <div className="max-w-3xl mx-auto lg:max-w-none">
@@ -843,10 +897,24 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Right side on desktop: the duck loop above the illustration,
-                    which links through to /about */}
-                <div className="relative z-10 lg:flex-[4] lg:min-w-0 space-y-4">
-                  <HighlightLoop paused={selectedProject !== null} />
+                {/* Right side on desktop: the two loops above the illustration,
+                    which links through to /about. A column as tall as the
+                    trailer beside it, or a row of three under it on tablets. */}
+                <div className="relative z-10 grid grid-cols-3 lg:grid-cols-1 items-start gap-3 lg:flex-[5] lg:min-w-0">
+                  <HighlightLoop
+                    base="/videos/duck-hunting-season-wip-v01a"
+                    width={1280}
+                    height={722}
+                    label="Duck Hunting Season, work in progress animation loop"
+                    paused={selectedProject !== null}
+                  />
+                  <HighlightLoop
+                    base="/videos/flower-growing-v01"
+                    width={960}
+                    height={542}
+                    label="Animation loop of a rose growing and blooming"
+                    paused={selectedProject !== null}
+                  />
                   <div>
                     <Link
                       href="/about"
@@ -884,7 +952,7 @@ export default function Home() {
             <div className="relative">
               {/* Explore All Projects Heading */}
               <div>
-                <div className="text-center mb-8">
+                <div className="text-center mb-3 md:mb-6">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-satoshi tracking-wider">
                     {/* Phones skip the highlights row above, so there's no
                         "rest" to speak of. */}
@@ -896,16 +964,17 @@ export default function Home() {
               </div>
 
               {/* Categories Section - Always visible */}
-              <div ref={categoriesRef} className="relative z-10 mb-8">
+              <div ref={categoriesRef} className="relative z-10 mb-4 md:mb-8">
                 <div>
-                  <div className="text-center py-4">
-                    <div className="flex flex-wrap gap-3 justify-center">
+                  <div className="text-center">
+                    {/* Tighter on phones so all three fit on one line. */}
+                    <div className="flex flex-wrap gap-2 md:gap-3 justify-center">
                       {categories.map((category) => (
                         <motion.button
                           key={category}
                           onClick={() => toggleCategory(category)}
                           className={`
-                             px-4 py-2 font-satoshi text-sm transition-colors duration-150
+                             px-3 md:px-4 py-2 font-satoshi text-sm transition-colors duration-150
                              border mobile-touch-target
                              ${
                                selectedCategories.includes(category)
@@ -987,7 +1056,8 @@ export default function Home() {
                               {(project.image.endsWith(".webm") ||
                                 project.image.endsWith(".mp4")) &&
                               !isSafari &&
-                              !isMobile ? (
+                              !isMobile &&
+                              !PROJECT_MOTION[project.id] ? (
                                 <video
                                   autoPlay
                                   loop
@@ -1035,9 +1105,8 @@ export default function Home() {
                                     }
                                   />
                                 </video>
-                              ) : (project.image.endsWith(".webm") ||
-                                  project.image.endsWith(".mp4")) &&
-                                (isSafari || isMobile) ? (
+                              ) : project.image.endsWith(".webm") ||
+                                project.image.endsWith(".mp4") ? (
                                 <Image
                                   src={getVideoPosterImage(project)}
                                   alt={project.title}
@@ -1098,6 +1167,19 @@ export default function Home() {
                                       setIsLoading(false);
                                     }
                                   }}
+                                />
+                              )}
+
+                              {PROJECT_MOTION[project.id] && (
+                                <TileMotion
+                                  media={PROJECT_MOTION[project.id]}
+                                  paused={selectedProject !== null}
+                                  tileAspectRatio={aspectRatio}
+                                  sizes={gridImageSizes}
+                                  quality={
+                                    PROJECT_IMAGE_QUALITY[project.id] ??
+                                    (index < 6 ? 50 : 35)
+                                  }
                                 />
                               )}
 

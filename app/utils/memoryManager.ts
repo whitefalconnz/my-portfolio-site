@@ -344,7 +344,7 @@ class MemoryManager {
 
   private clearProjectGridMedia(): void {
     // Clear project grid videos
-    const projectVideos = document.querySelectorAll('.project-item-inner video');
+    const projectVideos = document.querySelectorAll('.project-item-inner video:not([data-exclude-memory-management="true"])');
     projectVideos.forEach((video, index) => {
       const element = video as HTMLVideoElement;
       const key = `project-video-${index}`;
@@ -364,7 +364,7 @@ class MemoryManager {
     });
 
     // Clear project grid images
-    const projectImages = document.querySelectorAll('.project-item-inner img');
+    const projectImages = document.querySelectorAll('.project-item-inner img:not([data-exclude-memory-management="true"])');
     projectImages.forEach((img, index) => {
       const element = img as HTMLImageElement;
       const key = `project-image-${index}`;
@@ -380,7 +380,7 @@ class MemoryManager {
     });
 
     // Clear any Next.js Image components by targeting their underlying img elements
-    const nextImages = document.querySelectorAll('img[src*="media.jakobbackhouse.com"], img[src*="res.cloudinary.com"]');
+    const nextImages = document.querySelectorAll('img[src*="media.jakobbackhouse.com"]:not([data-exclude-memory-management="true"]), img[src*="res.cloudinary.com"]:not([data-exclude-memory-management="true"])');
     nextImages.forEach((img, index) => {
       const element = img as HTMLImageElement;
       const key = `next-image-${index}`;

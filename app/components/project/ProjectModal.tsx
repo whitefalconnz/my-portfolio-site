@@ -9,6 +9,7 @@ import { useScrollInView } from "../../hooks/useScrollInView";
 import OrangeLoadingCube from "../common/OrangeLoadingCube";
 import BlurImage from "../BlurImage";
 import { getCDNUrl } from "../../utils/cdn";
+import { trackProjectView } from "../../lib/analytics";
 import { createPortal } from "react-dom";
 import type { Project } from "../../types/project";
 import { useAutoImageTracking } from "../../hooks/useAutoMemoryManagement";
@@ -1366,16 +1367,29 @@ export default function ProjectModal({
   const currentProjectIndex = selectedProject
     ? filteredProjects.findIndex((p) => p.id === selectedProject)
     : -1;
-  const hasNext = currentProjectIndex < filteredProjects.length - 1;
-  const hasPrevious = currentProjectIndex > 0;
+  // The arrows and the Next link wrap round, so no project is a dead end. A
+  // filter can leave a single project, which then has nowhere to go.
+  const projectCount = filteredProjects.length;
+  const hasNext = projectCount > 1;
+  const hasPrevious = projectCount > 1;
+  const nextProject = hasNext
+    ? filteredProjects[(currentProjectIndex + 1) % projectCount]
+    : null;
+  const previousProject = hasPrevious
+    ? filteredProjects[(currentProjectIndex - 1 + projectCount) % projectCount]
+    : null;
   const onNext = () => {
-    if (hasNext)
-      setSelectedProject(filteredProjects[currentProjectIndex + 1].id);
+    if (nextProject) setSelectedProject(nextProject.id);
   };
   const onPrevious = () => {
-    if (hasPrevious)
-      setSelectedProject(filteredProjects[currentProjectIndex - 1].id);
+    if (previousProject) setSelectedProject(previousProject.id);
   };
+
+  useEffect(() => {
+    if (isOpen && selectedProject && title) {
+      trackProjectView(selectedProject, title);
+    }
+  }, [isOpen, selectedProject, title]);
 
   // MODIFICATION: The IntersectionObserver setup is now in an effect that correctly
   // re-runs when the project changes, ensuring it always observes the current content.
@@ -1573,7 +1587,10 @@ export default function ProjectModal({
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isOpen, hasNext, hasPrevious]);
+    // The handler has to see the current project and whether the modal has
+    // settled, or the arrow keys repeat the same move and Escape does nothing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, hasNext, hasPrevious, selectedProject, isModalSettled]);
 
   useEffect(() => {
     return () => {
@@ -2101,6 +2118,32 @@ export default function ProjectModal({
           }}
         >
           <div className="w-full">{renderContent()}</div>
+
+          {/* Phones have no arrows, so this is their way on to the next project.
+              Bottom padding keeps it clear of the fixed caption there. Stops the
+              click because a click on this column otherwise closes the modal. */}
+          {nextProject && (
+            <div className="pl-4 pr-8 md:pl-10 md:pr-6 pt-4 pb-44 md:pb-4">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNext();
+                }}
+                className="group/next w-full flex items-center justify-between gap-4 border border-line bg-surface p-5 md:p-6 text-left transition-colors duration-300 hover:border-accent"
+              >
+                <span className="min-w-0">
+                  <span className="block font-mono text-xs uppercase tracking-wider text-ink/60 mb-1">
+                    Next project
+                  </span>
+                  <span className="block font-display font-bold text-xl md:text-2xl text-ink transition-colors duration-300 group-hover/next:text-accent">
+                    {nextProject.title}
+                  </span>
+                </span>
+                <ChevronRight className="h-6 w-6 flex-none text-ink transition-transform duration-300 group-hover/next:translate-x-1" />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="hidden md:block md:w-[35%] lg:w-[32%] xl:w-[30%] md:pl-6 lg:pl-8 xl:pl-10 md:pr-14 lg:pr-20 xl:pr-24 flex-none flex flex-col overflow-y-auto mt-4 lg:mt-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-4 max-w-full max-h-full">

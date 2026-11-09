@@ -728,3 +728,20 @@ html::-webkit-scrollbar-track {
 /* Clean blur placeholder for Next.js Image component */
 
 /* Staggered animation delays for skeleton items */
+
+/* Scroll progress: a 2px line in the text colour, well under half strength,
+   above the header (z 200) and below the project view. Only its transform
+   changes while scrolling. */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 210;
+  background: var(--ink);
+  opacity: 0.35;
+  transform-origin: left;
+  pointer-events: none;
+  transition: opacity 0.6s ease-out 0.6s;
+}

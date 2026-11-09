@@ -18,9 +18,9 @@ html.bw {
   --accent-alt: #000000;
   --accent-contrast: #FFFFFF;
   --accent-wash: rgba(0, 0, 0, 0.1);
-  --line: #000000;
-  --line-strong: #000000;
-  --grid: rgba(0, 0, 0, 0.06);
+  --line: rgba(0, 0, 0, 0.22);
+  --line-strong: rgba(0, 0, 0, 0.4);
+  --grid: rgba(0, 0, 0, 0.07);
 }
 
 html.bw.dark {
@@ -32,9 +32,9 @@ html.bw.dark {
   --accent-alt: #FFFFFF;
   --accent-contrast: #000000;
   --accent-wash: rgba(255, 255, 255, 0.16);
-  --line: #FFFFFF;
-  --line-strong: #FFFFFF;
-  --grid: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.24);
+  --line-strong: rgba(255, 255, 255, 0.42);
+  --grid: rgba(255, 255, 255, 0.13);
 }
 
 /* The few places that use a fixed colour instead of a palette token: Tailwind's
@@ -51,6 +51,33 @@ html.bw [class*="bg-green-"] {
 
 html.bw [class*="hover:bg-gray-"]:hover {
   background-color: transparent;
+}
+
+/* One line weight everywhere: every outline and rule takes the palette's line
+   colour, whatever colour its own class asked for, and on sharp (2x and up)
+   screens is drawn as a half-pixel hairline. Ordinary screens can't draw
+   thinner than one pixel. Spinners keep their own colours, since theirs is
+   what makes them read as spinning. */
+html.bw :is(.border, .border-t, .border-b):not(.animate-spin, .pdf-spinner, .border-transparent, .border-accent) {
+  border-color: var(--line);
+}
+
+@media (min-resolution: 2dppx) {
+  html.bw .border {
+    border-width: 0.5px;
+  }
+
+  html.bw .border-t {
+    border-top-width: 0.5px;
+  }
+
+  html.bw .border-b {
+    border-bottom-width: 0.5px;
+  }
+
+  html.bw :is(.progress-bar-background, .avatar-placeholder, .cube-wrapper .face) {
+    border-width: 0.5px;
+  }
 }
 
 /* ?bw=all: the artwork too. */

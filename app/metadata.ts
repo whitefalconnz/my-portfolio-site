@@ -94,6 +94,6 @@ export const viewport: Viewport = {
   userScalable: true,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
-    { media: "(prefers-color-scheme: dark)", color: "#0E0E10" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };

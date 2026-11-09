@@ -1,0 +1,61 @@
+/* ---------------------------------------------------------------------------
+   PREVIEW ONLY: a stark black-and-white version of both themes.
+
+   Nothing here applies unless the page is opened with ?bw in the address
+   (for example /?bw), which adds the `bw` class to <html> for that tab.
+   /?bw=all also shows the artwork in greyscale, and /?bw=0 switches back.
+
+   To adopt it for real, copy the two palettes below over the ones at the top
+   of globals.css. To drop the idea, delete this file, its import in
+   layout.tsx and BW_PREVIEW_SCRIPT there.
+   --------------------------------------------------------------------------- */
+html.bw {
+  --ground: #FFFFFF;
+  --surface: #FFFFFF;
+  --ink: #000000;
+  --muted-ink: #000000;
+  --accent: #000000;
+  --accent-alt: #000000;
+  --accent-contrast: #FFFFFF;
+  --accent-wash: rgba(0, 0, 0, 0.1);
+  --line: #000000;
+  --line-strong: #000000;
+  --grid: rgba(0, 0, 0, 0.06);
+}
+
+html.bw.dark {
+  --ground: #000000;
+  --surface: #000000;
+  --ink: #FFFFFF;
+  --muted-ink: #FFFFFF;
+  --accent: #FFFFFF;
+  --accent-alt: #FFFFFF;
+  --accent-contrast: #000000;
+  --accent-wash: rgba(255, 255, 255, 0.16);
+  --line: #FFFFFF;
+  --line-strong: #FFFFFF;
+  --grid: rgba(255, 255, 255, 0.08);
+}
+
+/* The few places that use a fixed colour instead of a palette token: Tailwind's
+   blue-tinted greys, the green "sent" tick and the red form error. */
+html.bw [class*="text-gray-"],
+html.bw [class*="text-red-"] {
+  color: var(--ink);
+}
+
+html.bw [class*="bg-green-"] {
+  background-color: var(--ink);
+  color: var(--ground);
+}
+
+html.bw [class*="hover:bg-gray-"]:hover {
+  background-color: transparent;
+}
+
+/* ?bw=all: the artwork too. */
+html.bw-media img,
+html.bw-media video,
+html.bw-media iframe {
+  filter: grayscale(1);
+}

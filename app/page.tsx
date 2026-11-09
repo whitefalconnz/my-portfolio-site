@@ -1,33 +1,36 @@
 "use client";
 
-import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Linkedin } from "lucide-react";
-import ProjectModal from "./components/project/ProjectModal";
 import TileMotion, {
   type TileMotionMedia,
 } from "./components/project/TileMotion";
-import "./grid.css";
-import Header from "./components/layout/Header";
 import { AspectRatio, type Project } from "./types/project";
 import "./styles/grid.css";
 import ScrollReveal from "./components/animations/ScrollReveal";
 import Masonry from "react-masonry-css";
-import { getCDNUrl, getOptimizedImageUrl } from "./utils/cdn";
-import {
-  clearHomePageMedia,
-  restoreHomePageMedia,
-  logMemoryUsage,
-} from "./utils/memoryManager";
 import FadeInImage from "./components/common/FadeInImage";
-import { useLoading } from "./contexts/LoadingContext";
 import FeatureVideo from "./components/common/FeatureVideo";
 import HighlightLoop from "./components/common/HighlightLoop";
 import GetInTouch from "./components/common/GetInTouch";
-import { motion } from "framer-motion";
-import { useAutoImageTracking } from "./hooks/useAutoMemoryManagement";
-import MemoryStatsDebugger from "./components/common/MemoryStatsDebugger";
+
+// The project view is by far the largest piece of code on the site and nobody
+// needs it until they open a project, so it's kept out of the page's first
+// download. It is fetched in the background once the page is idle (the
+// preload effect in Home), so opening a project is still instant.
+const loadProjectModal = () => import("./components/project/ProjectModal");
+const ProjectModal = dynamic(loadProjectModal, { ssr: false });
 
 // Static project data. Declared at module scope so it keeps a stable identity
 // across renders -- when this lived inside the component it produced a new array
@@ -258,547 +261,11 @@ const PROJECTS_JSON_LD = JSON.stringify({
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export default function Home() {
-  // True only while the first-load screen is showing. The page renders behind
-  // it (hidden) so its text reaches search engines, but the trailer row and the
-  // grid wait for it to lift, exactly as before: on a phone the server HTML
-  // would otherwise carry the desktop-only trailer, whose poster gets fetched
-  // before React can remove it, and the grid's autoplaying videos would compete
-  // with the loading animation for bandwidth.
-  const { isLoading: firstLoadGate } = useLoading();
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+const CATEGORIES = ["Animation", "Creative Advertising", "Illustration"];
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [imageDimensions] = useState(PROJECT_DIMENSIONS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [contentLoaded, setContentLoaded] = useState(false);
-  const [randomizedProjects, setRandomizedProjects] = useState<Project[]>([]);
-  const [loadingItems, setLoadingItems] = useState<Record<string, boolean>>({});
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isSafari, setIsSafari] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  // Whether isMobile reflects the real viewport yet. The desktop-only trailer
-  // row waits for this, so a phone never inserts it (and never fetches its
-  // poster) on the way to finding out it's a phone.
-  const [viewportKnown, setViewportKnown] = useState(false);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const pageContainerRef = useRef<HTMLDivElement>(null);
+const MASONRY_BREAKPOINTS = { default: 3, 1024: 2, 768: 1 };
 
-  // Auto memory management for images on this page
-  const { trackAllElements, getStats: getAutoTrackingStats } =
-    useAutoImageTracking(pageContainerRef, {
-      enabled: true,
-      debugLog: process.env.NODE_ENV === "development",
-      selector: "img, video, iframe:not([src*='vimeo.com'])", // Exclude Vimeo iframes from auto memory management
-      trackOnMount: true,
-      retryInterval: 2000, // Check for new images every 2 seconds
-    });
-
-  // Cleanup memory on component unmount
-  useEffect(() => {
-    return () => {
-      // Restore media if component unmounts while modal is open
-      restoreHomePageMedia();
-    };
-  }, []);
-
-  // Track elements when content loads or project list changes
-  useEffect(() => {
-    if (contentLoaded && randomizedProjects.length > 0) {
-      // Delay tracking to ensure DOM is ready
-      const timer = setTimeout(() => {
-        trackAllElements();
-
-        if (process.env.NODE_ENV === "development") {
-          console.log(
-            "📊 Auto-tracking stats after content load:",
-            getAutoTrackingStats()
-          );
-        }
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [
-    contentLoaded,
-    randomizedProjects.length,
-    trackAllElements,
-    getAutoTrackingStats,
-  ]);
-  // Social meta tags are now defined in `app/metadata.ts`
-
-  // Re-track elements when filter changes (some images become visible/hidden)
-  useEffect(() => {
-    if (contentLoaded) {
-      const timer = setTimeout(() => {
-        trackAllElements();
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [selectedCategories, contentLoaded, trackAllElements]);
-
-  // Add state for collapsible categories
-
-  // Add state for filter button visibility based on scroll
-  const [showFilterButton, setShowFilterButton] = useState(false);
-  const categoriesRef = useRef<HTMLDivElement>(null);
-
-  // Tooltip state for illustration
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
-  // Runs before paint so the first frame already has the right layout for the
-  // device: previously a phone painted desktop padding and the desktop-only
-  // trailer row first, then animated to the mobile layout a frame later.
-  useIsomorphicLayoutEffect(() => {
-    // Detect Safari browser
-    const detectSafari = () => {
-      const userAgent = navigator.userAgent;
-      const isSafariBrowser =
-        /^((?!chrome|android).)*safari/i.test(userAgent) ||
-        /iPad|iPhone|iPod/.test(userAgent);
-      setIsSafari(isSafariBrowser);
-
-      if (isSafariBrowser) {
-        console.log("Safari detected - optimizing for memory usage");
-      }
-    };
-
-    // Detect mobile devices
-    const detectMobile = () => {
-      const userAgent = navigator.userAgent;
-      const isMobileDevice =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          userAgent
-        ) || window.innerWidth <= 768; // Also consider small screens as mobile
-      setIsMobile(isMobileDevice);
-
-      if (isMobileDevice) {
-        console.log("Mobile device detected - optimizing for performance");
-      }
-    };
-
-    // Check if dark mode is active
-    const checkDarkMode = () => {
-      const isDark = document.documentElement.classList.contains("dark");
-      setIsDarkMode(isDark);
-    };
-
-    // Initial checks
-    detectSafari();
-    detectMobile();
-    setViewportKnown(true);
-    checkDarkMode();
-
-    // Set up observer for theme changes
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    // Set up resize listener for mobile detection
-    const handleResize = () => {
-      detectMobile();
-    };
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  // Add scroll listener to show filter button when past featured section
-  useEffect(() => {
-    let frame = 0;
-
-    // Read layout inside a rAF so a fast scroll coalesces into one measurement
-    // per frame instead of one per scroll event.
-    const measure = () => {
-      frame = 0;
-      // Show button when scrolled past approximately where featured section ends
-      const past = window.scrollY > window.innerHeight * 1.2;
-      // Only setState on an actual change -- otherwise every frame re-renders the page.
-      setShowFilterButton((prev) => (prev === past ? prev : past));
-    };
-
-    const handleScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(measure);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    measure(); // Check initial position
-
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  // Reset positions function
-  const resetPositions = () => {
-    // Function kept for compatibility but emptied since drag functionality was removed
-  };
-
-  // Track when any element is dragged
-  const onDragEnd = () => {
-    // Function kept for compatibility but emptied since drag functionality was removed
-  };
-
-  // Enhanced mobile-friendly click handler
-  const handleProjectClick = (
-    projectId: string,
-    event?: React.MouseEvent | React.TouchEvent
-  ) => {
-    // Prevent event bubbling and default behavior
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    // Defer to the next frame so state updates settle properly on mobile
-    requestAnimationFrame(() => {
-      // Clear home page media to reduce memory usage
-      clearHomePageMedia();
-      setSelectedProject(projectId);
-    });
-  };
-
-  // FIX: Enhanced mobile-optimized touch handlers for better modal interaction
-  const handleTouchStart = (projectId: string) => (event: React.TouchEvent) => {
-    if (process.env.NODE_ENV === "development") {
-      console.log("📱 Touch start on project:", projectId);
-    }
-
-    // FIX: Prevent any potential interference with modal opening
-    event.stopPropagation();
-
-    // Store the initial touch to compare with touchend
-    const touch = event.touches[0];
-    (event.currentTarget as any).initialTouch = {
-      x: touch.clientX,
-      y: touch.clientY,
-      time: Date.now(),
-    };
-  };
-
-  const handleTouchEnd = (projectId: string) => (event: React.TouchEvent) => {
-    if (process.env.NODE_ENV === "development") {
-      console.log("📱 Touch end on project:", projectId);
-    }
-
-    // FIX: Prevent any potential interference with modal opening
-    event.stopPropagation();
-    event.preventDefault();
-
-    const element = event.currentTarget as any;
-    const initialTouch = element.initialTouch;
-
-    if (!initialTouch) {
-      if (process.env.NODE_ENV === "development") {
-        console.log("📱 No initial touch found, treating as click");
-      }
-      handleProjectClick(projectId, event);
-      return;
-    }
-
-    const changedTouch = event.changedTouches[0];
-    const deltaX = Math.abs(changedTouch.clientX - initialTouch.x);
-    const deltaY = Math.abs(changedTouch.clientY - initialTouch.y);
-    const deltaTime = Date.now() - initialTouch.time;
-
-    // FIX: More lenient tap detection for mobile users
-    const isTap = deltaX < 15 && deltaY < 15 && deltaTime < 750;
-
-    if (process.env.NODE_ENV === "development") {
-      console.log("📱 Touch analysis:", {
-        deltaX,
-        deltaY,
-        deltaTime,
-        isTap,
-      });
-    }
-
-    if (isTap) {
-      handleProjectClick(projectId, event);
-    }
-
-    // Clean up
-    delete element.initialTouch;
-  };
-
-  const categories = ["Animation", "Creative Advertising", "Illustration"];
-
-  // Safe toggle category handler that prevents clicks during/after drag
-  const handleToggleCategory = (category: string) => {
-    // Save current window scroll position
-    const scrollPosition = window.scrollY;
-
-    // Add filtering class for smooth transition
-    const masonryElement = document.querySelector(".project-masonry");
-    if (masonryElement) {
-      masonryElement.classList.add("filtering");
-    }
-
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
-
-    // Reset loading states for newly visible projects
-    setTimeout(() => {
-      setLoadingItems((prev) => {
-        const newLoadingStates = { ...prev };
-        filteredProjects.forEach((project) => {
-          // Only reset if the project wasn't already visible
-          if (!prev.hasOwnProperty(project.id)) {
-            newLoadingStates[project.id] = true;
-          }
-        });
-        return newLoadingStates;
-      });
-    }, 10);
-
-    // Restore window scroll position and remove filtering class after state update
-    setTimeout(() => {
-      window.scrollTo({
-        top: scrollPosition,
-        behavior: "auto", // Use 'auto' instead of 'smooth' to prevent visible scrolling
-      });
-
-      if (masonryElement) {
-        masonryElement.classList.remove("filtering");
-      }
-    }, 50); // Slight delay to ensure smooth transition
-  };
-
-  // Replace the original toggleCategory function with our safe version
-  const toggleCategory = handleToggleCategory;
-
-
-  // Browsers remember only the shuffled order of project ids, not the projects
-  // themselves, so a changed image or description reaches everyone straight away.
-  const getStoredOrder = (): string[] => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("projectOrderIds") ?? "[]");
-      return Array.isArray(stored) ? stored : [];
-    } catch {
-      return [];
-    }
-  };
-
-  const shuffleArray = (array: Project[]) => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
-
-  // Pinned projects keep their fixed order at the front; the rest are shuffled
-  const orderProjects = (array: Project[]) => {
-    const pinned = PINNED_PROJECT_IDS.flatMap((id) =>
-      array.filter((project) => project.id === id)
-    );
-    const rest = array.filter(
-      (project) => !PINNED_PROJECT_IDS.includes(project.id)
-    );
-    return [...pinned, ...shuffleArray(rest)];
-  };
-
-  useEffect(() => {
-    // Reuse the visitor's saved order while it still fits the current project
-    // list: every project present, none gone, and pinned projects still in front.
-    const storedOrder = getStoredOrder();
-    const storedProjects = storedOrder.flatMap((id) =>
-      projects.filter((project) => project.id === id)
-    );
-
-    if (
-      storedOrder.length === projects.length &&
-      new Set(storedProjects).size === projects.length &&
-      PINNED_PROJECT_IDS.every((id, index) => storedOrder[index] === id)
-    ) {
-      setRandomizedProjects(storedProjects);
-      // Show content immediately if we have stored projects
-      setContentLoaded(true);
-    } else {
-      const newRandomized = orderProjects(projects);
-      setRandomizedProjects(newRandomized);
-      try {
-        localStorage.setItem(
-          "projectOrderIds",
-          JSON.stringify(newRandomized.map((project) => project.id))
-        );
-        // Older visits saved the whole project list under these keys.
-        localStorage.removeItem("projectOrder");
-        localStorage.removeItem("projectDataVersion");
-      } catch {
-        // Storage can be unavailable; the order just won't persist.
-      }
-      // Show content after a short delay for first-time visitors
-      setTimeout(() => setContentLoaded(true), 300);
-    }
-
-    // Initialize loading states for all projects
-    const initialLoadingStates: Record<string, boolean> = {};
-    projects.forEach((project) => {
-      initialLoadingStates[project.id] = true;
-    });
-    setLoadingItems(initialLoadingStates);
-
-    // Set a timeout to ensure we show content even if images are slow to load
-    const loadingTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500); // Maximum loading time before showing content anyway
-
-    return () => clearTimeout(loadingTimeout);
-  }, []);
-
-  // Dimensions are static (PROJECT_DIMENSIONS), so the grid is ready as soon
-  // as the project order is known -- nothing to download first.
-  useEffect(() => {
-    if (contentLoaded) setIsLoading(false);
-  }, [contentLoaded]);
-
-  const getGridSpan = (project: Project) => {
-    const imageRatio =
-      imageDimensions[project.id]?.width /
-        imageDimensions[project.id]?.height || 1;
-
-    if (imageRatio > 1.7) {
-      // Very wide images (panorama)
-      return { cols: 4, rows: 3 };
-    } else if (imageRatio > 1.3) {
-      // Landscape
-      return { cols: 3, rows: 3 };
-    } else if (imageRatio > 0.8 && imageRatio < 1.2) {
-      // Square-ish
-      return { cols: 2, rows: 3 };
-    } else if (imageRatio < 0.6) {
-      // Very tall
-      return { cols: 2, rows: 4 };
-    } else {
-      // Portrait
-      return { cols: 2, rows: 4 };
-    }
-  };
-
-  const filteredProjects = randomizedProjects.filter((project: Project) => {
-    if (selectedCategories.length === 0) return true;
-    return project.categories.some((category: string) =>
-      selectedCategories.includes(category)
-    );
-  });
-
-  const currentProjectIndex = selectedProject
-    ? filteredProjects.findIndex((p) => p.id === selectedProject)
-    : -1;
-
-  const handleNext = () => {
-    if (currentProjectIndex < filteredProjects.length - 1) {
-      setSelectedProject(filteredProjects[currentProjectIndex + 1].id);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentProjectIndex > 0) {
-      setSelectedProject(filteredProjects[currentProjectIndex - 1].id);
-    }
-  };
-
-  // Add skeleton array for the loading state
-  const skeletonProjects = useMemo(
-    () =>
-      Array(9)
-        .fill(0)
-        .map((_, i) => i),
-    []
-  );
-
-  // Development utility - add to console for testing
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      (window as any).resetIntro = () => {
-        // localStorage.removeItem('hasSeenIntro');
-        // window.location.reload();
-      };
-    }
-  }, []);
-
-  // Function to handle individual item loading completion
-  const handleItemLoaded = (projectId: string) => {
-    setLoadingItems((prev) => ({
-      ...prev,
-      [projectId]: false,
-    }));
-  };
-
-  // Function to get poster image for video projects - using project-based mapping
-  const getVideoPosterImage = (project: Project) => {
-    // Map each project to a reliable static image
-    const projectPosterMap: Record<string, string> = {
-      SmokeAnimation:
-        "https://media.jakobbackhouse.com/Img_and_Vid/Smoke/SmokeThumbnail(Safari).webp", // Use illustration as fallback
-      MySafetyTV:
-        "https://media.jakobbackhouse.com/Img_and_Vid/MySafetyTV/MySafetyTVThumbnail(Safari).webp", // Use Tag poster as fallback
-    };
-
-    // Return mapped poster or use a reliable default
-    return (
-      projectPosterMap[project.id] ||
-      "https://media.jakobbackhouse.com/Img_and_Vid/Tag/Development/TagPoster1.webp"
-    );
-  };
-
-  // Function to get aspect ratio class for placeholders
-  const getPlaceholderClass = (project: Project) => {
-    const aspectRatio =
-      imageDimensions[project.id]?.width /
-        imageDimensions[project.id]?.height || 1;
-
-    if (aspectRatio > 1.7) return "panorama";
-    if (aspectRatio > 1.3) return "landscape";
-    if (aspectRatio > 0.8 && aspectRatio < 1.2) return "square";
-    if (aspectRatio < 0.6) return "tall";
-    return "portrait";
-  };
-
-  // Enhanced skeleton component using new CSS classes
-  const ProjectSkeleton = () => (
-    <div className="masonry-skeleton">
-      {skeletonProjects.map((_, index) => (
-        <div
-          key={index}
-          className={`masonry-skeleton-item skeleton-stagger-${(index % 9) + 1}`}
-        >
-          <div className="masonry-skeleton-image"></div>
-          <div className="project-skeleton-content">
-            <div className="skeleton-title" />
-            <div className="skeleton-description" />
-            <div className="skeleton-description" />
-            <div className="skeleton-tags">
-              <div className="skeleton-tag" />
-              <div className="skeleton-tag" />
-              <div className="skeleton-tag" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-  return (
-    <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
+const PAGE_STYLES = `
         /* Prevent hyphenation and mid-word breaks globally */
         * {
           -webkit-hyphens: none;
@@ -829,12 +296,419 @@ export default function Home() {
         .no-zoom {
           touch-action: manipulation;
         }
-        `,
+        `;
+
+// Still shown in place of a video tile on Safari and phones.
+const VIDEO_POSTERS: Record<string, string> = {
+  SmokeAnimation: `${MEDIA_HOST}/Smoke/SmokeThumbnail(Safari).webp`,
+  MySafetyTV: `${MEDIA_HOST}/MySafetyTV/MySafetyTVThumbnail(Safari).webp`,
+};
+const DEFAULT_VIDEO_POSTER = `${MEDIA_HOST}/Tag/Development/TagPoster1.webp`;
+
+const isVideoFile = (src: string) =>
+  src.endsWith(".webm") || src.endsWith(".mp4");
+
+// Browsers remember only the shuffled order of project ids, not the projects
+// themselves, so a changed image or description reaches everyone straight away.
+const getStoredOrder = (): string[] => {
+  try {
+    const stored = JSON.parse(localStorage.getItem("projectOrderIds") ?? "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+};
+
+const shuffleArray = (array: Project[]) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// Pinned projects keep their fixed order at the front; the rest are shuffled
+const orderProjects = (array: Project[]) => {
+  const pinned = PINNED_PROJECT_IDS.flatMap((id) =>
+    array.filter((project) => project.id === id)
+  );
+  const rest = array.filter(
+    (project) => !PINNED_PROJECT_IDS.includes(project.id)
+  );
+  return [...pinned, ...shuffleArray(rest)];
+};
+
+// The visitor's saved order while it still fits the current project list
+// (every project present, none gone, pinned projects still in front), or a
+// freshly shuffled one, which is then saved.
+const resolveProjectOrder = (): Project[] => {
+  const storedOrder = getStoredOrder();
+  const storedProjects = storedOrder.flatMap((id) =>
+    projects.filter((project) => project.id === id)
+  );
+
+  if (
+    storedOrder.length === projects.length &&
+    new Set(storedProjects).size === projects.length &&
+    PINNED_PROJECT_IDS.every((id, index) => storedOrder[index] === id)
+  ) {
+    return storedProjects;
+  }
+
+  const fresh = orderProjects(projects);
+  try {
+    localStorage.setItem(
+      "projectOrderIds",
+      JSON.stringify(fresh.map((project) => project.id))
+    );
+    // Older visits saved the whole project list under these keys.
+    localStorage.removeItem("projectOrder");
+    localStorage.removeItem("projectDataVersion");
+  } catch {
+    // Storage can be unavailable; the order just won't persist.
+  }
+  return fresh;
+};
+
+type TouchStart = { x: number; y: number; time: number };
+
+/**
+ * One tile of the project grid. Memoised, and it owns its own "has my image
+ * arrived" flag, so one tile finishing loading (or anything else changing on
+ * the page) doesn't re-render the other tiles.
+ */
+const ProjectTile = memo(function ProjectTile({
+  project,
+  index,
+  isMobile,
+  isSafari,
+  paused,
+  onOpen,
+}: {
+  project: Project;
+  index: number;
+  isMobile: boolean;
+  isSafari: boolean;
+  paused: boolean;
+  onOpen: (projectId: string) => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const markLoaded = useCallback(() => setLoaded(true), []);
+  const touchStart = useRef<TouchStart | null>(null);
+
+  const dimensions = PROJECT_DIMENSIONS[project.id];
+  const aspectRatio = dimensions ? dimensions.width / dimensions.height : 1;
+  const motion = PROJECT_MOTION[project.id];
+  const isVideo = isVideoFile(project.image);
+  const quality = PROJECT_IMAGE_QUALITY[project.id] ?? (index < 6 ? 50 : 35);
+  const mediaClass = `object-cover w-full h-full transition-all duration-500 ${
+    loaded ? "opacity-100" : "opacity-0"
+  }`;
+
+  const open = (event: React.MouseEvent | React.TouchEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onOpen(project.id);
+  };
+
+  // Tap detection for touch screens: a touch that barely moves and ends
+  // quickly opens the project, anything else is a scroll.
+  const handleTouchStart = (event: React.TouchEvent) => {
+    event.stopPropagation();
+    const touch = event.touches[0];
+    touchStart.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+    };
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) {
+      open(event);
+      return;
+    }
+
+    const end = event.changedTouches[0];
+    const isTap =
+      Math.abs(end.clientX - start.x) < 15 &&
+      Math.abs(end.clientY - start.y) < 15 &&
+      Date.now() - start.time < 750;
+    if (isTap) open(event);
+  };
+
+  return (
+    /* No entry animation -- thumbnails just appear. */
+    <div
+      className="project-masonry-item"
+      style={{ "--aspect-ratio": aspectRatio } as React.CSSProperties}
+    >
+      <div
+        className="group relative cursor-pointer mobile-touch-target no-zoom"
+        onClick={open}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          WebkitTouchCallout: "none",
+          WebkitUserSelect: "none",
+          touchAction: "manipulation",
         }}
-      />
+      >
+        <div className="relative border border-line overflow-hidden">
+          <div
+            className="project-item-inner"
+            style={{ paddingBottom: `${(1 / aspectRatio) * 100}%` }}
+          >
+            {isVideo && !isSafari && !isMobile && !motion ? (
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                webkit-playsinline="true"
+                controls={false}
+                disablePictureInPicture
+                className={`absolute inset-0 ${mediaClass}`}
+                preload="auto"
+                onLoadedData={(e) => {
+                  markLoaded();
+                  // Refused autoplay is fine: it plays on hover instead.
+                  (e.target as HTMLVideoElement).play().catch(() => {});
+                }}
+                onCanPlay={markLoaded}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLVideoElement).play().catch(() => {});
+                }}
+              >
+                {/* One source, the file that exists. If MP4 encodes are
+                    uploaded later, list them ahead of the WebM. */}
+                <source
+                  src={project.image}
+                  type={
+                    project.image.endsWith(".mp4") ? "video/mp4" : "video/webm"
+                  }
+                />
+              </video>
+            ) : (
+              <Image
+                src={
+                  isVideo
+                    ? VIDEO_POSTERS[project.id] || DEFAULT_VIDEO_POSTER
+                    : project.image
+                }
+                alt={project.title}
+                fill
+                quality={isVideo ? 50 : quality}
+                priority={index < 3}
+                loading={index < 6 ? "eager" : "lazy"}
+                className={mediaClass}
+                sizes={gridImageSizes(
+                  isVideo ? 1 : PROJECT_IMAGE_SCALE[project.id]
+                )}
+                onLoad={markLoaded}
+                onError={markLoaded}
+              />
+            )}
+
+            {motion && (
+              <TileMotion
+                media={motion}
+                paused={paused}
+                tileAspectRatio={aspectRatio}
+                sizes={gridImageSizes}
+                quality={quality}
+              />
+            )}
+
+            {/* Subtle loading indicator */}
+            {!loaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-10">
+                <div className="loading-spinner">
+                  <div className="w-8 h-8 border border-white/30 border-t-white/80 rounded-full animate-spin"></div>
+                </div>
+              </div>
+            )}
+
+            <div
+              className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${
+                isMobile
+                  ? "opacity-100" // Always visible on mobile
+                  : "opacity-0 group-hover:opacity-100" // Hover effect on desktop
+              }`}
+            >
+              {/* Title only -- description and category chips are in the
+                  project view. */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <h3 className="text-lg font-display font-medium">
+                  {project.title}
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+/**
+ * The illustration that links to /about, with a label that follows the mouse.
+ * The label's position lives here rather than in the page, so moving the mouse
+ * over it re-renders this link alone and not the whole home page.
+ */
+function AboutIllustrationLink() {
+  const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(
+    null
+  );
+
+  return (
+    <div>
+      <Link
+        href="/about"
+        className="block border border-line overflow-hidden cursor-pointer group"
+        onMouseEnter={(e) => setTooltip({ x: e.clientX, y: e.clientY })}
+        onMouseLeave={() => setTooltip(null)}
+        onMouseMove={(e) => {
+          if (tooltip) setTooltip({ x: e.clientX, y: e.clientY });
+        }}
+      >
+        <FadeInImage
+          src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
+          alt="About Jakob Backhouse — illustration of an artist drawing at a desk by a window"
+          width={720}
+          height={540}
+          // Always in the first view on the screens that show it.
+          loading="eager"
+          // Drawn about 230px wide beside the trailer, and a third of the
+          // container under it on tablets.
+          sizes="(max-width: 1023px) 33vw, 320px"
+          className="block w-full h-auto transition-transform duration-300"
+        />
+      </Link>
+
+      {tooltip && (
+        <div
+          className="fixed z-50 pointer-events-none bg-ink text-ground px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-ink"
+          style={{
+            left: tooltip.x + 10,
+            top: tooltip.y - 40,
+            transform: "translate(0, 0)",
+          }}
+        >
+          Go to about page
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Home() {
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  // Empty until the browser has worked out this visitor's order. The page is
+  // still behind the first-load screen at that point, so the grid and its
+  // images load while that screen is up and are ready when it lifts.
+  const [randomizedProjects, setRandomizedProjects] = useState<Project[]>([]);
+  const [isSafari, setIsSafari] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  // Whether isMobile reflects the real viewport yet. The desktop-only trailer
+  // row waits for this, so a phone never inserts it (and never fetches its
+  // poster) on the way to finding out it's a phone.
+  const [viewportKnown, setViewportKnown] = useState(false);
+
+  // Runs before paint so the first frame already has the right layout for the
+  // device and the visitor's project order.
+  useIsomorphicLayoutEffect(() => {
+    const userAgent = navigator.userAgent;
+    setIsSafari(
+      /^((?!chrome|android).)*safari/i.test(userAgent) ||
+        /iPad|iPhone|iPod/.test(userAgent)
+    );
+
+    const isMobileUserAgent =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        userAgent
+      );
+    // Small screens count as mobile too.
+    const detectMobile = () =>
+      setIsMobile(isMobileUserAgent || window.innerWidth <= 768);
+
+    detectMobile();
+    setViewportKnown(true);
+    setRandomizedProjects(resolveProjectOrder());
+
+    window.addEventListener("resize", detectMobile);
+    return () => window.removeEventListener("resize", detectMobile);
+  }, []);
+
+  // Fetch the project view's code once the browser has nothing better to do,
+  // so the first click on a project doesn't wait for it.
+  useEffect(() => {
+    const preload = () => {
+      loadProjectModal().catch(() => {});
+    };
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(preload, { timeout: 4000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const timer = setTimeout(preload, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleProjectOpen = useCallback((projectId: string) => {
+    // Defer to the next frame so state updates settle properly on mobile
+    requestAnimationFrame(() => setSelectedProject(projectId));
+  }, []);
+
+  const toggleCategory = (category: string) => {
+    // Save current window scroll position
+    const scrollPosition = window.scrollY;
+
+    // Add filtering class for smooth transition
+    const masonryElement = document.querySelector(".project-masonry");
+    masonryElement?.classList.add("filtering");
+
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+
+    // Restore window scroll position and remove filtering class after state update
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: "auto" });
+      masonryElement?.classList.remove("filtering");
+    }, 50);
+  };
+
+  const filteredProjects = useMemo(
+    () =>
+      selectedCategories.length === 0
+        ? randomizedProjects
+        : randomizedProjects.filter((project) =>
+            project.categories.some((category) =>
+              selectedCategories.includes(category)
+            )
+          ),
+    [randomizedProjects, selectedCategories]
+  );
+
+  const openProject = selectedProject
+    ? filteredProjects.find((p) => p.id === selectedProject)
+    : undefined;
+  const modalOpen = selectedProject !== null;
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: PAGE_STYLES }} />
 
       <div
-        ref={pageContainerRef}
         className="min-h-screen bg-ground grid-pattern overflow-x-hidden relative no-zoom"
         suppressHydrationWarning
         style={{
@@ -866,7 +740,7 @@ export default function Home() {
             {/* Trailer and illustration, side by side. Desktop only -- on mobile
                 the whole row is skipped so a phone lands straight on the work
                 rather than on a video plus an empty gap. */}
-            {!firstLoadGate && viewportKnown && !isMobile && (
+            {viewportKnown && !isMobile && (
               <>
                 {/* Same treatment as the "Explore the rest of my stuff below"
                     line further down, so the two read as a pair. */}
@@ -877,77 +751,48 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row lg:gap-12 lg:items-start mb-20 lg:mb-28">
-                <div className="relative z-10 showreel-container lg:flex-[19] lg:min-w-0">
-                  <div>
-                    <div className="mb-8 lg:mb-0">
-                      <div className="max-w-3xl mx-auto lg:max-w-none">
-                        {/* The Tag trailer player, moved down from the old
-                            full-screen hero. Same 16:9 box the Vimeo showreel
-                            embed used to occupy. */}
-                        <div
-                          style={{
-                            padding: "56.25% 0 0 0",
-                            position: "relative",
-                          }}
-                        >
-                          <FeatureVideo />
+                  <div className="relative z-10 showreel-container lg:flex-[19] lg:min-w-0">
+                    <div>
+                      <div className="mb-8 lg:mb-0">
+                        <div className="max-w-3xl mx-auto lg:max-w-none">
+                          {/* The Tag trailer player, in a 16:9 box. */}
+                          <div
+                            style={{
+                              padding: "56.25% 0 0 0",
+                              position: "relative",
+                            }}
+                          >
+                            <FeatureVideo />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Right side on desktop: the two loops above the illustration,
-                    which links through to /about. A column as tall as the
-                    trailer beside it, or a row of three under it on tablets.
-                    No z-index here, because an enlarged loop has to clear the
-                    site header. */}
-                <div className="relative grid grid-cols-3 lg:grid-cols-1 items-start gap-3 lg:flex-[5] lg:min-w-0">
-                  <HighlightLoop
-                    base="/videos/duck-hunting-season-wip-v01a"
-                    width={1280}
-                    height={722}
-                    label="Duck Hunting Season, work in progress animation loop"
-                    paused={selectedProject !== null}
-                    zoomOrigin="origin-top-right"
-                  />
-                  <HighlightLoop
-                    base="/videos/flower-growing-v01"
-                    width={960}
-                    height={542}
-                    label="Animation loop of a rose growing and blooming"
-                    paused={selectedProject !== null}
-                    zoomOrigin="origin-right"
-                  />
-                  <div>
-                    <Link
-                      href="/about"
-                      className="block border border-line overflow-hidden hover:border-accent transition-all duration-300 cursor-pointer group"
-                      onMouseEnter={(e) => {
-                        setShowTooltip(true);
-                        setTooltipPosition({ x: e.clientX, y: e.clientY });
-                      }}
-                      onMouseLeave={() => setShowTooltip(false)}
-                      onMouseMove={(e) => {
-                        if (showTooltip) {
-                          setTooltipPosition({
-                            x: e.clientX,
-                            y: e.clientY,
-                          });
-                        }
-                      }}
-                    >
-                      <FadeInImage
-                        src="https://media.jakobbackhouse.com/Img_and_Vid/WebsitePortfolio.webp"
-                        alt="About Jakob Backhouse — illustration of an artist drawing at a desk by a window"
-                        width={720}
-                        height={540}
-                        priority={false}
-                        className="block w-full h-auto transition-transform duration-300"
-                      />
-                    </Link>
+                  {/* Right side on desktop: the two loops above the illustration,
+                      which links through to /about. A column as tall as the
+                      trailer beside it, or a row of three under it on tablets.
+                      No z-index here, because an enlarged loop has to clear the
+                      site header. */}
+                  <div className="relative grid grid-cols-3 lg:grid-cols-1 items-start gap-3 lg:flex-[5] lg:min-w-0">
+                    <HighlightLoop
+                      base="/videos/duck-hunting-season-wip-v01a"
+                      width={1280}
+                      height={722}
+                      label="Duck Hunting Season, work in progress animation loop"
+                      paused={modalOpen}
+                      zoomOrigin="origin-top-right"
+                    />
+                    <HighlightLoop
+                      base="/videos/flower-growing-v01"
+                      width={960}
+                      height={542}
+                      label="Animation loop of a rose growing and blooming"
+                      paused={modalOpen}
+                      zoomOrigin="origin-right"
+                    />
+                    <AboutIllustrationLink />
                   </div>
-                </div>
                 </div>
               </>
             )}
@@ -968,13 +813,13 @@ export default function Home() {
               </div>
 
               {/* Categories Section - Always visible */}
-              <div ref={categoriesRef} className="relative z-10 mb-4 md:mb-8">
+              <div className="relative z-10 mb-4 md:mb-8">
                 <div>
                   <div className="text-center">
                     {/* Tighter on phones so all three fit on one line. */}
                     <div className="flex flex-wrap gap-2 md:gap-3 justify-center">
-                      {categories.map((category) => (
-                        <motion.button
+                      {CATEGORIES.map((category) => (
+                        <button
                           key={category}
                           onClick={() => toggleCategory(category)}
                           className={`
@@ -983,13 +828,13 @@ export default function Home() {
                              ${
                                selectedCategories.includes(category)
                                  ? "bg-accent border-accent text-accent-contrast"
-                                 : "bg-ground border-line text-ink hover:border-accent"
+                                 : "bg-ground border-line text-ink"
                              }
                            `}
                           aria-pressed={selectedCategories.includes(category)}
                         >
                           {category}
-                        </motion.button>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -999,227 +844,27 @@ export default function Home() {
           </div>
 
           <main className="container mx-auto px-4 py-0 relative z-10">
-            {/* Show skeleton during loading, but only if we haven't loaded content yet */}
-            {firstLoadGate ? null : isLoading && !contentLoaded ? (
-              <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b border-line mx-auto"></div>
-                  <p className="mt-4 text-gray-600 dark:text-gray-400">
-                    Loading projects...
-                  </p>
-                </div>
-              </div>
-            ) : isLoading && contentLoaded ? (
-              <ProjectSkeleton />
-            ) : (
-              <div ref={gridRef} className="masonry-container">
+            <div className="masonry-container">
+              {randomizedProjects.length > 0 && (
                 <Masonry
-                  breakpointCols={{ default: 3, 1024: 2, 768: 1 }}
+                  breakpointCols={MASONRY_BREAKPOINTS}
                   className="project-masonry"
                   columnClassName="project-masonry-column"
                 >
-                  {filteredProjects.map((project, index) => {
-                    const spans = getGridSpan(project);
-                    const aspectRatio = imageDimensions[project.id]
-                      ? imageDimensions[project.id].width /
-                        imageDimensions[project.id]?.height
-                      : 1;
-
-                    return (
-                      /* No entry animation -- thumbnails just appear. */
-                      <div
-                        key={project.id}
-                        className="project-masonry-item"
-                        style={
-                          {
-                            "--aspect-ratio": aspectRatio,
-                            // Add content-visibility for better performance
-                            contentVisibility: index > 9 ? "auto" : "visible",
-                            contain: index > 9 ? "content" : "none",
-                          } as React.CSSProperties
-                        }
-                      >
-                        <div
-                          className="group relative cursor-pointer mobile-touch-target no-zoom"
-                          onClick={(e) => handleProjectClick(project.id, e)}
-                          onTouchStart={handleTouchStart(project.id)}
-                          onTouchEnd={handleTouchEnd(project.id)}
-                          style={{
-                            WebkitTouchCallout: "none",
-                            WebkitUserSelect: "none",
-                            touchAction: "manipulation",
-                          }}
-                        >
-                          <div className="relative border border-line overflow-hidden hover:border-accent transition-all duration-300">
-                            <div
-                              className="project-item-inner"
-                              style={{
-                                paddingBottom: `${(1 / aspectRatio) * 100}%`,
-                              }}
-                            >
-                              {(project.image.endsWith(".webm") ||
-                                project.image.endsWith(".mp4")) &&
-                              !isSafari &&
-                              !isMobile &&
-                              !PROJECT_MOTION[project.id] ? (
-                                <video
-                                  autoPlay
-                                  loop
-                                  muted
-                                  playsInline
-                                  webkit-playsinline="true"
-                                  controls={false}
-                                  disablePictureInPicture
-                                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
-                                    loadingItems[project.id]
-                                      ? "opacity-0"
-                                      : "opacity-100"
-                                  }`}
-                                  preload="auto"
-                                  onLoadedData={(e) => {
-                                    const video = e.target as HTMLVideoElement;
-                                    handleItemLoaded(project.id);
-                                    video.play().catch(() => {
-                                      // Fallback: try playing on user interaction
-                                      console.log(
-                                        "Autoplay prevented, will play on hover"
-                                      );
-                                    });
-                                  }}
-                                  onCanPlay={() => handleItemLoaded(project.id)}
-                                  onMouseEnter={(e) => {
-                                    const video = e.target as HTMLVideoElement;
-                                    video.play().catch(() => {});
-                                  }}
-                                >
-                                  {/* One source, the file that exists. A derived
-                                      .mp4 used to be listed first "for Safari", but
-                                      no .mp4 versions were ever uploaded (all 404),
-                                      and Safari gets the poster-image branch above
-                                      instead -- so every other browser paid a
-                                      failed request before falling back to WebM.
-                                      If MP4 encodes are uploaded later, list them
-                                      ahead of the WebM again. */}
-                                  <source
-                                    src={project.image}
-                                    type={
-                                      project.image.endsWith(".mp4")
-                                        ? "video/mp4"
-                                        : "video/webm"
-                                    }
-                                  />
-                                </video>
-                              ) : project.image.endsWith(".webm") ||
-                                project.image.endsWith(".mp4") ? (
-                                <Image
-                                  src={getVideoPosterImage(project)}
-                                  alt={project.title}
-                                  fill
-                                  quality={50}
-                                  priority={index < 3}
-                                  loading={index < 6 ? "eager" : "lazy"}
-                                  className={`object-cover w-full h-full transition-all duration-500 ${
-                                    loadingItems[project.id]
-                                      ? "opacity-0"
-                                      : "opacity-100"
-                                  }`}
-                                  sizes={gridImageSizes()}
-                                  placeholder="blur"
-                                  blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
-                                    `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`
-                                  ).toString("base64")}`}
-                                  onLoadingComplete={() => {
-                                    handleItemLoaded(project.id);
-                                    if (index < 6 && isLoading) {
-                                      setIsLoading(false);
-                                    }
-                                  }}
-                                  onError={() => {
-                                    console.log(
-                                      "Poster image failed to load (Safari/Mobile):",
-                                      getVideoPosterImage(project)
-                                    );
-                                    handleItemLoaded(project.id);
-                                  }}
-                                />
-                              ) : (
-                                <Image
-                                  src={project.image}
-                                  alt={project.title}
-                                  fill
-                                  quality={
-                                    PROJECT_IMAGE_QUALITY[project.id] ??
-                                    (index < 6 ? 50 : 35) // Reduced quality for better memory usage
-                                  }
-                                  priority={index < 3}
-                                  loading={index < 6 ? "eager" : "lazy"}
-                                  className={`object-cover w-full h-full transition-all duration-500 ${
-                                    loadingItems[project.id]
-                                      ? "opacity-0"
-                                      : "opacity-100"
-                                  }`}
-                                  sizes={gridImageSizes(
-                                    PROJECT_IMAGE_SCALE[project.id]
-                                  )}
-                                  placeholder="blur"
-                                  blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
-                                    `<svg width="40" height="40" version="1.1" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="${project.bgColor}"/></svg>`
-                                  ).toString("base64")}`}
-                                  onLoadingComplete={() => {
-                                    handleItemLoaded(project.id);
-                                    if (index < 6 && isLoading) {
-                                      setIsLoading(false);
-                                    }
-                                  }}
-                                />
-                              )}
-
-                              {PROJECT_MOTION[project.id] && (
-                                <TileMotion
-                                  media={PROJECT_MOTION[project.id]}
-                                  paused={selectedProject !== null}
-                                  tileAspectRatio={aspectRatio}
-                                  sizes={gridImageSizes}
-                                  quality={
-                                    PROJECT_IMAGE_QUALITY[project.id] ??
-                                    (index < 6 ? 50 : 35)
-                                  }
-                                />
-                              )}
-
-                              {/* Subtle loading indicator */}
-                              {loadingItems[project.id] && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-10">
-                                  <div className="loading-spinner">
-                                    <div className="w-8 h-8 border border-white/30 border-t-white/80 rounded-full animate-spin"></div>
-                                  </div>
-                                </div>
-                              )}
-
-                              <div
-                                className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${
-                                  isMobile
-                                    ? "opacity-100" // Always visible on mobile
-                                    : "opacity-0 group-hover:opacity-100" // Hover effect on desktop
-                                }`}
-                              >
-                                {/* Title only -- description and category
-                                    chips are in the project view. */}
-                                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                  <h3 className="text-lg font-display font-medium">
-                                    {project.title}
-                                  </h3>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {filteredProjects.map((project, index) => (
+                    <ProjectTile
+                      key={project.id}
+                      project={project}
+                      index={index}
+                      isMobile={isMobile}
+                      isSafari={isSafari}
+                      paused={modalOpen}
+                      onOpen={handleProjectOpen}
+                    />
+                  ))}
                 </Masonry>
-              </div>
-            )}
+              )}
+            </div>
           </main>
 
           <section
@@ -1266,82 +911,20 @@ export default function Home() {
 
           {selectedProject && (
             <ProjectModal
-              isOpen={!!selectedProject}
+              isOpen
               onClose={() => {
-                if (process.env.NODE_ENV === "development") {
-                  console.log("🚪 Modal onClose called");
-                }
-
-                // FIX: Enhanced modal close with better restoration
-                try {
-                  // Log memory usage before restoration
-                  logMemoryUsage("Before modal close");
-
-                  // Restore home page media
-                  restoreHomePageMedia();
-
-                  // FIX: Add additional restoration steps for mobile
-                  if (typeof window !== "undefined") {
-                    // Ensure pointer events are restored
-                    document.body.style.pointerEvents = "auto";
-
-                    // Force a layout recalculation
-                    setTimeout(() => {
-                      window.dispatchEvent(new Event("resize"));
-                    }, 50);
-                  }
-
-                  // Log memory usage after restoration
-                  setTimeout(() => logMemoryUsage("After media restored"), 100);
-
-                  setSelectedProject(null);
-
-                  if (process.env.NODE_ENV === "development") {
-                    console.log("✅ Modal closed successfully");
-                  }
-                } catch (error) {
-                  if (process.env.NODE_ENV === "development") {
-                    console.error("Error closing modal:", error);
-                  }
-                  // Fallback: still try to close
-                  setSelectedProject(null);
-                }
+                document.body.style.pointerEvents = "auto";
+                setSelectedProject(null);
               }}
-              title={
-                filteredProjects.find((p) => p.id === selectedProject)?.title ||
-                ""
-              }
-              description={
-                filteredProjects.find((p) => p.id === selectedProject)
-                  ?.description || ""
-              }
-              image={
-                filteredProjects.find((p) => p.id === selectedProject)?.image ||
-                ""
-              }
+              title={openProject?.title || ""}
+              description={openProject?.description || ""}
+              image={openProject?.image || ""}
               filteredProjects={filteredProjects}
               selectedProject={selectedProject}
               setSelectedProject={setSelectedProject}
             />
           )}
-
-          {/* Custom tooltip for illustration */}
-          {showTooltip && (
-            <div
-              className="fixed z-50 pointer-events-none bg-ink text-ground px-3 py-2 rounded-md text-sm font-satoshi shadow-lg border border-ink"
-              style={{
-                left: tooltipPosition.x + 10,
-                top: tooltipPosition.y - 40,
-                transform: "translate(0, 0)",
-              }}
-            >
-              Go to about page
-            </div>
-          )}
         </main>
-
-        {/* Memory stats debugger - development only */}
-        <MemoryStatsDebugger position="bottom-right" />
       </div>
     </>
   );

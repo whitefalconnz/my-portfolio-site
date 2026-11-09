@@ -98,34 +98,10 @@
   }
 
   /* Fix line-clamp vendor prefix warnings */
-  .line-clamp-1 {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-  }
   
   .line-clamp-2 {
     -webkit-line-clamp: 2;
     line-clamp: 2;
-  }
-  
-  .line-clamp-3 {
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-  }
-  
-  .line-clamp-4 {
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-  }
-  
-  .line-clamp-5 {
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
-  }
-  
-  .line-clamp-6 {
-    -webkit-line-clamp: 6;
-    line-clamp: 6;
   }
 
   /* Fix vertical-align conflict with display: block */
@@ -168,10 +144,6 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
-  }
-
-  .mono {
-    @apply font-mono;
   }
 
   /* Prevent hyphenation and mid-word breaks */
@@ -244,60 +216,6 @@ html, body, * {
 }
 
 /* Scroll Reveal Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
 @keyframes fadeIn {
   from {
@@ -310,102 +228,7 @@ html, body, * {
   }
 }
 
-@keyframes fadeInFast {
-  from {
-    opacity: 0;
-    transform: translateY(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOutFast {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-3px);
-  }
-}
-
-@keyframes textPixelExplode {
-  0% {
-    transform: translate(0, 0) scale(0.8); /* Reduced initial scale from 1 to 0.8 */
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(var(--tx), var(--ty)) scale(0);
-    opacity: 0;
-  }
-}
-
-.text-pixel {
-  position: absolute;
-  width: 2px; /* Reduced from 3px */
-  height: 2px; /* Reduced from 3px */
-  background-color: var(--spark-color);
-  animation: textPixelExplode 0.5s ease-out forwards; /* Reduced from 0.6s */
-  pointer-events: none;
-  z-index: 10;
-  box-shadow: 0 0 2px var(--spark-color); /* Reduced glow from 4px to 2px */
-  opacity: 0.9; /* Added initial opacity */
-  image-rendering: pixelated; /* Add pixelated rendering */
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.2s ease-out forwards;
-}
-
-.animate-fadeOut {
-  animation: fadeOut 0.15s ease-out forwards;
-}
-
-.animate-fadeIn-fast {
-  animation: fadeInFast 0.12s ease-out forwards;
-}
-
-.animate-fadeOut-fast {
-  animation: fadeOutFast 0.12s ease-out forwards;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.animate-fade-in-down {
-  animation: fadeInDown 0.6s ease-out forwards;
-}
-
-.animate-fade-in-left {
-  animation: fadeInLeft 0.6s ease-out forwards;
-}
-
-.animate-fade-in-right {
-  animation: fadeInRight 0.6s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
 /* Apply staggered delays to children */
-.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
-.stagger-children > *:nth-child(7) { animation-delay: 0.7s; }
-.stagger-children > *:nth-child(8) { animation-delay: 0.8s; }
-.stagger-children > *:nth-child(9) { animation-delay: 0.9s; }
-.stagger-children > *:nth-child(10) { animation-delay: 1s; }
 
 /* Updated Loading Screen Styles */
 .loading-screen {
@@ -423,13 +246,18 @@ html, body, * {
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-.loading-screen.fade-out {
-  opacity: 0;
+/* The entry is a CSS animation rather than a class React adds once it has
+   loaded, so the screen shows with the very first paint instead of after the
+   scripts arrive. `backwards` only: once it ends, the rules above apply again
+   and the exit transition below works as normal. */
+@keyframes loadingScreenIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
-
-.loading-screen.entering {
-  opacity: 0;
-  transform: translateY(-10px);
+.loading-screen {
+  animation: loadingScreenIn 0.3s ease-in-out 50ms backwards;
 }
 
 .loading-screen.exiting {
@@ -631,20 +459,6 @@ html, body, * {
   display: none;
 }
 
-.progress-percentage {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: 0.5px;
-  font-variant-numeric: tabular-nums;
-  min-width: 40px;
-  text-align: center;
-}
-
-.dark .progress-percentage {
-  color: var(--ink);
-}
-
 /* Retro scanning line effect for the progress bar */
 .progress-bar-background::after {
   content: '';
@@ -674,42 +488,7 @@ html, body, * {
   }
 }
 
-/* Fixed positioned cube (for specific use cases) */
-.cube.fixed-position {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 60px; /* Reduced from 80px */
-  height: 60px; /* Reduced from 80px */
-  transform-style: preserve-3d;
-  animation: cube-spin 2s infinite linear;
-  margin-bottom: 1rem;
-}
-
-.cube.fixed-position .face {
-  position: absolute;
-  width: 60px; /* Reduced from 80px */
-  height: 60px; /* Reduced from 80px */
-  border: 1px solid var(--line);
-  background: rgba(255, 77, 0, 0.9);
-}
-
-.dark .cube.fixed-position .face {
-  border: 1px solid var(--line);
-  background: rgba(255, 107, 97, 0.9);
-}
-
-.cube.fixed-position .front  { transform: translateZ(30px); } /* Reduced from 40px */
-.cube.fixed-position .back   { transform: rotateY(180deg) translateZ(30px); } /* Reduced from 40px */
-.cube.fixed-position .right  { transform: rotateY(90deg) translateZ(30px); } /* Reduced from 40px */
-.cube.fixed-position .left   { transform: rotateY(-90deg) translateZ(30px); } /* Reduced from 40px */
-.cube.fixed-position .top    { transform: rotateX(90deg) translateZ(30px); } /* Reduced from 40px */
-.cube.fixed-position .bottom { transform: rotateX(-90deg) translateZ(30px); } /* Reduced from 40px */
-
-@keyframes cube-spin {
-  0% { transform: rotateX(0) rotateY(0); }
-  100% { transform: rotateX(360deg) rotateY(360deg); }
-}
+/* Fixed positioned cube (for specific use cases) */ /* Reduced from 40px */ /* Reduced from 40px */ /* Reduced from 40px */ /* Reduced from 40px */ /* Reduced from 40px */ /* Reduced from 40px */
 
 /* Orange Loading Cube Animation - Centered */
 .cube-wrapper {
@@ -771,38 +550,6 @@ html, body, * {
 }
 
 /* Modal Transition Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  padding: 2rem;
-}
-
-.modal-overlay.show {
-  opacity: 1;
-}
-
-.modal-content {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.modal-content.show {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Replace project transition animations with simpler opacity transitions */
 @keyframes fadeOut {
@@ -815,13 +562,6 @@ html, body, * {
 }
 
 /* Using the main fadeIn animation defined above */
-.fade-out {
-  animation: fadeOut 0.3s ease-in-out forwards;
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out forwards;
-}
 
 /* Remove old slide animations */
 /* Delete or comment out the slideOutLeft, slideOutRight, slideInLeft, slideInRight animations */
@@ -903,44 +643,12 @@ html::-webkit-scrollbar-track {
 /* Sprite transparency is now handled by SVG filters in BackgroundSprites component */
 
 /* Enhanced Modal overlay styles for proper display */
-html.modal-open {
-  overflow: hidden !important;
-}
-
-html.modal-open body {
-  overflow: hidden !important;
-}
 
 /* Ensure project modal appears above everything with proper isolation */
-.project-modal-overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 99999 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(0, 0, 0, 0.9) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  isolation: isolate !important;
-  contain: layout style paint !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  transform: translate3d(0, 0, 0) !important;
-  will-change: auto !important;
-}
 
 /* Ensure all modal content inherits proper stacking */
-.project-modal-overlay * {
-  box-sizing: border-box;
-}
 
 /* Force modal to always be viewport relative */
-.project-modal-overlay {
-  inset: 0 !important;
-}
 
 /* ========================================
    IMAGE LOADING PLACEHOLDERS & SKELETONS
@@ -956,268 +664,29 @@ html.modal-open body {
   }
 }
 
-@keyframes scan-line {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100vh);
-  }
-}
-
 /* Clean image placeholder base styles */
-.image-placeholder {
-  position: relative;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 150px;
-  animation: simple-pulse 2s infinite;
-}
-
-.dark .image-placeholder {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--line);
-}
 
 /* Remove the shimmer overlay - no more orange gradient */
-.image-placeholder::before {
-  content: none;
-}
-
-.dark .image-placeholder::before {
-  content: none;
-}
 
 /* Clean placeholder icon */
-.image-placeholder::after {
-  content: '';
-  width: 32px;
-  height: 32px;
-  background: currentColor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/%3E%3C/svg%3E") no-repeat center;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/%3E%3C/svg%3E") no-repeat center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
-  opacity: 0.4;
-  z-index: 2;
-  position: relative;
-}
 
 /* Aspect ratio variants */
-.image-placeholder.portrait {
-  aspect-ratio: 3/4;
-}
-
-.image-placeholder.landscape {
-  aspect-ratio: 4/3;
-}
-
-.image-placeholder.square {
-  aspect-ratio: 1/1;
-}
-
-.image-placeholder.panorama {
-  aspect-ratio: 16/9;
-}
-
-.image-placeholder.tall {
-  aspect-ratio: 2/3;
-}
 
 /* Size variants */
-.image-placeholder.small {
-  min-height: 120px;
-}
-
-.image-placeholder.medium {
-  min-height: 200px;
-}
-
-.image-placeholder.large {
-  min-height: 300px;
-}
-
-.image-placeholder.hero {
-  min-height: 400px;
-}
 
 /* Video placeholder with play icon */
-.video-placeholder {
-  position: relative;
-}
-
-.video-placeholder::after {
-  content: '';
-  width: 60px;
-  height: 60px;
-  background: currentColor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'/%3E%3C/svg%3E") no-repeat center;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'/%3E%3C/svg%3E") no-repeat center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
-}
 
 /* Project grid skeleton */
-.project-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-}
-
-.project-skeleton-item {
-  position: relative;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  animation: simple-pulse 2s infinite;
-}
-
-.dark .project-skeleton-item {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--line);
-}
 
 /* Remove skeleton shimmer effect */
-.project-skeleton-item::before {
-  content: none;
-}
-
-.dark .project-skeleton-item::before {
-  content: none;
-}
 
 /* Skeleton content areas */
-.project-skeleton-content {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.skeleton-title {
-  height: 1.5rem;
-  background: rgba(0, 0, 0, 0.1);
-  width: 70%;
-  animation: simple-pulse 2s infinite;
-}
-
-.dark .skeleton-title {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.skeleton-description {
-  height: 1rem;
-  background: rgba(0, 0, 0, 0.08);
-  width: 100%;
-  animation: simple-pulse 2s infinite 0.2s;
-}
-
-.dark .skeleton-description {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.skeleton-description:nth-child(3) {
-  width: 85%;
-  animation-delay: 0.4s;
-}
-
-.skeleton-tags {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.skeleton-tag {
-  height: 1.2rem;
-  width: 60px;
-  background: rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  animation: simple-pulse 2s infinite;
-}
-
-.dark .skeleton-tag {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.skeleton-tag:nth-child(2) {
-  width: 80px;
-  animation-delay: 0.1s;
-}
-
-.skeleton-tag:nth-child(3) {
-  width: 70px;
-  animation-delay: 0.2s;
-}
 
 /* Masonry skeleton layout */
-.masonry-skeleton {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-.masonry-skeleton-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.masonry-skeleton-image {
-  aspect-ratio: 4/3;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  position: relative;
-  animation: simple-pulse 2s infinite;
-}
-
-.dark .masonry-skeleton-image {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--line);
-}
 
 /* Randomized skeleton heights for realistic masonry look */
-.masonry-skeleton-item:nth-child(3n+1) .masonry-skeleton-image {
-  aspect-ratio: 3/4;
-}
-
-.masonry-skeleton-item:nth-child(3n+2) .masonry-skeleton-image {
-  aspect-ratio: 16/9;
-}
-
-.masonry-skeleton-item:nth-child(3n+3) .masonry-skeleton-image {
-  aspect-ratio: 1/1;
-}
 
 /* Progressive loading states */
-.loading-progressive {
-  transition: opacity 0.3s ease, filter 0.3s ease;
-}
-
-.loading-progressive.blur-heavy {
-  filter: blur(20px);
-  opacity: 0.7;
-}
-
-.loading-progressive.blur-medium {
-  filter: blur(10px);
-  opacity: 0.8;
-}
-
-.loading-progressive.blur-light {
-  filter: blur(5px);
-  opacity: 0.9;
-}
-
-.loading-progressive.loaded {
-  filter: blur(0);
-  opacity: 1;
-}
 
 /* Remove scan line effect - keeping simple loading */
 
@@ -1253,42 +722,9 @@ html.modal-open body {
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-  .image-placeholder {
-    min-height: 120px;
-  }
-  
-  .masonry-skeleton {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* Utility classes for quick implementation */
-.placeholder-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-.placeholder-fade-out {
-  animation: fadeOut 0.3s ease-out;
-}
 
 /* Clean blur placeholder for Next.js Image component */
-.nextjs-image-placeholder {
-  background: rgba(0, 0, 0, 0.05);
-  animation: simple-pulse 2s infinite;
-}
-
-.dark .nextjs-image-placeholder {
-  background: rgba(255, 255, 255, 0.05);
-}
 
 /* Staggered animation delays for skeleton items */
-.skeleton-stagger-1 { animation-delay: 0.1s; }
-.skeleton-stagger-2 { animation-delay: 0.2s; }
-.skeleton-stagger-3 { animation-delay: 0.3s; }
-.skeleton-stagger-4 { animation-delay: 0.4s; }
-.skeleton-stagger-5 { animation-delay: 0.5s; }
-.skeleton-stagger-6 { animation-delay: 0.6s; }
-.skeleton-stagger-7 { animation-delay: 0.7s; }
-.skeleton-stagger-8 { animation-delay: 0.8s; }
-.skeleton-stagger-9 { animation-delay: 0.9s; }

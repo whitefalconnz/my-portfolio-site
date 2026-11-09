@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
-import { getCDNUrl } from "../../utils/cdn";
 import { useLoading } from "../../contexts/LoadingContext";
 
 export default function Header() {
@@ -22,6 +20,15 @@ export default function Header() {
     `px-5 py-3 border font-satoshi text-dark dark:text-light transition-colors duration-300 ${
       pathname === href ? "border-line" : "border-transparent"
     }`;
+  // Each part of the header fades in once the first-load screen lifts, a
+  // beat apart. Plain CSS transitions: these used to be framer-motion
+  // elements, which put that whole library in every page's first download.
+  // The colour transitions are restated because an inline `transition`
+  // replaces the ones the classes set.
+  const fadeIn = (delay: number): CSSProperties => ({
+    opacity: isLoading ? 0 : 1,
+    transition: `opacity ${isLoading ? "0.2s ease-in 0s" : `0.4s ease-out ${delay}s`}, color 0.15s, background-color 0.15s, border-color 0.15s`,
+  });
   const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -40,32 +47,20 @@ export default function Header() {
   `.trim();
 
   return (
-    <motion.header
+    <header
       className={headerClasses}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: isLoading ? 0 : 1, y: 0 }}
-      transition={{
-        duration: isLoading ? 0.2 : 0.4,
-        delay: isLoading ? 0 : 0.1,
-        ease: isLoading ? "easeIn" : "easeOut",
-      }}
-    >
+      style={fadeIn(0.1)}
+>
       {/* Both rows clip sideways so their slide-in can't add a brief horizontal
           scrollbar. Don't clip this container: the mobile menu hangs below it. */}
       <div className="container mx-auto px-4 py-6 relative">
         {/* Desktop Layout */}
         <div className="hidden lg:flex items-center justify-between overflow-x-clip">
           {/* Main Navigation */}
-          <motion.nav
+          <nav
             className="flex items-center space-x-3 w-1/3"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: isLoading ? 0 : 0.2,
-              ease: "easeOut",
-            }}
-          >
+            style={fadeIn(0.2)}
+>
             <Link
               href="/"
               className={`${navLinkClass("/")} text-lg`}
@@ -87,48 +82,30 @@ export default function Header() {
             >
               CONTACT
             </Link>
-          </motion.nav>
+          </nav>
 
           {/* Center Logo/Name */}
-          <motion.div
+          <div
             className="flex items-center justify-center w-1/3"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
-            transition={{
-              duration: 0.4,
-              delay: isLoading ? 0 : 0.15,
-              ease: "easeOut",
-            }}
-          >
+            style={fadeIn(0.15)}
+>
             <Link
               href="/"
               className="font-display text-4xl xl:text-5xl font-bold text-ink whitespace-nowrap hover:text-accent transition-colors"
             >
               Jakob Backhouse
             </Link>
-          </motion.div>
+          </div>
 
           {/* Profile Picture + Social Icons + Theme Toggle */}
-          <motion.div
+          <div
             className="flex items-center space-x-5 justify-end w-1/3"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: isLoading ? 0 : 0.3,
-              ease: "easeOut",
-            }}
-          >
-            <motion.div
+            style={fadeIn(0.3)}
+>
+            <div
               className="w-20 h-20 rounded-full overflow-hidden relative border border-line"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
-              transition={{
-                duration: 0.4,
-                delay: isLoading ? 0 : 0.25,
-                ease: "easeOut",
-              }}
-            >
+              style={fadeIn(0.25)}
+>
               {!profileLoaded && (
                 <div className="avatar-placeholder absolute inset-0 z-10" />
               )}
@@ -145,53 +122,47 @@ export default function Header() {
                   onLoad={() => setProfileLoaded(true)}
                 />
               </Link>
-            </motion.div>
+            </div>
 
             {/* Theme toggle button */}
             {mounted && (
-              <motion.button
+              <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Toggle theme"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: isLoading ? 0 : 0.35 }}
-              >
+                style={fadeIn(0.35)}
+>
                 {theme === "dark" ? (
                   <Sun className="w-6 h-6 text-ink hover:text-accent" />
                 ) : (
                   <Moon className="w-6 h-6 text-ink hover:text-accent" />
                 )}
-              </motion.button>
+              </button>
             )}
-          </motion.div>
+          </div>
         </div>
 
         {/* Mobile Layout */}
         <div className="lg:hidden flex items-center justify-between overflow-x-clip">
           {/* Hamburger Button */}
-          <motion.button
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-ink p-2"
             aria-label="Toggle menu"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
-            transition={{ duration: 0.4, delay: isLoading ? 0 : 0.2 }}
-          >
+            style={fadeIn(0.2)}
+>
             {isMobileMenuOpen ? (
               <X className="w-8 h-8" />
             ) : (
               <Menu className="w-8 h-8" />
             )}
-          </motion.button>
+          </button>
 
           {/* Center Logo/Name */}
-          <motion.div
+          <div
             className="flex items-center gap-4 justify-center"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: isLoading ? 0 : 0.15 }}
-          >
+            style={fadeIn(0.15)}
+>
             <Link
               href="/"
               className="font-display text-3xl md:text-4xl text-ink hover:text-accent transition-colors"
@@ -200,12 +171,10 @@ export default function Header() {
                 Jakob Backhouse
               </span>
             </Link>
-            <motion.div
+            <div
               className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden relative border border-line"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: isLoading ? 0 : 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: isLoading ? 0 : 0.25 }}
-            >
+              style={fadeIn(0.25)}
+>
               {!profileLoaded && (
                 <div className="avatar-placeholder absolute inset-0 z-10" />
               )}
@@ -222,25 +191,23 @@ export default function Header() {
                   onLoad={() => setProfileLoaded(true)}
                 />
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Theme Toggle */}
           {mounted && (
-            <motion.button
+            <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-3"
               aria-label="Toggle theme"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: isLoading ? 0 : 1, x: 0 }}
-              transition={{ duration: 0.4, delay: isLoading ? 0 : 0.3 }}
-            >
+              style={fadeIn(0.3)}
+>
               {theme === "dark" ? (
                 <Sun className="w-6 h-6 text-ink hover:text-accent" />
               ) : (
                 <Moon className="w-6 h-6 text-ink hover:text-accent" />
               )}
-            </motion.button>
+            </button>
           )}
         </div>
 
@@ -276,6 +243,6 @@ export default function Header() {
             </div>
           )}
       </div>
-    </motion.header>
+    </header>
   );
 }

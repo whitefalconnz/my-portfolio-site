@@ -2130,7 +2130,7 @@ export default function ProjectModal({
                   e.stopPropagation();
                   onNext();
                 }}
-                className="group/next w-full flex items-center justify-between gap-4 border border-line bg-surface p-5 md:p-6 text-left transition-colors duration-300 hover:border-accent"
+                className="group/next w-full flex items-center justify-between gap-4 border border-line bg-surface p-5 md:p-6 text-left transition-colors duration-300"
               >
                 <span className="min-w-0">
                   <span className="block font-mono text-xs uppercase tracking-wider text-ink/60 mb-1">

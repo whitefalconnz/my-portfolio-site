@@ -27,17 +27,25 @@ function LoadingProviderInner({ children }: { children: ReactNode }) {
   // Runs once, on the initial load of the site. This provider lives in the root
   // layout, so it mounts a single time per full page load and survives every
   // client-side navigation -- which means route changes never replay the
-  // loading screen. Every timing is half what it was: 50ms in, visible until
-  // 750ms, then a 300ms exit, so the whole gate is ~1050ms instead of ~2100ms.
+  // loading screen.
+  //
+  // The screen is already on screen from the server's HTML, before any of this
+  // code has downloaded, so its ~1050ms (50ms in, visible until 750ms, 300ms
+  // exit) is counted from when the page started rather than from when React
+  // took over. On a slow phone that used to add the whole script download on
+  // top of the wait. It always stays up for at least MIN_AFTER_START_MS more,
+  // so the run cycle is seen however late the scripts arrive.
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
+    const MIN_AFTER_START_MS = 450;
+    const exitAt = Math.max(750 - performance.now(), MIN_AFTER_START_MS);
 
     timers.push(setTimeout(() => setTransitionState("visible"), 50));
     timers.push(
       setTimeout(() => {
         setTransitionState("exiting");
         timers.push(setTimeout(() => setIsLoading(false), 300));
-      }, 750)
+      }, exitAt)
     );
 
     return () => timers.forEach(clearTimeout);

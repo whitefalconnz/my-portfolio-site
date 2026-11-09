@@ -84,7 +84,6 @@ export default function GetInTouch({
           <a
             href="mailto:jakobbackhouse@gmail.com"
             className="block w-full px-6 py-3 bg-ink text-ground font-medium text-center
-              hover:border-accent
               transition-all border font-satoshi"
             style={{ borderColor: "var(--line)" }}
           >
@@ -96,7 +95,7 @@ export default function GetInTouch({
       <div className="md:flex-1 relative">
         {!formSubmitted ? (
           <div
-            className="p-8 border relative z-10 hover:border-accent transition-all duration-300"
+            className="p-8 border relative z-10 transition-all duration-300"
             style={{
               backgroundColor: "var(--surface)",
               borderColor: "var(--line)",
@@ -116,7 +115,6 @@ export default function GetInTouch({
                   required
                   className="w-full px-4 py-2 bg-ground
                     text-dark dark:text-light focus:outline-none focus:ring-0
-                    hover:border-accent
                     transition-all border"
                   placeholder="Your Name..."
                   value={formData.name}
@@ -140,7 +138,6 @@ export default function GetInTouch({
                   required
                   className="w-full px-4 py-2 bg-ground
                     text-dark dark:text-light focus:outline-none focus:ring-0
-                    hover:border-accent
                     transition-all border"
                   placeholder="Your Email Address..."
                   value={formData.email}
@@ -164,7 +161,6 @@ export default function GetInTouch({
                   rows={6}
                   className="w-full px-4 py-2 bg-ground
                     text-dark dark:text-light focus:outline-none focus:ring-0
-                    hover:border-accent
                     transition-all border"
                   placeholder="Your Message..."
                   value={formData.message}
@@ -183,7 +179,6 @@ export default function GetInTouch({
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full px-6 py-3 bg-ink text-ground font-medium
-                  hover:border-accent
                   transition-all border disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{ borderColor: "var(--line)" }}
               >
@@ -193,7 +188,7 @@ export default function GetInTouch({
           </div>
         ) : (
           <div
-            className="p-8 border relative z-10 hover:border-accent transition-all duration-300"
+            className="p-8 border relative z-10 transition-all duration-300"
             style={{
               backgroundColor: "var(--surface)",
               borderColor: "var(--line)",

@@ -1,9 +1,9 @@
 import React, { Suspense } from "react";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./bw-preview.css";
 import { ThemeProvider } from "./components/common/theme-provider";
 import LoadingProvider from "./components/common/LoadingProvider";
-import ScrollProgressBar from "./components/common/ScrollProgressBar";
 import GoogleAnalytics from "./components/common/GoogleAnalytics";
 import Header from "./components/layout/Header";
 import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
@@ -17,7 +17,7 @@ import { SITE_URL } from "./metadata";
 // setup also loaded Geist Sans -- which had zero usages -- and Recoleta, which
 // was a trial-licensed file, and declared Space Mono, which was never loaded.
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "./fonts/GeistMonoVF.woff2",
   variable: "--font-geist-mono",
   weight: "100 900",
   display: "swap",
@@ -40,6 +40,12 @@ const satoshi = localFont({
   variable: "--font-satoshi",
   display: "swap",
 });
+
+// Turns the black-and-white preview on for a visit that arrives with ?bw in
+// the address, and keeps it on for the rest of that tab's session. Runs before
+// first paint so the page never flashes in colour. ?bw=all also drains the
+// artwork; ?bw=0 turns the preview off again.
+const BW_PREVIEW_SCRIPT = `try{var m=location.search.match(/[?&]bw(?:=(\\w+))?(?:&|$)/),v=m?m[1]||"1":sessionStorage.getItem("bw");if(m)sessionStorage.setItem("bw",v);if(v&&v!=="0"){var c=document.documentElement.classList;c.add("bw");if(v==="all")c.add("bw-media")}}catch(e){}`;
 
 // Structured data describing who the site belongs to. Search engines use this
 // for knowledge panels and to connect the site to its social profiles. Every
@@ -113,6 +119,8 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* Black-and-white preview switch. See bw-preview.css. */}
+        <script dangerouslySetInnerHTML={{ __html: BW_PREVIEW_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -129,7 +137,6 @@ export default function RootLayout({
         >
           <LoadingContextProvider>
             <Header />
-            <ScrollProgressBar />
             <Suspense fallback={null}>
               <LoadingProvider>{children}</LoadingProvider>
             </Suspense>

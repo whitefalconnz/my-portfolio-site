@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import { getImageProps } from "next/image";
 import { Volume2, VolumeX } from "lucide-react";
 
@@ -32,6 +33,11 @@ export default function FeatureVideo() {
   const [isSoundOn, setIsSoundOn] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
+
+  // The poster is the largest thing in the first view. A <video poster> isn't
+  // fetched while the page is still hidden behind the first-load screen, so
+  // ask for it outright and it's there when the screen lifts.
+  preload(POSTER, { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
     const ua = navigator.userAgent;
@@ -111,7 +117,7 @@ export default function FeatureVideo() {
 
       <button
         onClick={handleSoundToggle}
-        className="absolute top-3 right-3 z-20 p-2 bg-ground border border-line hover:border-accent"
+        className="absolute top-3 right-3 z-20 p-2 bg-ground border border-line"
         aria-label={isSoundOn ? "Turn sound off" : "Turn sound on"}
       >
         {isSoundOn ? (

@@ -1,63 +1,12 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
-import Header from "../components/layout/Header";
 import { Badge } from "../components/ui/badge";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import React from "react";
-import { useAutoImageTracking } from "../hooks/useAutoMemoryManagement";
-import MemoryStatsDebugger from "../components/common/MemoryStatsDebugger";
 
+// Nothing on this page is interactive, so it's rendered on the server and
+// ships no page-specific JavaScript.
 export default function AboutPage() {
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Auto memory management for images on this page
-  const aboutPageRef = useRef<HTMLDivElement>(null);
-  const { trackAllElements, getStats: getAboutTrackingStats } =
-    useAutoImageTracking(aboutPageRef, {
-      enabled: true,
-      debugLog: process.env.NODE_ENV === "development",
-      selector: "img, video, iframe",
-      trackOnMount: true,
-      retryInterval: 2000,
-    });
-
-  useEffect(() => {
-    // Theme-dependent colours now come from CSS variables, so this component no
-    // longer needs to observe the class attribute to recolour itself in JS.
-
-    // Set loaded state after a small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
-
-  // Track elements when page loads
-  useEffect(() => {
-    if (isLoaded) {
-      const timer = setTimeout(() => {
-        trackAllElements();
-
-        if (process.env.NODE_ENV === "development") {
-          console.log(
-            "📊 About page auto-tracking stats:",
-            getAboutTrackingStats()
-          );
-        }
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isLoaded, trackAllElements, getAboutTrackingStats]);
-
   return (
     <div
-      ref={aboutPageRef}
       className="min-h-screen bg-ground grid-pattern relative"
     >
 
@@ -71,7 +20,7 @@ export default function AboutPage() {
                 className="relative z-10 bg-transparent p-0 inline-block"
               >
                 <div
-                  className="relative border hover:border-accent transition-all duration-300"
+                  className="relative border transition-all duration-300"
                   style={{
                     borderColor: "var(--line)",
                   }}
@@ -149,7 +98,7 @@ export default function AboutPage() {
                   <a
                     href="mailto:JakobBackhouse@gmail.com"
                     className="inline-flex items-center gap-2 bg-ink px-3 py-1.5 text-ground
-                        hover:border-accent transition-all text-sm border"
+                        transition-all text-sm border"
                     style={{ borderColor: "var(--line)" }}
                   >
                     JakobBackhouse@gmail.com
@@ -243,9 +192,6 @@ export default function AboutPage() {
           </div>
         </div>
       </main>
-
-      {/* Memory stats debugger - development only */}
-      <MemoryStatsDebugger position="top-left" />
     </div>
   );
 }

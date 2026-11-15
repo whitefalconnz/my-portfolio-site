@@ -6,8 +6,8 @@ import Script from "next/script";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 /**
- * Google Analytics 4. Visits to /about and /contact are counted automatically
- * because GA watches the browser's history. Projects open in a modal with no URL
+ * Google Analytics 4. The site is one page, so the page itself is counted automatically
+ * by GA. Projects unfold in place with no page load
  * of their own, so those are reported through trackEvent in lib/analytics.
  *
  * The library itself waits until the page has finished loading so it can't slow

@@ -15,15 +15,15 @@ const shape = (media: { w: number; h: number }) =>
 
 /**
  * How wide an image is drawn in the big view of an open project, so the
- * browser fetches a file that matches. The view is about three quarters of
- * the window on a wide screen and 16:9 at most, so a tall image is drawn much
- * narrower than the view.
+ * browser fetches a file that matches and no bigger. On a wide screen the
+ * view is three of the wall's four columns, and never taller than the window
+ * allows (the same limit `.stage` has in globals.css), so a tall image or a
+ * short window means a much narrower picture than the view itself.
  */
 const stageSizes = (media: { w: number; h: number }) => {
   const a = media.w / media.h;
-  const wide = Math.round(75 * Math.min(1, (a * 9) / 16));
-  const narrow = Math.round(100 * Math.min(1, (a * 3) / 4));
-  return `(max-width: 1023px) ${narrow}vw, ${wide}vw`;
+  const narrow = Math.round(100 * Math.min(1, a / 0.8));
+  return `(max-width: 1023px) ${narrow}vw, min(72vw, calc((100vh - 264px) * ${a.toFixed(3)}))`;
 };
 
 /** A still picture in the big view. Clicking it opens it at full screen. */
@@ -153,6 +153,11 @@ export function Vimeo({
         <button
           type="button"
           className="play"
+          // The small version is already on the page as a thumbnail, so the
+          // still shows at once while the sharper one loads over it.
+          style={
+            still ? { backgroundImage: `url("${thumb(still)}")` } : undefined
+          }
           onClick={() => setPlaying(true)}
           aria-label={`Play ${title}`}
         >

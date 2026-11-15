@@ -228,6 +228,10 @@ export default function Portfolio({
         if (box.top < 48 || box.bottom > window.innerHeight) {
           cell.scrollIntoView({ behavior, block: "center" });
         }
+        // Focus was inside what just closed; hand it back.
+        if (!document.activeElement || document.activeElement === document.body) {
+          (cell as HTMLElement).focus({ preventScroll: true });
+        }
       }
       return;
     }
@@ -242,8 +246,13 @@ export default function Portfolio({
           ? "[data-contact]"
           : `[data-panel="${route.open}"]`
       );
-      if (target) target.scrollIntoView({ behavior, block: "start" });
-      else if (tries++ < 40) timer = setTimeout(reveal, 50);
+      if (target) {
+        target.scrollIntoView({ behavior, block: "start" });
+        // Keyboard and screen reader users carry on from what just opened.
+        if (!instant) (target as HTMLElement).focus({ preventScroll: true });
+      } else if (tries++ < 40) {
+        timer = setTimeout(reveal, 50);
+      }
     };
     reveal();
     return () => clearTimeout(timer);

@@ -48,7 +48,12 @@ export default function Contact({ onClose }: { onClose: () => void }) {
   });
 
   return (
-    <section className="contact" data-contact aria-labelledby="contact-title">
+    <section
+      className="contact"
+      data-contact
+      aria-labelledby="contact-title"
+      tabIndex={-1}
+    >
       <div className="contact-intro">
         <header className="panel-head">
           <h2 id="contact-title">Get in Touch</h2>

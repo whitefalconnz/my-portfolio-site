@@ -322,6 +322,11 @@ ul {
   grid-column: 1 / -1;
 }
 
+.panel:focus,
+.contact:focus {
+  outline: 0;
+}
+
 @keyframes unfold {
   from {
     clip-path: inset(0 0 100% 0);
@@ -346,14 +351,14 @@ ul {
   grid-column: 1 / span 3;
   aspect-ratio: 16 / 9;
   min-height: 220px;
-  max-height: calc(100vh - var(--bar) - 200px);
+  max-height: calc(100vh - var(--bar) - 216px);
   container-type: size;
   touch-action: pan-y;
 }
 
 @supports (height: 100dvh) {
   .stage {
-    max-height: calc(100dvh - var(--bar) - 200px);
+    max-height: calc(100dvh - var(--bar) - 216px);
   }
 }
 
@@ -397,6 +402,7 @@ ul {
 .play {
   display: grid;
   place-items: center;
+  background: center / cover no-repeat;
   box-shadow: inset 0 0 0 1px var(--line);
 }
 
@@ -485,12 +491,14 @@ ul {
 
 .years {
   flex: none;
-  width: 5.25em;
+  width: 5.5em;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
 /* Every piece in the project, grouped as the project is. */
 .sheet {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   grid-column: 1 / -1;
@@ -516,7 +524,7 @@ ul {
 .thumb {
   position: relative;
   flex: none;
-  height: 56px;
+  height: 52px;
   overflow: hidden;
   opacity: 0.4;
   box-shadow: inset 0 0 0 1px var(--line);
@@ -618,8 +626,8 @@ ul {
 
 /* --- The foot of the page ------------------------------------------------ */
 
-/* Sits on the bottom edge when the page is shorter than the window. The gap
-   on the left is where the runner stands. */
+/* Sits on the bottom edge when the page is shorter than the window. The gaps
+   at either end are where the runner stands at the start and the finish. */
 .foot {
   display: flex;
   flex: none;
@@ -628,7 +636,7 @@ ul {
   gap: 6px 20px;
   min-height: var(--bar);
   margin-top: auto;
-  padding: 8px var(--pad) 8px calc(var(--pad) + 76px);
+  padding: 8px calc(var(--pad) + 76px);
 }
 
 .foot-copy {
@@ -925,25 +933,58 @@ ul {
     grid-column: 1;
   }
 
-  .panel-head {
+  .panel-text > .panel-head {
     order: 1;
   }
 
-  .stage {
+  /* The thumbnails become one row that scrolls sideways, above the big view.
+     Up there nothing can push them about, so they stay put under a finger
+     while the view below takes the shape of each piece. */
+  .panel .sheet {
     order: 2;
-    max-height: 62vh;
+    flex-wrap: nowrap;
+    margin: 0 calc(-1 * var(--pad));
+    padding: 0 var(--pad);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
   }
 
-  .panel-piece {
+  .sheet::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sheet-group {
+    flex: none;
+    max-width: none;
+  }
+
+  .sheet-thumbs {
+    flex-wrap: nowrap;
+  }
+
+  .stage {
     order: 3;
+    aspect-ratio: var(--shape);
+    min-height: 0;
+    max-height: 68vh;
   }
 
-  .sheet {
+  .panel-text > .panel-piece {
     order: 4;
   }
 
-  .panel-about {
+  .panel-text > .panel-about {
     order: 5;
+  }
+
+  /* About leads with the introduction. */
+  .panel-bio .panel-text > .panel-about {
+    order: 3;
+  }
+
+  .panel-bio .stage {
+    order: 2;
   }
 
   .panel-next {
@@ -1007,12 +1048,13 @@ ul {
     flex-wrap: wrap;
   }
 
-  .stage {
-    aspect-ratio: 4 / 3;
-  }
-
   .thumb {
     height: 48px;
+  }
+
+  /* No room for a second label beside the title. */
+  .cell-note:not(.cell-count) {
+    display: none;
   }
 
   .foot {

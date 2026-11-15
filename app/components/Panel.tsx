@@ -1,6 +1,13 @@
 "use client";
 
-import { useRef, useState, type PointerEvent, type MouseEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+  type MouseEvent,
+} from "react";
 import {
   ABOUT,
   piecesOf,
@@ -66,8 +73,16 @@ export function Stage({
   const swipe = useSwipe(step);
   const { media } = piece;
 
+  // On a narrow screen the view takes the shape of what's in it, within
+  // reason, so the caption sits right under the picture.
+  const shape = Math.min(2.2, Math.max(0.8, media.w / media.h));
+
   return (
-    <div className="stage" {...swipe}>
+    <div
+      className="stage"
+      style={{ "--shape": shape } as CSSProperties}
+      {...swipe}
+    >
       {media.type === "image" && (
         <StageImage
           key={media.src}
@@ -102,10 +117,30 @@ function Sheet({
   posters: Record<string, Still>;
   onPiece: (index: number) => void;
 }) {
+  const sheetRef = useRef<HTMLElement>(null);
+
+  // On a narrow screen the thumbnails are one row that scrolls sideways, so
+  // keep the current one in the middle of it. Only the row moves, never the
+  // page.
+  useEffect(() => {
+    const sheet = sheetRef.current;
+    const thumbnail = sheet?.querySelector<HTMLElement>("[aria-current]");
+    if (!sheet || !thumbnail || sheet.scrollWidth <= sheet.clientWidth) return;
+    sheet.scrollTo({
+      left:
+        thumbnail.offsetLeft - (sheet.clientWidth - thumbnail.offsetWidth) / 2,
+      behavior: "smooth",
+    });
+  }, [current]);
+
   let index = -1;
 
   return (
-    <nav className="sheet" aria-label={`Everything in ${entry.title}`}>
+    <nav
+      ref={sheetRef}
+      className="sheet"
+      aria-label={`Everything in ${entry.title}`}
+    >
       {entry.sections.map((section) => (
         <div className="sheet-group" key={section.title + section.pieces[0].title}>
           <p className="sheet-title">{section.title}</p>
@@ -179,7 +214,12 @@ export default function Panel({
   const long = entry.text.length > 260;
 
   return (
-    <section className="panel" data-panel={entry.slug} aria-label={entry.title}>
+    <section
+      className="panel"
+      data-panel={entry.slug}
+      aria-label={entry.title}
+      tabIndex={-1}
+    >
       <div className="panel-body">
         <Stage
           piece={piece}
@@ -289,7 +329,12 @@ export function AboutPanel({
   const piece = piecesOf(entry)[0];
 
   return (
-    <section className="panel" data-panel={entry.slug} aria-label="About">
+    <section
+      className="panel panel-bio"
+      data-panel={entry.slug}
+      aria-label="About"
+      tabIndex={-1}
+    >
       <div className="panel-body">
         <Stage piece={piece} step={() => {}} onView={onView} />
 

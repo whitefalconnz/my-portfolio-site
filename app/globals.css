@@ -677,8 +677,10 @@ ul {
   pointer-events: none;
 }
 
-.runner[data-running] .sprite {
-  animation-play-state: running;
+/* His legs are moved by the script, one drawing per few pixels of ground
+   covered, so his stride always matches his speed. */
+.runner .sprite {
+  animation: none;
 }
 
 .runner[data-back] .sprite {

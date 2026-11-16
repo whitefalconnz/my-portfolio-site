@@ -62,11 +62,14 @@ function useSwipe(step: (direction: number) => void) {
 export function Stage({
   piece,
   poster,
+  loop,
   step,
   onView,
 }: {
   piece: FlatPiece;
   poster?: Still;
+  // The piece is a silent loop that plays by itself.
+  loop?: boolean;
   step: (direction: number) => void;
   onView: () => void;
 }) {
@@ -92,7 +95,7 @@ export function Stage({
         />
       )}
       {media.type === "video" && (
-        <Clip key={media.src} media={media} title={piece.title} />
+        <Clip key={media.src} media={media} title={piece.title} loop={loop} />
       )}
       {media.type === "vimeo" && (
         <Vimeo
@@ -224,6 +227,7 @@ export default function Panel({
         <Stage
           piece={piece}
           poster={posters[piece.media.src]}
+          loop={entry.kind === "loop"}
           step={onStep}
           onView={onView}
         />

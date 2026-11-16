@@ -37,8 +37,8 @@ export type Entry = {
   // reports carry on. `slug` is the address: jakobbackhouse.com/#slug.
   id: string;
   slug: string;
-  // A stack opens into its pieces, a loop goes straight to full screen, and
-  // about opens the bio.
+  // A stack and a loop both open into their pieces (a loop has one, which
+  // plays by itself), and about opens the bio.
   kind: "stack" | "loop" | "about";
   title: string;
   note?: string;
@@ -306,18 +306,13 @@ const ALL_ENTRIES: Entry[] = [
     },
     sections: [
       {
-        title: "Project Overview",
+        title: "Final Paintings",
         pieces: [
           {
             title: "Example Photo 1",
             text: CODING_PHOTO,
             media: image(`${MEDIA}/CreativeCoding/output_3.webp`, 1920, 640),
           },
-        ],
-      },
-      {
-        title: "Concept Development",
-        pieces: [
           {
             title: "Example Photo 2",
             text: CODING_PHOTO,
@@ -936,6 +931,8 @@ const ALL_ENTRIES: Entry[] = [
 // A loop is a single piece: its own clip.
 for (const entry of ALL_ENTRIES) {
   if (entry.kind === "loop" && entry.loop) {
+    // The piece's caption says the same thing, so it isn't shown twice.
+    entry.hideText = true;
     entry.sections = [
       {
         title: "Loops",

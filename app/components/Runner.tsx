@@ -6,7 +6,8 @@ import { useEffect, useRef } from "react";
  * The run cycle from the old loading screen, now a small companion along the
  * bottom edge. He shows how far through the page you are (or how far through
  * a project, at full screen): scroll and he runs to keep up, scroll back and
- * he turns round. He stands still when nothing moves, steps out of the way of
+ * he turns round, and his stride always matches the ground he covers. He
+ * stands still when nothing moves, steps out of the way of
  * whatever you're looking at, and clicking him goes back to the start.
  *
  * Only his position changes while he runs, and only while he's running, so he
@@ -38,6 +39,22 @@ export default function Runner({
     let last = 0;
     let hide: ReturnType<typeof setTimeout>;
 
+    // His legs follow the ground he covers, not the clock: the eleven
+    // drawings of one full stride are spread over a fixed distance, so he
+    // runs fast when the page moves fast, slows as it slows, and never
+    // slides. One stride is about two and a half times his height.
+    const sprite = el.firstElementChild as HTMLElement;
+    const FRAMES = 11;
+    let covered = 0;
+    let shown = -1;
+    const draw = () => {
+      const stride = sprite.offsetHeight * 2.5;
+      const drawing = Math.floor((covered / stride) * FRAMES) % FRAMES;
+      if (drawing === shown) return;
+      shown = drawing;
+      sprite.style.backgroundPositionX = `${-drawing * sprite.offsetWidth}px`;
+    };
+
     const scrollRoom = () =>
       document.documentElement.scrollHeight - window.innerHeight;
 
@@ -68,11 +85,16 @@ export default function Runner({
         settle();
         return;
       }
-      // Faster the further behind he is, in pixels per millisecond.
+      // Faster the further behind he is, in pixels per millisecond, up to a
+      // sprint his legs can still be seen making. After a long fast scroll he
+      // takes a moment to catch up rather than blurring across.
       const elapsed = Math.min(40, last ? now - last : 16);
       last = now;
-      const speed = Math.min(Math.max(Math.abs(distance) * 0.008, 0.12), 2.6);
-      x += Math.sign(distance) * Math.min(Math.abs(distance), speed * elapsed);
+      const speed = Math.min(Math.max(Math.abs(distance) * 0.008, 0.12), 1.2);
+      const moved = Math.min(Math.abs(distance), speed * elapsed);
+      x += Math.sign(distance) * moved;
+      covered += moved;
+      draw();
       el.style.transform = `translate3d(${x}px, 0, 0)`;
       el.setAttribute("data-running", "");
       el.toggleAttribute("data-back", distance < 0);

@@ -133,10 +133,6 @@ export default function Portfolio({
       const target = bySlug(slug);
       if (!target && slug !== "contact") return;
 
-      if (target?.kind === "loop") {
-        go({ open: slug, piece: 0, view: true });
-        return;
-      }
       if (now.open === slug && !now.view && now.piece === piece) {
         back(HOME);
         return;
@@ -155,12 +151,7 @@ export default function Portfolio({
 
   const closeView = useCallback(() => {
     const now = routeRef.current;
-    if (bySlug(now.open ?? "")?.kind === "loop") {
-      // A loop goes back to wherever it was opened from.
-      back(parseRoute(window.history.state?.from ?? ""));
-    } else {
-      back({ ...now, view: false });
-    }
+    back({ ...now, view: false });
   }, [back]);
 
   /** Move to the next or previous piece, carrying on into the next project. */
@@ -235,7 +226,6 @@ export default function Portfolio({
       }
       return;
     }
-    if (entry?.kind === "loop") return;
 
     // The panel's code may still be arriving, so look again until it's there.
     let tries = 0;
@@ -261,7 +251,7 @@ export default function Portfolio({
 
   // Each project opened is reported as its own page view.
   useEffect(() => {
-    if (entry && entry.kind !== "loop") trackProjectView(entry.id, entry.title);
+    if (entry) trackProjectView(entry.id, entry.title);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entry?.slug]);
 
@@ -415,7 +405,7 @@ export default function Portfolio({
                   count={piecesOf(item).length}
                   onOpen={open}
                 />
-                {isOpen && item.kind === "stack" && (
+                {isOpen && item.kind !== "about" && (
                   <Panel
                     key={item.slug}
                     entry={item}
@@ -491,7 +481,7 @@ export default function Portfolio({
             const next: Route = {
               open: slug,
               piece,
-              view: target?.kind === "loop",
+              view: false,
             };
             // Takes the index's place in history, so Back returns to wherever
             // the index was opened from.

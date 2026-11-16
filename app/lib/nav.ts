@@ -34,13 +34,13 @@ export function parseRoute(hash: string): Route {
   if (!entry) return HOME;
   const last = Math.max(piecesOf(entry).length - 1, 0);
   const piece = Math.min(Math.max((parseInt(number, 10) || 1) - 1, 0), last);
-  return { open: slug, piece, view: entry.kind === "loop" || mode === "view" };
+  return { open: slug, piece, view: mode === "view" };
 }
 
 export function formatRoute(route: Route): string {
   if (!route.open) return "";
   const entry = bySlug(route.open);
-  if (!entry || entry.kind === "loop") return `#${route.open}`;
+  if (!entry) return `#${route.open}`;
   if (route.view) return `#${route.open}/${route.piece + 1}/view`;
   return route.piece > 0
     ? `#${route.open}/${route.piece + 1}`

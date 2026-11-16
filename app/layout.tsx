@@ -1,35 +1,15 @@
-import React, { Suspense } from "react";
+import React from "react";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ThemeProvider } from "./components/common/theme-provider";
-import LoadingProvider from "./components/common/LoadingProvider";
-import ScrollProgressBar from "./components/common/ScrollProgressBar";
-import GoogleAnalytics from "./components/common/GoogleAnalytics";
-import Header from "./components/layout/Header";
-import { LoadingProvider as LoadingContextProvider } from "./contexts/LoadingContext";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 // Re-export route metadata so Next.js can pick it up from a dedicated file
 export { metadata, viewport } from "./metadata";
 import { SITE_URL } from "./metadata";
 
-// Two families only. Satoshi covers display and body (variable 300-900, so the
-// heavy display weight comes free); Geist Mono covers labels and data. The old
-// setup also loaded Geist Sans -- which had zero usages -- and Recoleta, which
-// was a trial-licensed file, and declared Space Mono, which was never loaded.
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff2",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-  display: "swap",
-  // Only used for headings inside the project modal, never at first paint, so
-  // it shouldn't compete with the page's critical requests. It still loads the
-  // moment the modal needs it.
-  preload: false,
-});
-
+// One typeface for the whole site: Satoshi, upright, as a single variable
+// file that covers every weight.
 const satoshi = localFont({
-  // Upright only. The italic file was preloaded on every page but no text on
-  // the site is italic, so it was ~42 KB of wasted critical-path download.
   src: [
     {
       path: "./fonts/Satoshi_Complete/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2",
@@ -43,7 +23,7 @@ const satoshi = localFont({
 
 // Structured data describing who the site belongs to. Search engines use this
 // for knowledge panels and to connect the site to its social profiles. Every
-// fact here is taken from the site's own About page and links.
+// fact here is taken from the site's own About section and links.
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -52,8 +32,7 @@ const structuredData = {
       "@id": `${SITE_URL}/#person`,
       name: "Jakob Backhouse",
       url: `${SITE_URL}/`,
-      image:
-        "https://media.jakobbackhouse.com/Img_and_Vid/SmokeProfile.webp",
+      image: "https://media.jakobbackhouse.com/Img_and_Vid/SmokeProfile.webp",
       jobTitle: "Designer and Animator",
       description:
         "Wellington-based designer and animator specialising in frame-by-frame and mixed-media animation, illustration and creative advertising.",
@@ -93,6 +72,10 @@ const structuredData = {
   ],
 };
 
+// Runs before anything is drawn, so a visitor who chose the white version
+// never sees a flash of the black one. Black is the default.
+const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t==="light"){document.documentElement.dataset.theme="light";document.querySelector('meta[name="theme-color"]')?.setAttribute("content","#ffffff")}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -101,40 +84,23 @@ export default function RootLayout({
   return (
     <html lang="en-NZ" suppressHydrationWarning>
       <head>
-        {/* Videos, posters and the loading animation come straight from the
-            media host, so open that connection early. No crossOrigin: these
-            are plain <video>/<img> requests, and a CORS-mode preconnect would
-            sit unused beside them. Cloudinary and Vimeo are only reached from
-            inside a project, so a DNS lookup is all they need up front. */}
+        {/* Artwork comes straight from the media host, so open that connection
+            early. Vimeo is only reached once a film is played, so a DNS lookup
+            is all it needs up front. */}
         <link rel="preconnect" href="https://media.jakobbackhouse.com" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://player.vimeo.com" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body
-        className={`${satoshi.variable} ${geistMono.variable} antialiased bg-ground text-ink`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LoadingContextProvider>
-            <Header />
-            <ScrollProgressBar />
-            <Suspense fallback={null}>
-              <LoadingProvider>{children}</LoadingProvider>
-            </Suspense>
-          </LoadingContextProvider>
-        </ThemeProvider>
+      <body className={satoshi.variable}>
+        {children}
         <GoogleAnalytics />
       </body>
     </html>
